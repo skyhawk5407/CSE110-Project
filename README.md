@@ -19,6 +19,7 @@
     
 ## Install packages
     # Install dependencies
+    gem install bundler
     bundle install
     yarn install
     
