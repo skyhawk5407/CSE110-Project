@@ -23,6 +23,8 @@
     bundle install
     yarn install
     
-    # Run server (two separate consoles)
+## Run server (two separate consoles)
     ruby .\bin\webpack-dev-server
     rails s
+   
+    (Visit localhost:3000 in a browser
