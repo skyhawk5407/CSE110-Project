@@ -1,3 +1,9 @@
+| Branch        | Status        |
+| ------------- |:-------------:|
+| master      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=master)](https://travis-ci.org/tangandrew/CSE110-Project) |
+| rails      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=rails)](https://travis-ci.org/tangandrew/CSE110-Project) |
+
+
 ## Download and install software
     Ruby 2.4.6: https://rubyinstaller.org/downloads/
     Yarn:       https://yarnpkg.com/en/docs/install
