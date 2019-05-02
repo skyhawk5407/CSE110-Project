@@ -1,5 +1,6 @@
 language: ruby
 rvm: 2.4.6
+before_script: rake db:create db:migrate RAILS_ENV=test
 script: bundle exec rake spec
 cache: 
   - bundler
