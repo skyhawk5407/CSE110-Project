@@ -7,3 +7,21 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+case Rails.env
+when 'development'
+  # development-specific seeds ...
+  # (anything you need to interactively play around with in the rails console)
+
+when 'test'
+  # test-specific seeds ...
+  # (Consider having your tests set up the data they need
+  # themselves instead of seeding it here!)
+
+when 'production'
+  # production seeds (if any) ...
+
+end
+
+# common seeds ...
+# (data your application needs in all environments)
