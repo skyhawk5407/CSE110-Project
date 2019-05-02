@@ -5,7 +5,7 @@ class CreateApartments < ActiveRecord::Migration[5.2]
       t.string :name
       t.references :user, foreign_key: true
       t.string :items
-
+      t.string :access_code
       t.timestamps
     end
   end

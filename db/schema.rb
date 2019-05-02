@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2019_05_02_211156) do
     t.string "name"
     t.integer "user_id"
     t.string "items"
+    t.string "access_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_apartments_on_user_id"
