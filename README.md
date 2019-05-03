@@ -83,7 +83,7 @@
     bundle exec rake db:drop:_unsafe
 
     # Populate database
-    bundle exec rake db:create db:migrate db:seed
+    bundle exec rake db:schema:load db:seed
 
 ## Run tests (located in /spec/acceptance)
     bundle exec rspec
