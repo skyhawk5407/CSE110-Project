@@ -78,6 +78,13 @@
     # View webpage
     http://localhost:3000
 
+## Set up database
+    # Remove old database
+    bundle exec rake db:drop:_unsafe
+
+    # Populate database
+    bundle exec rake db:create db:migrate db:seed
+
 ## Run tests (located in /spec/acceptance)
     bundle exec rspec
     
