@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_02_211156) do
+ActiveRecord::Schema.define(version: 2019_05_05_045622) do
+
+  create_table "apartment_mates", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "apartment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_apartment_mates_on_apartment_id"
+    t.index ["user_id"], name: "index_apartment_mates_on_user_id"
+  end
 
   create_table "apartment_rules", force: :cascade do |t|
     t.integer "apartment_id"
