@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router';
 
-import One from './components/pages/One'
+import Login from './components/pages/Login'
 import Two from './components/pages/Two'
 
 Vue.use(VueRouter);
 
 const routes = [
-  { path: '/one', component: One },
+  { path: '/Login', component: Login },
   { path: '/two', component: Two },
-  { path: '*', redirect: '/one' }
+  { path: '*', redirect: '/Login' }
 ];
 
 export default new VueRouter({
