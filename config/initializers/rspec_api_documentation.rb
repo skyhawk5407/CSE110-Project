@@ -7,4 +7,5 @@ RspecApiDocumentation.configure do |config|
   # Possible values are :json, :html, :combined_text, :combined_json,
   #   :json_iodocs, :textile, :markdown, :append_json
   config.format = [:json]
+  config.request_body_formatter = :json
 end
