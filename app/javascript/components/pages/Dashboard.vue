@@ -9,18 +9,16 @@
     <b-carousel
       id="carousel-fade"
       v-model="slide"
+      style="text-shadow: 0px 0px 2px #000"
       :interval="4000"
+      fade
       controls
       indicators
-      background="#ababab"
-      img-width="550"
-      img-height="450"
-      style="text-shadow: 1px 1px 2px #333;"
-      @sliding-start="onSlideStart"
-      @sliding-end="onSlideEnd"
+      img-width="1024"
+      img-height="480"
     >
       <!-- Slides with custom text -->
-      <b-carousel-slide img-src="/DOM.JPG">
+      <b-carousel-slide img-src="/DOM.JPG" class-width="" img-height="">
         <h1>Hello world!</h1>
       </b-carousel-slide>
       <b-carousel-slide img-src="/EX.JPG">
@@ -29,6 +27,9 @@
     </b-carousel>
   </div>
 </template>
+
+<style>
+</style>
 
 <script>
 // KEEP ALL HERE
@@ -39,14 +40,14 @@ export default {
     Apartment
   },
   data() {
-      return {
-        hide: false
-      }
+    return {
+      hide: false
+    };
   },
   methods: {
     showApartment: function() {
       this.hide = !this.hide;
     }
-  },
+  }
 };
 </script>
