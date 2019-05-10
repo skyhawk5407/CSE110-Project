@@ -1,7 +1,7 @@
 language: ruby
 rvm: 2.4.6
 before_script: bundle exec rake db:create db:migrate db:seed RAILS_ENV=test
-script: bundle exec rake spec
+script: bundle exec rake spec && bundle exec rails docs:generate
 cache: 
   - bundler
   - yarn
