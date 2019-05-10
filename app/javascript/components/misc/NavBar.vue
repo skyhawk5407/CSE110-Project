@@ -10,6 +10,7 @@
       <b-navbar-nav>
         <b-nav-item to="/Login">Login</b-nav-item>
         <b-nav-item to="/two">Two</b-nav-item>
+        <b-nav-item to="/Dashboard">Dashboard</b-nav-item>
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
