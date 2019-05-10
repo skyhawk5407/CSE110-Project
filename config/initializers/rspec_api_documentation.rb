@@ -8,4 +8,5 @@ RspecApiDocumentation.configure do |config|
   #   :json_iodocs, :textile, :markdown, :append_json
   config.format = [:json]
   config.request_body_formatter = :json
+
 end
