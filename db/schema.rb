@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_05_045622) do
+ActiveRecord::Schema.define(version: 2019_05_06_235110) do
 
   create_table "apartment_mates", force: :cascade do |t|
     t.integer "user_id"
@@ -30,11 +30,11 @@ ActiveRecord::Schema.define(version: 2019_05_05_045622) do
   end
 
   create_table "apartments", force: :cascade do |t|
-    t.string "address"
-    t.string "name"
-    t.integer "user_id"
+    t.string "address", null: false
+    t.string "name", null: false
+    t.integer "user_id", null: false
     t.string "items"
-    t.string "access_code"
+    t.string "access_code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_apartments_on_user_id"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 2019_05_05_045622) do
     t.integer "apartment_id"
     t.integer "payer_id"
     t.integer "issuer_id"
+    t.string "title"
     t.integer "amount"
     t.boolean "paid"
     t.boolean "verified"
@@ -71,6 +72,7 @@ ActiveRecord::Schema.define(version: 2019_05_05_045622) do
   create_table "notifications", force: :cascade do |t|
     t.integer "apartment_id"
     t.integer "user_id"
+    t.string "title"
     t.string "message"
     t.datetime "sent_date"
     t.datetime "created_at", null: false
@@ -79,13 +81,18 @@ ActiveRecord::Schema.define(version: 2019_05_05_045622) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
-  create_table "sessions", force: :cascade do |t|
-    t.string "identifier"
-    t.integer "user_id"
-    t.datetime "expiry"
+  create_table "scheduled_expenses", force: :cascade do |t|
+    t.integer "apartment_id"
+    t.integer "payer_id"
+    t.integer "issuer_id"
+    t.string "title"
+    t.integer "amount"
+    t.integer "day_of_month"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_sessions_on_user_id"
+    t.index ["apartment_id"], name: "index_scheduled_expenses_on_apartment_id"
+    t.index ["issuer_id"], name: "index_scheduled_expenses_on_issuer_id"
+    t.index ["payer_id"], name: "index_scheduled_expenses_on_payer_id"
   end
 
   create_table "unread_notifications", force: :cascade do |t|
@@ -98,14 +105,17 @@ ActiveRecord::Schema.define(version: 2019_05_05_045622) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "username"
-    t.string "password"
-    t.string "reset_token"
-    t.string "first_name"
-    t.string "last_name"
-    t.string "email"
+    t.string "username", null: false
+    t.string "password_digest", null: false
+    t.string "reset_token", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "email", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_token"], name: "index_users_on_reset_token", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
 end

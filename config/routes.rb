@@ -4,7 +4,10 @@ Rails.application.routes.draw do
   # Api definition
   namespace :api do
     namespace :v1 do
-      get '/test' => 'test#get'
+      post '/users' => 'user#create'
+      delete '/users' => 'user#delete'
+      get '/users/find_by_reset_token' => 'user#find_by_reset_token'
+      post '/users/reset_password' => 'user#reset_password'
     end
   end
 

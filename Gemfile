@@ -79,3 +79,5 @@ gem 'rspec-rails', '~> 3.0'
 gem 'rspec_api_documentation'
 gem 'apitome'
 
+# Authentication
+gem 'bcrypt', '~> 3.1.7'
