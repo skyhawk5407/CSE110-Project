@@ -1,18 +1,20 @@
-import Vue from 'vue';
+import Vue from 'vue'
 import VueRouter from 'vue-router';
 
-import Login from './components/pages/Login';
-import Two from './components/pages/Two';
-import Dashboard from './components/pages/Dashboard';
-import Notifications from './components/pages/Notifications';
+import Login from './components/pages/Login'
+import Profile from './components/pages/Profile'
+import AccountCreation from './components/pages/AccountCreation'
+import Dashboard from './components/pages/Dashboard'
+import Dashboard_i from './components/pages/Dashboard_initial'
 
 Vue.use(VueRouter);
 
 const routes = [
   { path: '/Login', component: Login },
-  { path: '/two', component: Two },
+  { path: '/Profile', component: Profile },
+  { path: '/AccountCreation', component: AccountCreation },
   { path: '/Dashboard', component: Dashboard },
-  { path: '/Notifications', component: Notifications},
+  { path: '/Dashboardi', component: Dashboard_i },
   { path: '*', redirect: '/Login' }
 ];
 

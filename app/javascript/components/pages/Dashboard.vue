@@ -1,52 +1,44 @@
-
 <template>
   <div>
-    <!-- KEEP THIS CODE BELOW -->
-    <button v-on:click="showApartment">Click Apartment Here</button>
-    <Apartment v-if="hide"/>
-    <!-- KEEP THIS CODE ABOVE -->
+	  <b-card no-body>
+		  <b-tabs card>
+			  <b-tab title="Apartment Mates" active>
+				  <ApartmentMate></ApartmentMate>
+			  </b-tab>
+			  <b-tab title="Documents">
 
-    <b-carousel
-      id="carousel-fade"
-      style="text-shadow: 0px 0px 2px #000"
-      :interval="4000"
-      fade
-      controls
-      indicators
-      img-width="1024"
-      img-height="480"
-    >
-      <!-- Slides with custom text -->
-      <b-carousel-slide img-src="/DOM.JPG" class-width="" img-height="">
-        <h1>Hello world!</h1>
-      </b-carousel-slide>
-      <b-carousel-slide img-src="/EX.JPG">
-        <h1>Hello world!</h1>
-      </b-carousel-slide>
-    </b-carousel>
+			  </b-tab>
+			  <b-tab title="Items">
+
+			  </b-tab>
+			  <b-tab title="Rules">
+
+			  </b-tab>
+			  <b-tab title="Rent Splitter">
+
+			  </b-tab>
+			  <b-tab title="Notifications">
+                  <Notifications></Notifications>
+			  </b-tab>
+              <b-tab title="Leave Apartment">
+                  <b-button v-b-modal="'modal-1'" variant="danger">Leave Apartment</b-button>
+                  <b-modal id="modal-1" hide-footer title="Leave Apartment">
+                      <p><b>Are you SURE you wish to leave your apartment?</b></p>
+                      <p><i>Note: This action can not be undone.</i></p>
+                      <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
+                      <b-button class="mt-2" variant="danger">Yes, I am sure.</b-button>
+                  </b-modal>
+              </b-tab>
+		  </b-tabs>
+	  </b-card>
   </div>
 </template>
 
-<style>
-</style>
-
 <script>
-// KEEP ALL HERE
-import Apartment from "./ApartmentMate.vue";
-export default {
-  name: "Dashboard",
-  components: {
-    Apartment
-  },
-  data() {
-    return {
-      hide: false
-    };
-  },
-  methods: {
-    showApartment: function() {
-      this.hide = !this.hide;
+	import ApartmentMate from './ApartmentMate';
+	import Notifications from './Notifications';
+    export default {
+        name: "Dashboard",
+        components: {ApartmentMate, Notifications}
     }
-  }
-};
 </script>
