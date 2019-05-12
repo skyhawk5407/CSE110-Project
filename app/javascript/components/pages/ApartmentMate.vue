@@ -1,38 +1,51 @@
 <template>
   <div>
     <!-- TODO: display apartment mate info -->
-
-    <!-- TODO: Add on click handlers into a form -->
     <!-- TODO: Allow form to be reset each time + popup email sent! -->
-    <b-button v-b-modal.modal-1 variant="primary">Invite Apartment Mate</b-button>
+    <!-- <div class="mt-3">
+      Apartment: {{showApartment}}
+      <div v-if="apartmentMembers.length === 0">--</div>
+      <ul v-else class="mb-0 pl-3">
+        <li v-for-key="member in apartmentMembers">{ {{ member }}</li>
+      </ul>
+    </div> -->
 
+    <div class="mt-3">
+      Submitted Names:
+      <div v-if="submittedEmails.length === 0">--</div>
+      <ul v-else class="mb-0 pl-3">
+        <li v-for="email in submittedEmails">{{ status }} {{ email }}</li>
+      </ul>
+    </div>
+
+    <b-button @click="$bvModal.show('modal-email')">Invite Apartment Mate</b-button>
     <!-- Modal Component 1-->
-    <b-modal id="modal-1" centered title="Send E-mail">
+    <b-modal id="modal-email" centered title="Send E-mail" ref="Email_Modal" hide-header-close>
       <!-- Form for sending emails -->
-      <form ref="form" @submit.stop.prevent="handleSubmit">
+      <form ref="form" @handleSendInvite.stop.prevent="handleSendInvite">
         <b-form-group
-          :state="nameState"
+          :state="emailState"
           label="Email"
           label-for="Email-input"
-          invalid-feedback="Email is required"
+          invalid-feedback="Valid Email is required"
         >
-          <b-form-input id="Email-input" v-model="name" :state="nameState" required></b-form-input>
+          <b-form-input id="Email-input" v-model="email" :state="emailState" required></b-form-input>
         </b-form-group>
       </form>
-
-      <div slot="modal-footer" slot-scope="{ cancel }" >
+      <!-- We pass the name cancel as props to footer -->
+      <div slot="modal-footer">
         <b-button
           class="float-right"
           variant="outline-warning"
           block
-          @click="sendInvite"
+          @click="handleSendInvite"
         >Send Invite</b-button>
         <b-button
           class="float-right"
           size="sm"
           variant="outline-danger"
           block
-          @click="cancel()"
+          @click="cancel"
         >Cancel</b-button>
       </div>
     </b-modal>
@@ -44,28 +57,54 @@ export default {
   name: "ApartmentMate",
   data() {
     return {
-      name: "",
-      show: true,
-      nameState: null,
-      submittedNames: []
+      email: "",
+      emailState: null,
+      status: null,
+      submittedEmails: [],
+      apartmentMembers: []
     };
   },
   methods: {
-    sendInvite() {
-     // TODO
+    showApartment() {
+      // TODO SHOW FROM BACKEND
     },
-
-    handleSubmit() {
+    cancel() {
+      this.$nextTick(() => {
+        this.$refs.Email_Modal.hide();
+      });
+      this.resetForm();
+    },
+    handleSendInvite() {
       // Exit when the form isn't valid
       if (!this.checkFormValidity()) {
         return;
       }
-      // Push the name to submitted names
-      this.submittedNames.push(this.name);
-      // Hide the modal manually
+      this.submittedEmails.push(this.email);
+      this.status = "Invite Sent to: ";
+      // NOtify user that invite was made and backend send
       this.$nextTick(() => {
-        this.$refs.modal.hide();
+        this.$refs.Email_Modal.hide();
       });
+      this.resetForm();
+    },
+    resetForm() {
+      // Reset our form values
+      this.email = "";
+      this.emailState = null;
+    },
+    checkFormValidity() {
+      if (
+        this.submittedEmails == null ||
+        this.submittedEmails.indexOf(this.email) != -1 ||
+        !this.$refs.form.checkValidity()
+      ) {
+        this.emailState = "invalid";
+        return false;
+      }
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const valid = re.test(this.email);
+      this.emailState = valid ? "valid" : "invalid";
+      return valid;
     }
   }
 };

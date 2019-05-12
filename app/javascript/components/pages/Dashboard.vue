@@ -8,7 +8,6 @@
 
     <b-carousel
       id="carousel-fade"
-      v-model="slide"
       style="text-shadow: 0px 0px 2px #000"
       :interval="4000"
       fade
