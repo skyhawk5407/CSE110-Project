@@ -122,9 +122,9 @@ export default {
         // NOtify user that invite was made and backend send
         this.$nextTick(() => {
           this.$refs.Email_Modal.hide();
+          this.resetForm();
         });
         this.$emit(alert("Invite Sent to " + this.email));
-        this.resetForm();
       },
       resetForm() {
         // Reset our form values
