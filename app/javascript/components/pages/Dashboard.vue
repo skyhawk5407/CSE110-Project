@@ -6,16 +6,16 @@
 				  <ApartmentMate></ApartmentMate>
 			  </b-tab>
 			  <b-tab title="Documents">
-
+                  <Documents></Documents>
 			  </b-tab>
 			  <b-tab title="Items">
-
+                  <Items></Items>
 			  </b-tab>
 			  <b-tab title="Rules">
-
+                  <Rules></Rules>
 			  </b-tab>
 			  <b-tab title="Rent Splitter">
-
+                  <Splitter></Splitter>
 			  </b-tab>
 			  <b-tab title="Notifications">
                   <Notifications></Notifications>
@@ -37,8 +37,13 @@
 <script>
 	import ApartmentMate from './ApartmentMate';
 	import Notifications from './Notifications';
+	import Documents from './Documents';
+	import Items from './Items';
+	import Splitter from "./Splitter";
+	import Rules from './Rules';
+
     export default {
         name: "Dashboard",
-        components: {ApartmentMate, Notifications}
+        components: {ApartmentMate, Notifications, Documents, Items, Splitter, Rules}
     }
 </script>
