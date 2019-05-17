@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="height: 100%">
+  <div id="app" style="height: 100%" name="TURD MATE" >
     <nav-bar></nav-bar>
 
     <div class="my-5 mx-auto" style="width: 80%">
@@ -11,20 +11,23 @@
 </template>
 
 <script>
-  import NavBar from "./components/misc/NavBar";
-  export default {
-    name: 'App',
-    components: {NavBar}
+import NavBar from "./components/misc/NavBar";
+export default {
+  name: "App",
+  components: { NavBar },
+  created() {
+    document.title="TURD MATE";
   }
+};
 </script>
 
 <style scoped>
-  p {
-    font-size: 2em;
-    text-align: center;
-  }
+p {
+  font-size: 2em;
+  text-align: center;
+}
 
-  #app {
-    background-color: lightslategray;
-  }
+#app {
+  background-color: lightslategray;
+}
 </style>

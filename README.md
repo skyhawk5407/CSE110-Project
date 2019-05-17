@@ -67,6 +67,13 @@
     # Install new dependencies
     bundle install
     yarn install
+
+## Set up database
+    # Remove old database
+    bundle exec rake db:drop:_unsafe
+
+    # Populate database
+    bundle exec rake db:schema:load db:seed
     
 ## Run server in developer mode (two separate consoles)
     # Start developer environment
@@ -77,13 +84,6 @@
     
     # View webpage
     http://localhost:3000
-
-## Set up database
-    # Remove old database
-    bundle exec rake db:drop:_unsafe
-
-    # Populate database
-    bundle exec rake db:schema:load db:seed
 
 ## Run tests (located in /spec/acceptance)
     bundle exec rspec
