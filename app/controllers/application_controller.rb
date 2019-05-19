@@ -14,8 +14,27 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticated?
-    user = User.find_by_username(params[:username]).nil?
-    head :unauthorized unless user.authenticate(params[:password])
+    email = request.headers['EMAIL'].to_s
+    password = request.headers['PASSWORD'].to_s
+    user = User.find_by_email(email)
+    if user.nil? or not user.authenticate(password)
+      render :plain => 'Incorrect email or password',
+             :status => :unauthorized
+    end
   end
 
+  def user_belongs_to_apartment?
+    email = request.headers['EMAIL'].to_s
+    user = User.find_by_email(email)
+    # Check that user exists
+    if user.nil?
+      render :plain =>  'User not found',
+             :status => :not_found
+    end
+    # Check that apartment matches
+    unless user.apartment_id == params['apartment_id']
+      render :plain => 'User does not belong to apartment',
+             :status => :unauthorized
+    end
+  end
 end

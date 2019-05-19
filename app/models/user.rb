@@ -4,16 +4,19 @@ class User < ApplicationRecord
   has_many :expenses
 
   has_secure_password
+  has_secure_token :reset_token
 
-  validates :username, :presence => true, :uniqueness => true, :length => { :in => 3..20 }
   validates :email, :presence => true, :uniqueness => true, :format => EMAIL_REGEX
-  validates :reset_token, :presence => true, :uniqueness => true
-  validates :first_name, :presence => true
-  validates :last_name, :presence => true
-  validates :password, :length => { :in => 5..128 }
+  validates :reset_token, :uniqueness => true
+  validates :display_name, :presence => true, :length => { :in => 2..64 }
+  validates :password, :presence => true, :length => { :in => 5..128 }, :if => :password_digest_changed?
 
   def update_password(new_password)
     self.update(password: new_password)
-    self.update(reset_token: SecureRandom.uuid)
+    self.regenerate_reset_token
+  end
+
+  def as_json(options = {})
+    super(except: [:password_digest, :reset_token])
   end
 end

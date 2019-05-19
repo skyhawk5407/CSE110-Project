@@ -10,34 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_06_235110) do
-
-  create_table "apartment_mates", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "apartment_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["apartment_id"], name: "index_apartment_mates_on_apartment_id"
-    t.index ["user_id"], name: "index_apartment_mates_on_user_id"
-  end
-
-  create_table "apartment_rules", force: :cascade do |t|
-    t.integer "apartment_id"
-    t.string "rule"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["apartment_id"], name: "index_apartment_rules_on_apartment_id"
-  end
+ActiveRecord::Schema.define(version: 2019_05_19_061233) do
 
   create_table "apartments", force: :cascade do |t|
     t.string "address", null: false
     t.string "name", null: false
-    t.integer "user_id", null: false
-    t.string "items"
     t.string "access_code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_apartments_on_user_id"
+    t.index ["access_code"], name: "index_apartments_on_access_code", unique: true
   end
 
   create_table "documents", force: :cascade do |t|
@@ -69,6 +50,18 @@ ActiveRecord::Schema.define(version: 2019_05_06_235110) do
     t.index ["payer_id"], name: "index_expenses_on_payer_id"
   end
 
+  create_table "items", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "apartment_id"
+    t.string "name"
+    t.boolean "bought"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_items_on_apartment_id"
+    t.index ["user_id"], name: "index_items_on_user_id"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.integer "apartment_id"
     t.integer "user_id"
@@ -79,6 +72,14 @@ ActiveRecord::Schema.define(version: 2019_05_06_235110) do
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_notifications_on_apartment_id"
     t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "rules", force: :cascade do |t|
+    t.integer "apartment_id"
+    t.string "rule"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_rules_on_apartment_id"
   end
 
   create_table "scheduled_expenses", force: :cascade do |t|
@@ -105,17 +106,16 @@ ActiveRecord::Schema.define(version: 2019_05_06_235110) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "username", null: false
+    t.string "email", null: false
+    t.integer "apartment_id"
     t.string "password_digest", null: false
     t.string "reset_token", null: false
-    t.string "first_name", null: false
-    t.string "last_name", null: false
-    t.string "email", null: false
+    t.string "display_name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_users_on_apartment_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_token"], name: "index_users_on_reset_token", unique: true
-    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
 end

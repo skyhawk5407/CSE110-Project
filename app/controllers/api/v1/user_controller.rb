@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
-# localhost:3000/api/v1/user
+# localhost:3000/api/v1/users
 class Api::V1::UserController < ApplicationController
-  before_action :authenticated?, only: [:delete, :update_profile]
+  before_action :authenticated?, only: [:delete, :update_profile, :login, :join_apartment, :leave_apartment]
 
   # Register new user
   def register
-    user = User.find_by username: params[:account_name]
-    return render plain: 'User with this username already exists', status: :bad_request unless user.nil?
+    user = User.find_by_email(params[:email])
+    return render plain: 'User with this email already exists', status: :bad_request unless user.nil?
 
     user = User.create(
-      :username => params['username'],
+      :email => params['email'],
       :password => params['password'],
       :reset_token => SecureRandom.uuid,
-      :first_name => params['first_name'],
-      :last_name => params['last_name'],
-      :email => params['email']
+      :display_name => params['display_name']
     )
     return render :json => {:errors => user.errors.full_messages}, status: :bad_request unless user.valid?
 
@@ -23,37 +21,56 @@ class Api::V1::UserController < ApplicationController
   end
 
   def delete
-    user = User.find_by_username(params[:auth][:username])
+    user = User.find_by_email(request.headers['EMAIL'].to_s)
     user.destroy
-    head :ok
+    render plain: 'User deletion successful', status: :ok
   end
 
   def find_by_reset_token
     user = User.find_by_reset_token(params[:reset_token])
-    render plain: 'invalid token', status: :unauthorized if user.nil?
+    return render plain: 'Invalid token', status: :unauthorized if user.nil?
 
-    render json: {username: user.username}
+    render json: {email: user.email}
   end
 
   # Reset password of user using reset token
   def reset_password
     user = User.find_by_reset_token(params[:reset_token])
-    render plain: 'invalid token', status: :unauthorized if user.nil?
+    return render plain: 'Invalid token', status: :unauthorized if user.nil?
     user.update_password(params[:new_password])
     render plain: 'Password successfully updated', status: :ok
   end
 
   # Update first name, last name, password
   def update_profile
-    user = User.find_by_username(params[:auth][:username])
-    render json: 'invalid user id', status: :unauthorized if user.nil?
+    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    return render json: 'Invalid user email', status: :unauthorized if user.nil?
 
-    if user.update({:first_name => params[:first_name],
-                    :last_name => params[:last_name],
+    if user.update({:display_name => params[:display_name],
                     :password => params[:password]}.reject{|_,v| v.blank?})
       render plain: 'Profile successfully updated', status: :ok
     else
       render :json => {:errors => user.errors.full_messages}, status: :bad_request
     end
+  end
+
+  def login
+    render :json => User.find_by_email(request.headers['EMAIL'].to_s)
+                        .as_json
+  end
+
+  def join_apartment
+    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    return render plain: 'User already in an apartment', status: :bad_request unless user.apartment.nil?
+    apartment = Apartment.find_by_access_code(params[:access_code])
+    user.update_column(:apartment, apartment.id)
+    render plain: 'Successfully joined apartment', status: :ok
+  end
+
+  def leave_apartment
+    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    return render plain: 'User not already in an apartment', status: :bad_request if user.apartment.nil?
+    user.update_column(:apartment, nil)
+    render plain: 'Successfully left apartment', status: :ok
   end
 end

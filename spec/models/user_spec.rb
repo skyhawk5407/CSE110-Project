@@ -1,32 +1,24 @@
 require 'rails_helper'
 
-VALID_USERNAME = 'User 1'
-VALID_USERNAME2 = 'User 2'
-VALID_PASSWORD = 'password123'
-VALID_PASSWORD2 = 'password1234'
-VALID_FIRST_NAME = 'User'
-VALID_FIRST_NAME2 = 'User2'
-VALID_LAST_NAME = 'Name'
-VALID_LAST_NAME2 = 'Name2'
 VALID_EMAIL = 'user1@example.com'
 VALID_EMAIL2 = 'user2@example.com'
+VALID_PASSWORD = 'password123'
+VALID_PASSWORD2 = 'password1234'
+VALID_DISPLAY_NAME = 'User One'
+VALID_DISPLAY_NAME2 = 'User Two'
 
 VALID_USER = {
-    :username => VALID_USERNAME,
+    :email => VALID_EMAIL,
     :password => VALID_PASSWORD,
     :reset_token => SecureRandom.uuid,
-    :first_name => VALID_FIRST_NAME,
-    :last_name => VALID_LAST_NAME,
-    :email => VALID_EMAIL
+    :display_name => VALID_DISPLAY_NAME
 }
 
 VALID_USER2 = {
-    :username => VALID_USERNAME2,
+    :email => VALID_EMAIL2,
     :password => VALID_PASSWORD2,
     :reset_token => SecureRandom.uuid,
-    :first_name => VALID_FIRST_NAME2,
-    :last_name => VALID_LAST_NAME2,
-    :email => VALID_EMAIL2
+    :display_name => VALID_DISPLAY_NAME2
 }
 
 RSpec.describe User, type: :model do
@@ -43,44 +35,19 @@ RSpec.describe User, type: :model do
     expect(User.new).to_not be_valid
   end
 
-  it "is not valid without username" do
-    attr = VALID_USER.clone.except(:username)
-    expect(User.new(attr)).to_not be_valid
-  end
-
   it "is not valid without password" do
     attr = VALID_USER.clone.except(:password)
     expect(User.new(attr)).to_not be_valid
   end
 
-  it "is not valid without first name" do
-    attr = VALID_USER.clone.except(:first_name)
-    expect(User.new(attr)).to_not be_valid
-  end
-
-  it "is not valid without last name" do
-    attr = VALID_USER.clone.except(:last_name)
+  it "is not valid without display name" do
+    attr = VALID_USER.clone.except(:display_name)
     expect(User.new(attr)).to_not be_valid
   end
 
   it "is not valid without email" do
     attr = VALID_USER.clone.except(:email)
     expect(User.new(attr)).to_not be_valid
-  end
-
-  it "disallows duplicate username" do
-    attr1 = VALID_USER.clone
-    attr2 = VALID_USER2.clone
-
-    attr1[:username] = VALID_USERNAME
-    attr2[:username] = VALID_USERNAME
-
-    user1 = User.new(attr1)
-    expect(user1).to be_valid
-    user1.save
-
-    user2 = User.new(attr2)
-    expect(user2).to_not be_valid
   end
 
   it "disallows duplicate email" do
@@ -115,12 +82,6 @@ RSpec.describe User, type: :model do
     expect(user2).to_not be_valid
   end
 
-  it "disallows short username" do
-    attr = VALID_USER.clone
-    attr[:username] = 'w'
-    expect(User.new(attr)).to_not be_valid
-  end
-
   it "disallows short password" do
     attr = VALID_USER.clone
     attr[:password] = 'wwww'
@@ -133,27 +94,15 @@ RSpec.describe User, type: :model do
     expect(User.new(attr)).to_not be_valid
   end
 
-  it "disallows empty first name" do
+  it "disallows empty display name" do
     attr = VALID_USER.clone
-    attr[:first_name] = ''
+    attr[:display_name] = ''
     expect(User.new(attr)).to_not be_valid
   end
 
-  it "disallows only spaces in first name" do
+  it "disallows only spaces in display name" do
     attr = VALID_USER.clone
-    attr[:first_name] = ' ' * 10
-    expect(User.new(attr)).to_not be_valid
-  end
-
-  it "disallows empty last name" do
-    attr = VALID_USER.clone
-    attr[:last_name] = ''
-    expect(User.new(attr)).to_not be_valid
-  end
-
-  it "disallows only spaces in last name" do
-    attr = VALID_USER.clone
-    attr[:last_name] = ' ' * 10
+    attr[:display_name] = ' ' * 10
     expect(User.new(attr)).to_not be_valid
   end
 
@@ -165,11 +114,11 @@ RSpec.describe User, type: :model do
 
   it "allows password authentication" do
     attr = VALID_USER.clone
-    attr[:username] = VALID_USERNAME
+    attr[:email] = VALID_EMAIL
     attr[:password] = VALID_PASSWORD
     User.create(attr)
 
-    user = User.find_by_username(VALID_USERNAME)
+    user = User.find_by_email(VALID_EMAIL)
     expect(user.authenticate(VALID_PASSWORD)).to be user
     expect(user.authenticate(VALID_PASSWORD2)).to be false
 
@@ -181,7 +130,7 @@ RSpec.describe User, type: :model do
     User.create(attr)
 
     # Test with original password
-    user = User.find_by_username(VALID_USERNAME)
+    user = User.find_by_email(VALID_EMAIL)
     expect(user.authenticate(VALID_PASSWORD)).to be user
     expect(user.authenticate(VALID_PASSWORD2)).to be false
 
@@ -190,8 +139,27 @@ RSpec.describe User, type: :model do
     user.save
 
     # Check to make sure new password is being used
-    user = User.find_by_username(VALID_USERNAME)
+    user = User.find_by_email(VALID_EMAIL)
     expect(user.authenticate(VALID_PASSWORD)).to be false
     expect(user.authenticate(VALID_PASSWORD2)).to be user
+  end
+
+  it "correctly updates name" do
+    attr = VALID_USER.clone
+    expect(User.new(attr)).to be_valid
+    User.create(attr)
+
+    # Test with original profile
+    user = User.find_by_email(VALID_EMAIL)
+    expect(user.display_name).to eq VALID_DISPLAY_NAME
+
+    # Update name of user
+    user.update(:display_name => VALID_DISPLAY_NAME2)
+    expect(user).to be_valid
+    user.save
+
+    # Check to make sure new name is being used
+    user = User.find_by_email(VALID_EMAIL)
+    expect(user.display_name).to eq VALID_DISPLAY_NAME2
   end
 end
