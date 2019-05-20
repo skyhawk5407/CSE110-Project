@@ -16,7 +16,7 @@ export default {
   name: "App",
   components: { NavBar },
   created() {
-    document.title="TURD MATE";
+    document.title="TURD Mate";
   }
 };
 </script>
