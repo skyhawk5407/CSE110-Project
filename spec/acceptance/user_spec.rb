@@ -78,22 +78,25 @@ resource 'User' do
     end
   end
 
-  get 'api/v1/users/login' do
+  get 'api/v1/users/update_profile' do
+    before (:each) do
+      # Seed with an existing user and apartment
+      @existing_user = User.create(
+          :email => 'jsmith@example.com',
+          :password => 'password123',
+          :display_name => 'John Smith')
+    end
+
     context '200' do
-      example '1. User login - Success' do
-        explanation 'Verify the user\'s email and password.'
+      header 'EMAIL', 'jsmith@example.com'
+      header 'PASSWORD', 'password123'
 
-        header 'EMAIL', 'jsmith@example.com'
-        header 'PASSWORD', 'password123'
+      let(:password) {'password1234'}
+      let(:display_name) {'John'}
 
-        # Set up existing user
-        user = User.create(
-            :email => 'jsmith@example.com',
-            :password => 'password123',
-            :display_name => 'John Smith')
-        expect(user).to be_valid
+      example '1. Update profile - Success' do
+        explanation 'Update the current user\'s display name and password.'
 
-        # Should confirm login
         do_request
         expect(status).to eq(200)
       end
@@ -119,4 +122,5 @@ resource 'User' do
       end
     end
   end
+
 end

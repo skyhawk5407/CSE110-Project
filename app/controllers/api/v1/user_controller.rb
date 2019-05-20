@@ -41,7 +41,7 @@ class Api::V1::UserController < ApplicationController
     render plain: 'Password successfully updated', status: :ok
   end
 
-  # Update first name, last name, password
+  # Update display name, password
   def update_profile
     user = User.find_by_email(request.headers['EMAIL'].to_s)
     return render json: 'Invalid user email', status: :unauthorized if user.nil?
