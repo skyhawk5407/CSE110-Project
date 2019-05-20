@@ -10,8 +10,8 @@ Rails.application.routes.draw do
       get 'users/login' => 'user#login'
       post 'users/update_profile' => 'user#update_profile'
       post 'users/join_apartment' => 'user#join_apartment'
+      post 'users/leave_apartment' => 'user#leave_apartment'
       post 'users/reset_password' => 'user#reset_password'
-      get 'users/find_by_reset_token' => 'user#find_by_reset_token'
 
       # Apartments
       post 'apartments/' => 'apartment#create'

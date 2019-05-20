@@ -26,19 +26,16 @@ class Api::V1::UserController < ApplicationController
     render plain: 'User deletion successful', status: :ok
   end
 
-  def find_by_reset_token
-    user = User.find_by_reset_token(params[:reset_token])
-    return render plain: 'Invalid token', status: :unauthorized if user.nil?
-
-    render json: {email: user.email}
-  end
-
   # Reset password of user using reset token
   def reset_password
     user = User.find_by_reset_token(params[:reset_token])
     return render plain: 'Invalid token', status: :unauthorized if user.nil?
-    user.update_password(params[:new_password])
-    render plain: 'Password successfully updated', status: :ok
+    if user.update(:password => params[:new_password])
+      render plain: 'Password successfully updated', status: :ok
+    else
+      render :json => {:errors => user.errors.full_messages}, status: :bad_request
+    end
+
   end
 
   # Update display name, password
@@ -46,8 +43,9 @@ class Api::V1::UserController < ApplicationController
     user = User.find_by_email(request.headers['EMAIL'].to_s)
     return render json: 'Invalid user email', status: :unauthorized if user.nil?
 
-    if user.update({:display_name => params[:display_name],
-                    :password => params[:password]}.reject{|_,v| v.blank?})
+    filtered_params = {:display_name => params[:display_name],
+                       :password => params[:password]}.reject{|_,v| v.nil?}
+    if user.update(filtered_params)
       render plain: 'Profile successfully updated', status: :ok
     else
       render :json => {:errors => user.errors.full_messages}, status: :bad_request
@@ -61,16 +59,16 @@ class Api::V1::UserController < ApplicationController
 
   def join_apartment
     user = User.find_by_email(request.headers['EMAIL'].to_s)
-    return render plain: 'User already in an apartment', status: :bad_request unless user.apartment.nil?
+    return render plain: 'User already in an apartment', status: :bad_request unless user.apartment_id.nil?
     apartment = Apartment.find_by_access_code(params[:access_code])
-    user.update_column(:apartment, apartment.id)
+    user.update_column(:apartment_id, apartment.id)
     render plain: 'Successfully joined apartment', status: :ok
   end
 
   def leave_apartment
     user = User.find_by_email(request.headers['EMAIL'].to_s)
-    return render plain: 'User not already in an apartment', status: :bad_request if user.apartment.nil?
-    user.update_column(:apartment, nil)
+    return render plain: 'User not already in an apartment', status: :bad_request if user.apartment_id.nil?
+    user.update_column(:apartment_id, nil)
     render plain: 'Successfully left apartment', status: :ok
   end
 end
