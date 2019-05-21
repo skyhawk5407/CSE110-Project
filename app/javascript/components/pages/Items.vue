@@ -22,6 +22,8 @@
             </template>
 
             <template slot="Actions" slot-scope="row">
+                <b-button variant="primary">Edit</b-button>
+
                 <b-button v-b-modal="'modal-2'" variant="danger">Remove</b-button>
                 <b-modal id="modal-2" hide-footer title="Remove Item">
                     <p><b>Are you SURE you wish to remove this item?</b></p>
@@ -33,7 +35,7 @@
         </b-table>
 
         <b-button v-b-modal.modal-1 variant="primary">Add Item</b-button>
-        <b-modal id="modal-1" title="Add Item">
+        <b-modal id="modal-1" title="Add Item" ok-title="Add">
             <label>Item Name:</label>
             <b-form-input v-model="text" placeholder=""></b-form-input>
             <label>Owner:</label>

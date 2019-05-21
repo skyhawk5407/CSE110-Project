@@ -22,7 +22,7 @@
             </template>
 
             <template slot="Actions" slot-scope="row">
-                <b-button variant="success">Download</b-button>
+                <b-button variant="info">Download</b-button>
                 <b-button v-b-modal="'modal-2'" variant="danger">Delete</b-button>
                 <b-modal id="modal-2" hide-footer title="Delete Document">
                     <p><b>Are you SURE you wish to remove this document?</b></p>
