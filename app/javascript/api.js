@@ -7,10 +7,10 @@ const axios = require('axios');
 axios.defaults.baseURL = '/api/v1';
 
 export default {
-  endpoint: {
-    get: (value1) => axios.get('/endpoint', {params: {key1: value1}}),
-    post: (password, value1) => axios.post('/endpoint',
-        {key1: value1},
-        {headers: {Authorization: password}})
+  // Example endpoint
+  example: {
+    // Post to api/v1/example, providing the name
+    post: (name) => axios.post('/example',
+        {name: name})
   }
 }

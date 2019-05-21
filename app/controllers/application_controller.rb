@@ -28,8 +28,8 @@ class ApplicationController < ActionController::Base
     user = User.find_by_email(email)
     # Check that user exists
     if user.nil?
-      render :plain =>  'User not found',
-             :status => :not_found
+      render :plain =>  'Invalid email',
+             :status => :unauthorized
     end
     # Check that apartment matches
     unless user.apartment_id == params['apartment_id']

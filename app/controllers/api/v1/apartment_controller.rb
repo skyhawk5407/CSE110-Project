@@ -3,7 +3,7 @@
 # localhost:3000/api/v1/apartments
 class Api::V1::ApartmentController < ApplicationController
   before_action :authenticated?
-  before_action :user_belongs_to_apartment?, except: ['create']
+  before_action :user_belongs_to_apartment?, except: [:create, :delete]
 
   def create
     # User only allowed to create apartment if they're not already in one
@@ -23,6 +23,15 @@ class Api::V1::ApartmentController < ApplicationController
   end
 
   def delete
+    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    return render plain: 'User not already in an apartment', status: :bad_request if user.apartment_id.nil?
+
+    # Delete apartment
+    if apt = Apartment.find(user.apartment_id).destroy
+      render plain: 'Apartment deletion successful', status: :ok
+    else
+      render :json => {:errors => apt.errors.full_messages}, status: :internal_server_error
+    end
 
   end
 

@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   # Api definition
   namespace :api do
     namespace :v1 do
+      # Example
+      post 'example/' => 'example#post'
+
       # Users
       post 'users/' => 'user#register'
       delete 'users/' => 'user#delete'

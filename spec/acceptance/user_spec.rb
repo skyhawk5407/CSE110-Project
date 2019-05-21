@@ -17,7 +17,7 @@ resource 'User' do
       let(:password) {'password123'}
       let(:display_name) {'John Smith'}
 
-      example_request '1. User registration - register a user' do
+      example_request 'User registration' do
         explanation 'Register a new user, providing all the necessary fields. The new user will be inserted into the database.'
         expect(status).to eq(200)
       end
@@ -27,7 +27,7 @@ resource 'User' do
       context 'insufficient fields' do
         let(:email) { "jsmith@example.com" }
 
-        example_request '2. User registration - insufficient fields' do
+        example_request 'User registration - Insufficient fields' do
           explanation 'Example of supplying insufficient information. The new user will not be inserted into the database.'
           expect(status).to eq(400)
         end
@@ -38,7 +38,7 @@ resource 'User' do
         let(:password) {'password123'}
         let(:display_name) {'John Smith'}
 
-        example '3. User registration - username taken' do
+        example 'User registration - Username taken' do
           explanation 'Attempting to register the same user twice. The duplicate user will not be inserted into the database.'
 
           # Set up existing user
@@ -57,41 +57,55 @@ resource 'User' do
   end
 
   delete 'api/v1/users' do
+    header 'EMAIL', :email_header
+    header 'PASSWORD', :password_header
+
+    before (:each) do
+      # Set up existing user
+      User.create(
+          :email => 'jsmith@example.com',
+          :password => 'password123',
+          :display_name => 'John Smith'
+      )
+    end
+
     context '200' do
-      example '1. User deletion' do
+      let(:email_header) {'jsmith@example.com'}
+      let(:password_header) {'password123'}
+
+      example_request 'User deletion' do
         explanation 'Delete the currently logged in user.'
-
-        header 'EMAIL', 'jsmith@example.com'
-        header 'PASSWORD', 'password123'
-
-        # Set up existing user
-        user = User.create(
-            :email => 'jsmith@example.com',
-            :password => 'password123',
-            :display_name => 'John Smith')
-        expect(user).to be_valid
-
-        # Should delete the user
-        do_request
         expect(status).to eq(200)
+      end
+    end
+
+    context '401' do
+      let(:email_header) {nil}
+      let(:password_header) {nil}
+
+      example_request 'User deletion - Not logged in' do
+        explanation 'Attempt to delete the currently logged in user while not currently logged in.'
+        expect(status).to eq(401)
       end
     end
   end
 
   get 'api/v1/users/login' do
+    before (:each) do
+      # Set up existing user
+      User.create(
+          :email => 'jsmith@example.com',
+          :password => 'password123',
+          :display_name => 'John Smith'
+      )
+    end
+
     context '200' do
-      example '1. User login - Success' do
+      example 'User login' do
         explanation 'Verify the user\'s email and password.'
 
         header 'EMAIL', 'jsmith@example.com'
         header 'PASSWORD', 'password123'
-
-        # Set up existing user
-        user = User.create(
-            :email => 'jsmith@example.com',
-            :password => 'password123',
-            :display_name => 'John Smith')
-        expect(user).to be_valid
 
         # Should confirm login
         do_request
@@ -100,18 +114,11 @@ resource 'User' do
     end
 
     context '401' do
-      example '2. User login - Failure' do
+      example 'User login - Failure' do
         explanation 'Reject the user\'s incorrect email and password.'
 
         header 'EMAIL', 'jsmith@example.com'
         header 'PASSWORD', 'wrong-password'
-
-        # Set up existing user
-        user = User.create(
-            :email => 'jsmith@example.com',
-            :password => 'password123',
-            :display_name => 'John Smith')
-        expect(user).to be_valid
 
         # Should confirm login
         do_request
@@ -137,14 +144,14 @@ resource 'User' do
     header 'PASSWORD', 'password123'
 
     context '200' do
-      example '1. Update profile - Success' do
+      example 'Update profile' do
         explanation 'Update the current user\'s display name and password.'
         display_name = 'John'
         password = 'password1234'
         do_request
         expect(status).to eq(200)
       end
-      example '2. Update profile - Supply partial info' do
+      example 'Update profile - Supply partial info' do
         explanation 'Update the current user\'s display name or password only.'
         display_name = 'John'
         do_request
@@ -154,7 +161,7 @@ resource 'User' do
     context '400' do
       let(:display_name) {''}
       let(:password) {'password1234'}
-      example_request '3. Update profile - Failure' do
+      example_request 'Update profile - Failure' do
         explanation 'Supply invalid display name and/or password.'
         expect(status).to eq(400)
       end
@@ -188,14 +195,14 @@ resource 'User' do
 
     context '200' do
       let(:access_code) {@access_code1}
-      example_request '1. Join Apartment - Success' do
+      example_request 'Join Apartment' do
         explanation 'Join an apartment. The user cannot be part of an existing apartment.'
         expect(status).to eq(200)
       end
     end
     context '400' do
       let(:access_code) {@access_code2}
-      example '2. Join Apartment - Failure (User already in apartment)' do
+      example 'Join Apartment - Failure (User already in apartment)' do
         explanation 'Attempt to join an apartment while already in one.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
         do_request
@@ -222,7 +229,7 @@ resource 'User' do
     header 'PASSWORD', 'password123'
 
     context '200' do
-      example '1. Leave Apartment - Success' do
+      example 'Leave Apartment' do
         explanation 'Leave an apartment. The user must be part of an existing apartment.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
         do_request
@@ -230,7 +237,7 @@ resource 'User' do
       end
     end
     context '400' do
-      example_request '2. Leave Apartment - Failure (User not already in apartment)' do
+      example_request 'Leave Apartment - Failure (User not already in apartment)' do
         explanation 'Attempt to leave an apartment while not in one.'
         expect(status).to eq(400)
       end
@@ -253,7 +260,7 @@ resource 'User' do
     context '200' do
       let(:reset_token) {@existing_user.reset_token}
       let(:new_password) {'password1234'}
-      example_request '1. Reset Password - Success' do
+      example_request 'Reset Password' do
         explanation 'Reset the user\'s password with new_password by supplying the correct reset token.'
         expect(status).to eq(200)
       end
@@ -261,7 +268,7 @@ resource 'User' do
     context '400' do
       let(:reset_token) {@existing_user.reset_token}
       let(:new_password) {'p'}
-      example '2. Reset Password - Failure (Invalid password)' do
+      example 'Reset Password - Failure (Invalid password)' do
         explanation 'Attempt to reset the password with an invalid password.'
         reset_token = @existing_user.reset_token
         new_password = 'a'
@@ -272,7 +279,7 @@ resource 'User' do
     context '401' do
       let(:reset_token) {'incorrect-token'}
       let(:new_password) {'password1234'}
-      example '3. Reset Password - Failure (Incorrect token)' do
+      example 'Reset Password - Failure (Incorrect token)' do
         explanation 'Attempt to reset the password using the incorrect token.'
         do_request
         expect(status).to eq(401)
