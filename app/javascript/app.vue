@@ -28,6 +28,6 @@ p {
 }
 
 #app {
-  background-color: lightslategray;
+  background-image: url('bg.jpg');
 }
 </style>
