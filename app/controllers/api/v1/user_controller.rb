@@ -30,7 +30,7 @@ class Api::V1::UserController < ApplicationController
   def reset_password
     user = User.find_by_reset_token(params[:reset_token])
     return render plain: 'Invalid token', status: :unauthorized if user.nil?
-    if user.update(:password => params[:new_password])
+    if user.update(:password => params[:password])
       render plain: 'Password successfully updated', status: :ok
     else
       render :json => {:errors => user.errors.full_messages}, status: :bad_request
@@ -41,8 +41,6 @@ class Api::V1::UserController < ApplicationController
   # Update display name, password
   def update_profile
     user = User.find_by_email(request.headers['EMAIL'].to_s)
-    return render json: 'Invalid user email', status: :unauthorized if user.nil?
-
     filtered_params = {:display_name => params[:display_name],
                        :password => params[:password]}.reject{|_,v| v.nil?}
     if user.update(filtered_params)

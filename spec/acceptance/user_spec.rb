@@ -114,7 +114,7 @@ resource 'User' do
     end
 
     context '401' do
-      example 'User login - Failure' do
+      example 'User login - Incorrect credentials' do
         explanation 'Reject the user\'s incorrect email and password.'
 
         header 'EMAIL', 'jsmith@example.com'
@@ -161,7 +161,7 @@ resource 'User' do
     context '400' do
       let(:display_name) {''}
       let(:password) {'password1234'}
-      example_request 'Update profile - Failure' do
+      example_request 'Update profile - ' do
         explanation 'Supply invalid display name and/or password.'
         expect(status).to eq(400)
       end
@@ -202,7 +202,7 @@ resource 'User' do
     end
     context '400' do
       let(:access_code) {@access_code2}
-      example 'Join Apartment - Failure (User already in apartment)' do
+      example 'Join Apartment - User already in apartment' do
         explanation 'Attempt to join an apartment while already in one.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
         do_request
@@ -255,11 +255,11 @@ resource 'User' do
     end
 
     parameter :reset_token, 'The user\'s reset token.', type: :string
-    parameter :new_password, 'The user\'s desired new password.', type: :string
+    parameter :password, 'The user\'s desired new password.', type: :string
 
     context '200' do
       let(:reset_token) {@existing_user.reset_token}
-      let(:new_password) {'password1234'}
+      let(:password) {'password1234'}
       example_request 'Reset Password' do
         explanation 'Reset the user\'s password with new_password by supplying the correct reset token.'
         expect(status).to eq(200)
@@ -267,21 +267,17 @@ resource 'User' do
     end
     context '400' do
       let(:reset_token) {@existing_user.reset_token}
-      let(:new_password) {'p'}
-      example 'Reset Password - Failure (Invalid password)' do
+      let(:password) {'p'}
+      example_request 'Reset Password - Failure (Invalid password)' do
         explanation 'Attempt to reset the password with an invalid password.'
-        reset_token = @existing_user.reset_token
-        new_password = 'a'
-        do_request
         expect(status).to eq(400)
       end
     end
     context '401' do
       let(:reset_token) {'incorrect-token'}
-      let(:new_password) {'password1234'}
-      example 'Reset Password - Failure (Incorrect token)' do
+      let(:password) {'password1234'}
+      example_request 'Reset Password - Failure (Incorrect token)' do
         explanation 'Attempt to reset the password using the incorrect token.'
-        do_request
         expect(status).to eq(401)
       end
     end

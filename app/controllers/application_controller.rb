@@ -23,18 +23,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def user_belongs_to_apartment?
-    email = request.headers['EMAIL'].to_s
-    user = User.find_by_email(email)
-    # Check that user exists
-    if user.nil?
-      render :plain =>  'Invalid email',
-             :status => :unauthorized
-    end
-    # Check that apartment matches
-    unless user.apartment_id == params['apartment_id']
-      render :plain => 'User does not belong to apartment',
-             :status => :unauthorized
-    end
+  def get_apartment
+    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    return render plain: 'User not already in an apartment', status: :bad_request if user.apartment_id.nil?
+    @apartment = Apartment.find(user.apartment_id)
   end
 end

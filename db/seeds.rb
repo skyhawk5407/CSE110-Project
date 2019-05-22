@@ -9,18 +9,23 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 case Rails.env
-when 'development'
-  # development-specific seeds ...
-  # (anything you need to interactively play around with in the rails console)
+  when 'development'
+    # development-specific seeds ...
+    # (anything you need to interactively play around with in the rails console)
+    User.create(
+        :email => 'jsmith@example.com',
+        :password => 'password123',
+        :display_name => 'John Smith'
+    )
 
-when 'test'
-  # test-specific seeds ...
-  # (Consider having your tests set up the data they need
-  # themselves instead of seeding it here!)
+  when 'test'
+    # test-specific seeds ...
+    # (Consider having your tests set up the data they need
+    # themselves instead of seeding it here!)
 
-when 'production'
-  # production seeds (if any) ...
-
+  when 'production'
+    # production seeds (if any) ...
+  else pass
 end
 
 # common seeds ...

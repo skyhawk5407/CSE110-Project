@@ -96,9 +96,6 @@ resource 'Apartment' do
     end
 
     context '400' do
-      let(:email_header) {'jsmith@example.com'}
-      let(:password) {'password123'}
-
       example_request 'Apartment deletion - Not already in apartment' do
         explanation 'Attempt to delete apartment while user not already in apartment.'
         expect(status).to eq(400)
@@ -115,4 +112,78 @@ resource 'Apartment' do
       end
     end
   end
+
+  get 'api/v1/apartments' do
+    context '200' do
+      example 'Get current apartment' do
+        explanation 'Get the current user\'s apartment. The user must be part of an existing apartment.'
+        # User is part of apartment
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+
+        do_request
+        expect(status).to eq(200)
+      end
+    end
+
+    context '400' do
+      example_request 'Get current apartment - Not already in apartment' do
+        explanation 'Attempt to get apartment while user not already in apartment.'
+        expect(status).to eq(400)
+      end
+    end
+
+    context '401' do
+      let(:email_header) {nil}
+      let(:password_header) {nil}
+
+      example_request 'Get current apartment - Not logged in' do
+        explanation 'Attempt to get current apartment while not supplying correct user credentials.'
+        expect(status).to eq(401)
+      end
+    end
+  end
+
+  post 'api/v1/apartments/update_description' do
+    parameter :name, "The apartment's new name.", type: :string
+    parameter :address, "The apartment's new address.", type: :string
+
+    context '200' do
+      example 'Update description' do
+        explanation 'Update the current apartment\'s name and address.'
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        name = 'New Apartment Name'
+        address = 'New Address'
+        do_request
+        expect(status).to eq(200)
+      end
+      example 'Update description - Supply partial info' do
+        explanation 'Update the current apartment\'s name or address only.'
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        name = 'New Apartment Name'
+        do_request
+        expect(status).to eq(200)
+      end
+    end
+    context '400' do
+      let(:name) {''}
+      let(:address) {'New Address'}
+      example_request 'Update description - Invalid' do
+        explanation 'Supply invalid apartment name and/or address.'
+        expect(status).to eq(400)
+      end
+    end
+    context '401' do
+      let(:name) {'New Apartment Name'}
+      let(:address) {'New Address'}
+
+      let(:email_header) {nil}
+      let(:password_header) {nil}
+
+      example_request 'Update description - Not logged in' do
+        explanation 'Attempt to update the apartment description while supplying invalid user credentials.'
+        expect(status).to eq(401)
+      end
+    end
+  end
+
 end
