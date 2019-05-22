@@ -24,7 +24,7 @@ resource 'Document' do
         :address => '9500 Gilman Dr, La Jolla, CA 92093'
     )
 
-    @example_file = File.open(File.join(Rails.root, 'public', 'favicon.png'), 'rb') {|io| io.read}
+    @example_file = File.open(File.join(Rails.root, 'public', 'robots.txt'), 'rb') {|io| io.read}
     @example_file_data = Base64.encode64(@example_file)
   end
 
@@ -38,7 +38,7 @@ resource 'Document' do
     context '200' do
       let(:expense_id) {nil}
       let(:title) {'My Document'}
-      let(:filename) {'turdmate.png'}
+      let(:filename) {'robots.txt'}
       let(:apartmentwide) {true}
       let(:file_data) {@example_file_data}
       example 'Document creation' do
@@ -51,7 +51,7 @@ resource 'Document' do
 
     context '400' do
       context 'Insufficient fields' do
-        let(:filename) {'turdmate.png'}
+        let(:filename) {'robots.txt'}
         example 'Document creation - Insufficient fields' do
           explanation 'Example of supplying insufficient information. The new document will not be inserted into the database.'
           @existing_user.update(:apartment_id => @existing_apartment.id)
@@ -62,7 +62,7 @@ resource 'Document' do
       context 'Not part of apartment' do
         let(:expense_id) {nil}
         let(:title) {'My Document'}
-        let(:filename) {'turdmate.png'}
+        let(:filename) {'.png'}
         let(:apartmentwide) {true}
         let(:file_data) {@example_file_data}
         example_request 'Document creation - Not part of apartment' do
@@ -75,7 +75,7 @@ resource 'Document' do
     context '401' do
       let(:expense_id) {nil}
       let(:title) {'My Document'}
-      let(:filename) {'turdmate.png'}
+      let(:filename) {'robots.txt'}
       let(:apartmentwide) {true}
       let(:file_data) {@example_file_data}
 

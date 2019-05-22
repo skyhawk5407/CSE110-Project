@@ -28,7 +28,7 @@ class Api::V1::DocumentController < ApplicationController
 
     # Save the document
     if document.save
-      render :json => document.to_json(request.base_url), status: :ok
+      render :json => document.to_json(request.host), status: :ok
     else
       render :json => {:errors => document.errors.full_messages}, status: :bad_request
     end
@@ -38,7 +38,7 @@ class Api::V1::DocumentController < ApplicationController
     docs = Document.where(:apartment_id => @apartment.id)
 
     # Add the url and file data to each
-    render :json => docs.map {|x| x.to_json(request.base_url)}
+    render :json => docs.map {|x| x.to_json(request.host)}
   end
 
   def update
