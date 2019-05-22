@@ -21,7 +21,7 @@
       <template slot="Email" slot-scope="row">{{ row.value }}</template>
 
       <template slot="Actions" slot-scope="row">
-        <b-button v-b-modal="'modal-2'" variant="danger">Delete</b-button>
+        <b-button v-b-modal="'modal-2'" variant="danger">Remove Apartment Mate</b-button>
         <b-modal id="modal-2" hide-footer title="Remove Apartment Mate">
           <p>
             <b>Are you SURE you wish to remove this apartment mate?</b>

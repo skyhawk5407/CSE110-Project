@@ -16,9 +16,13 @@
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown text="Options" right>
           <b-dropdown-item to="/Profile">Profile</b-dropdown-item>
-          <b-dropdown-item v-b-modal.modal-two>Logout</b-dropdown-item>
+          <b-dropdown-item v-b-modal="'modal-logout'">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
+
+      <b-modal id="modal-logout" title="Logout Confirmation">
+        <p>Are you sure you want to logout?</p>
+      </b-modal>
 
     </b-collapse>
   </b-navbar>
