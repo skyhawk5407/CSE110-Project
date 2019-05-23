@@ -14,8 +14,8 @@
 			  <b-tab title="Rules">
                   <Rules></Rules>
 			  </b-tab>
-			  <b-tab title="Rent Splitter">
-                  <Splitter></Splitter>
+			  <b-tab title="Expenses">
+                  <Expenses></Expenses>
 			  </b-tab>
 			  <b-tab title="Notifications">
                   <Notifications></Notifications>
