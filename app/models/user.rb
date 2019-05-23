@@ -1,8 +1,9 @@
 EMAIL_REGEX = /\A[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\z/i
 
 class User < ApplicationRecord
-  has_many :expenses
-  has_one :apartment
+  has_many :expenses, foreign_key: 'payer_id', dependent: :destroy
+  has_many :expenses, foreign_key: 'issuer_id', dependent: :destroy
+  belongs_to :apartment, optional: true
 
   has_secure_password
   has_secure_token :reset_token
@@ -19,5 +20,21 @@ class User < ApplicationRecord
 
   def as_json(options = {})
     super(except: [:password_digest, :reset_token])
+  end
+
+  def leave_apartment
+    delete_expenses
+    delete_items
+    self.apartment_id = nil
+  end
+
+  private
+  def delete_expenses
+    Expense.where(:issuer_id => self.id).destroy_all
+    Expense.where(:payer => self.id).destroy_all
+  end
+
+  def delete_items
+    Item.where(:user_id => self.id).destroy_all
   end
 end

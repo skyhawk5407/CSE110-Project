@@ -3,7 +3,10 @@ class Document < ApplicationRecord
   belongs_to :expense, optional: true
 
   has_one_attached :file_data
-  #validates :file_data, attached: true
+
+  validates :title, :presence => true, :length => {:in => 2..128}
+  validates :filename, :presence => true, :length => {:in => 2..128}
+
 
   def to_json(base_url)
     ActiveStorage::Current.host = base_url

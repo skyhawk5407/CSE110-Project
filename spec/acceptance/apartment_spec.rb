@@ -23,6 +23,12 @@ resource 'Apartment' do
         :name => 'Example apartment',
         :address => '9500 Gilman Dr, La Jolla, CA 92093'
     )
+    @existing_user2 = User.create(
+        :email => 'jdoe@example.com',
+        :password => 'password12',
+        :display_name => 'Jane Doe',
+        :apartment_id => @existing_apartment.id
+    )
   end
 
   post 'api/v1/apartments' do
@@ -116,7 +122,7 @@ resource 'Apartment' do
   get 'api/v1/apartments' do
     context '200' do
       example 'Get current apartment' do
-        explanation 'Get the current user\'s apartment. The user must be part of an existing apartment.'
+        explanation 'Get details of the current user\'s apartment. The user must be part of an existing apartment.'
         # User is part of apartment
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
 
@@ -151,16 +157,20 @@ resource 'Apartment' do
       example 'Update description' do
         explanation 'Update the current apartment\'s name and address.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
-        name = 'New Apartment Name'
-        address = 'New Address'
-        do_request
+        request = {
+            :name => 'New Apartment Name',
+            :address => 'New Address'
+        }
+        do_request(request)
         expect(status).to eq(200)
       end
       example 'Update description - Supply partial info' do
         explanation 'Update the current apartment\'s name or address only.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
-        name = 'New Apartment Name'
-        do_request
+        request = {
+            :name => 'New Apartment Name'
+        }
+        do_request(request)
         expect(status).to eq(200)
       end
     end
@@ -186,4 +196,41 @@ resource 'Apartment' do
     end
   end
 
+  post 'api/v1/apartments/remove_user' do
+    parameter :user_id, "The id of the user to remove.", type: :integer
+
+    context '200' do
+      let(:user_id) {@existing_user2.id}
+
+      example 'Remove user' do
+        explanation 'Remove another user from the apartment.'
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        do_request
+        expect(status).to eq(200)
+      end
+    end
+
+    context '400' do
+      let(:user_id) {@existing_user2.id}
+
+      context 'invalid user' do
+        example_request 'Apartment creation - Not in same apartment' do
+          explanation 'Attempting to remove a user that isn\'t in the same apartment.'
+          expect(status).to eq(400)
+        end
+      end
+    end
+
+    context '401' do
+      let(:user_id) {@existing_user2.id}
+
+      let(:email_header) {nil}
+      let(:password_header) {nil}
+
+      example_request 'Remove user - Not logged in' do
+        explanation 'Attempt to remove a user while not supplying correct user credentials.'
+        expect(status).to eq(401)
+      end
+    end
+  end
 end
