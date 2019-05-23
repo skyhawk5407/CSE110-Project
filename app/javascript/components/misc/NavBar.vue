@@ -6,14 +6,15 @@
     <b-navbar-brand>TURD MATE</b-navbar-brand>
 
     <b-collapse is-nav id="nav_collapse">
+      <!-- add conditional ghere -->
+      <b-navbar-nav >
 
-      <b-navbar-nav>
-        <b-nav-item to="/Profile">Profile</b-nav-item>
-        <b-nav-item to="/Dashboard">Dashboard</b-nav-item>
+        <b-nav-item v-if="$store.state.username" to="/Profile">Profile</b-nav-item>
+        <b-nav-item  v-if="$store.state.username" to="/Dashboard">Dashboard</b-nav-item>
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
-      <b-navbar-nav class="ml-auto">
+      <b-navbar-nav  v-if="$store.state.username" class="ml-auto">
         <b-nav-item-dropdown text="Options" right>
           <b-dropdown-item to="/Profile">Profile</b-dropdown-item>
           <b-dropdown-item v-b-modal="'modal-logout'">Logout</b-dropdown-item>
