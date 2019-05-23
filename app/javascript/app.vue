@@ -1,8 +1,8 @@
 <template>
-  <div id="app" style="height: 100%" name="TURD MATE" >
+  <div id="app">
     <nav-bar></nav-bar>
 
-    <div class="my-5 mx-auto" style="width: 80%">
+    <div class="my-5 mx-auto" style="width: 80%; height: 100%;">
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
@@ -14,10 +14,7 @@
 import NavBar from "./components/misc/NavBar";
 export default {
   name: "App",
-  components: { NavBar },
-  created() {
-    document.title="TURD Mate";
-  }
+  components: { NavBar }
 };
 </script>
 
@@ -28,6 +25,8 @@ p {
 }
 
 #app {
-  background-image: url('bg.jpg');
+  min-height: 100%;
+  background-color: transparent;
 }
+
 </style>

@@ -31,16 +31,27 @@ class Api::V1::ApartmentController < ApplicationController
   end
 
   def get
-    render :json => @apartment.as_json
+    users = User.where(:apartment_id => @apartment.id)
+    render :json => @apartment.as_json.merge(:users => users)
   end
 
   def update_description
     filtered_params = {:name => params[:name],
                        :address => params[:address]}.reject{|_,v| v.nil?}
+    return render plain: 'Missing params', status: :bad_request if filtered_params.blank?
     if @apartment.update(filtered_params)
       render plain: 'Apartment description successfully updated', status: :ok
     else
       render :json => {:errors => @apartment.errors.full_messages}, status: :bad_request
     end
+  end
+
+  def remove_user
+    return render plain: 'Cannot remove self', status: :bad_request if params[:user_id] == @user.id
+    user_to_remove = User.find_by_id(params[:user_id])
+    return render plain: 'Not in same apartment', status: :bad_request if user_to_remove.nil? or user_to_remove.apartment_id != @user.apartment_id
+
+    user_to_remove.leave_apartment
+    render plain: 'User removed from apartment', status: :ok
   end
 end

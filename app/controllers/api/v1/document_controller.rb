@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# localhost:3000/api/v1/apartments
+# localhost:3000/api/v1/documents
 class Api::V1::DocumentController < ApplicationController
   before_action :authenticated?
   before_action :get_apartment
@@ -44,7 +44,8 @@ class Api::V1::DocumentController < ApplicationController
   def update
     filtered_params = {:title => params[:title],
                        :filename => params[:filename]}.reject{|_,v| v.nil?}
-    if @doc.update(filtered_params)
+    return render plain: 'Missing params', status: :bad_request if filtered_params.blank?
+    if @document.update(filtered_params)
       render plain: 'Document successfully updated', status: :ok
     else
       render :json => {:errors => @document.errors.full_messages}, status: :bad_request

@@ -16,8 +16,8 @@ class ApplicationController < ActionController::Base
   def authenticated?
     email = request.headers['EMAIL'].to_s
     password = request.headers['PASSWORD'].to_s
-    user = User.find_by_email(email)
-    if user.nil? or not user.authenticate(password)
+    @user = User.find_by_email(email)
+    if @user.nil? or not @user.authenticate(password)
       render :plain => 'Incorrect email or password',
              :status => :unauthorized
     end

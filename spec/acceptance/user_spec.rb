@@ -11,11 +11,13 @@ resource 'User' do
     parameter :email, "The user's email.", type: :string
     parameter :password, "The user's password.", type: :string
     parameter :display_name, "The user's display name (i.e. first and last).", type: :string
+    parameter :phone_number, "The user's phone number.", type: :string
 
     context '200' do
       let(:email) {'jsmith@example.com'}
       let(:password) {'password123'}
       let(:display_name) {'John Smith'}
+      let(:phone_number) {'(123)456-7890'}
 
       example_request 'User registration' do
         explanation 'Register a new user, providing all the necessary fields. The new user will be inserted into the database.'
@@ -37,6 +39,7 @@ resource 'User' do
         let(:email) {'jsmith@example.com'}
         let(:password) {'password123'}
         let(:display_name) {'John Smith'}
+        let(:phone_number) {'(123)456-7890'}
 
         example 'User registration - Username taken' do
           explanation 'Attempting to register the same user twice. The duplicate user will not be inserted into the database.'
@@ -137,8 +140,9 @@ resource 'User' do
       )
     end
 
-    parameter :display_name, "The user's display name (i.e. first and last).", type: :string
-    parameter :password, "The user's password.", type: :string
+    parameter :display_name, "The user's new display name (i.e. first and last).", type: :string
+    parameter :password, "The user's new password.", type: :string
+    parameter :phone_number, "The user's new phone number.", type: :string
 
     header 'EMAIL', 'jsmith@example.com'
     header 'PASSWORD', 'password123'
@@ -146,27 +150,61 @@ resource 'User' do
     context '200' do
       example 'Update profile' do
         explanation 'Update the current user\'s display name and password.'
-        display_name = 'John'
-        password = 'password1234'
-        do_request
+        request = {
+            :display_name => 'John',
+            :password => 'password1234',
+            :phone_number => '(111)222-3333'
+        }
+        do_request(request)
         expect(status).to eq(200)
       end
       example 'Update profile - Supply partial info' do
         explanation 'Update the current user\'s display name or password only.'
-        display_name = 'John'
-        do_request
+        request = {
+            :display_name => 'John',
+        }
+        do_request(request)
         expect(status).to eq(200)
       end
     end
     context '400' do
       let(:display_name) {''}
       let(:password) {'password1234'}
-      example_request 'Update profile - ' do
+      example_request 'Update profile - Invalid parameters' do
         explanation 'Supply invalid display name and/or password.'
         expect(status).to eq(400)
       end
     end
   end
+
+  post 'api/v1/users/issue_reset_email' do
+    before (:each) do
+      # Seed with an existing user and apartment
+      @existing_user = User.create(
+          :email => 'jsmith@example.com',
+          :password => 'password123',
+          :display_name => 'John Smith'
+      )
+    end
+
+    parameter :email, "The user's email.", type: :string
+
+    context '200' do
+      let(:email) {'jsmith@example.com'}
+      example_request 'Issue reset token' do
+        explanation 'Issue a new reset token to the user\'s email, which they can use to reset their password.'
+        expect(status).to eq(200)
+      end
+    end
+    context '400' do
+      let(:email) {'invalid-email'}
+      example_request 'Issue reset token - invalid email' do
+        explanation 'Attempt to issue a reset token to a non-registered email.'
+        expect(status).to eq(400)
+      end
+    end
+  end
+
 
   post 'api/v1/users/join_apartment' do
     before (:each) do

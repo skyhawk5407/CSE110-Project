@@ -43,26 +43,25 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
   end
 
   create_table "documents", force: :cascade do |t|
-    t.integer "apartment_id"
+    t.integer "apartment_id", null: false
     t.integer "expense_id"
-    t.string "title"
-    t.string "filename"
-    t.boolean "apartmentwide"
+    t.string "title", null: false
+    t.string "filename", null: false
+    t.boolean "apartmentwide", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_documents_on_apartment_id"
-    t.index ["expense_id"], name: "index_documents_on_expense_id"
+    t.index ["expense_id"], name: "index_documents_on_expense_id", unique: true
   end
 
   create_table "expenses", force: :cascade do |t|
-    t.integer "apartment_id"
-    t.integer "payer_id"
-    t.integer "issuer_id"
-    t.string "title"
-    t.integer "amount"
+    t.integer "apartment_id", null: false
+    t.integer "payer_id", null: false
+    t.integer "issuer_id", null: false
+    t.string "title", null: false
+    t.integer "amount", null: false
     t.boolean "paid"
-    t.boolean "verified"
-    t.datetime "verified_date"
+    t.datetime "paid_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_expenses_on_apartment_id"
@@ -131,6 +130,7 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
     t.string "password_digest", null: false
     t.string "reset_token", null: false
     t.string "display_name", null: false
+    t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_users_on_apartment_id"

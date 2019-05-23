@@ -20,7 +20,7 @@ Vue.use(BootstrapVue);
 /* Initialize vue */
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.body.appendChild(document.createElement('vue'));
-  const app = new Vue({
+  const vm = new Vue({
     el,
     router,
     store,

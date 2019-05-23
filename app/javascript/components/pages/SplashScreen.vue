@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-img center :src="require('../../CSE110Logo.png')" fluid></b-img>
+        <b-img center :src="require('../../../../public/CSE110Logo.png')" fluid></b-img>
         <div>
             <b-row align-h="center">
                 <b-button center class="m-1 btn" size="lg" to="Login" variant="success">Login</b-button>
