@@ -12,5 +12,23 @@ export default {
     // Post to api/v1/example, providing the name
     post: (name) => axios.post('/example',
         {name: name})
+  },
+
+  login: {
+    get: (email, password) => axios.get('/users/login', {
+        headers: {
+            email: email,
+            password: password
+        }
+    })
+  },
+
+  register: {
+      post: (email, password, display_name) => axios.post('/users', {
+          email: email,
+          password: password,
+          display_name: display_name
+      })
   }
+
 }

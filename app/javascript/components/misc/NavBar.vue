@@ -20,7 +20,7 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
-      <b-modal id="modal-logout" title="Logout Confirmation">
+      <b-modal id="modal-logout" title="Logout Confirmation" @ok="logout">
         <p>Are you sure you want to logout?</p>
       </b-modal>
 
@@ -31,6 +31,11 @@
 <script>
   export default {
     name: "NavBar",
+      methods: {
+        logout() {
+            this.$router.push({path: 'Login'});
+        }
+      }
   }
 </script>
 

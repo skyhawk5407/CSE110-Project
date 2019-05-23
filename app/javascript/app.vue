@@ -25,8 +25,8 @@ p {
 }
 
 #app {
-  background-color: lightslategray;
   min-height: 100%;
+  background-color: transparent;
 }
 
 </style>
