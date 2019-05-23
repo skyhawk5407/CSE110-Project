@@ -29,6 +29,12 @@ export default {
           password: password,
           display_name: display_name
       })
-  }
+  },
 
+    // Splitter endpoint
+    expenses: {
+      // Post to api/v1/example, providing the name
+      post: (name) => axios.post('/apartments/expenses',
+          {name: name})
+    },
 }
