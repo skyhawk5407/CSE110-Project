@@ -52,7 +52,6 @@
                 try {
                     let response = await api.login.get(this.login_email_text,
                         this.login_password_text);
-
                     // TODO: Login permanence if remember me is checked
                     if (this.remember_me) {
 
