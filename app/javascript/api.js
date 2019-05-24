@@ -7,34 +7,43 @@ const axios = require('axios');
 axios.defaults.baseURL = '/api/v1';
 
 export default {
-  // Example endpoint
-  example: {
-    // Post to api/v1/example, providing the name
-    post: (name) => axios.post('/example',
-        {name: name})
-  },
+    // Example endpoint
+    example: {
+        // Post to api/v1/example, providing the name
+        post: (name) => axios.post('/example',
+            { name: name })
+    },
 
-  login: {
-    get: (email, password) => axios.get('/users/login', {
-        headers: {
+    login: {
+        get: (email, password) => axios.get('/users/login', {
+            headers: {
+                email: email,
+                password: password
+            }
+        })
+    },
+
+    register: {
+        post: (email, password, display_name) => axios.post('/users', {
             email: email,
-            password: password
-        }
-    })
-  },
-
-  register: {
-      post: (email, password, display_name) => axios.post('/users', {
-          email: email,
-          password: password,
-          display_name: display_name
-      })
-  },
+            password: password,
+            display_name: display_name
+        })
+    },
 
     // Expenses endpoint
     expenses: {
-      // Post to api/v1/example, providing the name
-      post: (name) => axios.post('/apartments/expenses',
-          {name: name})
+        // Post to api/v1/example, providing the name
+        post: (payer_id, issuer_id, title, amount) => axios.post('/apartments/expenses', {
+            payer_id: payer_id,
+            issuer_id: issuer_id,
+            title: title,
+            amount: amount
+        }, {
+                headers: {
+                    email: 'jsmith@example.com',
+                    password: 'password123'
+                }
+            })
     },
 }

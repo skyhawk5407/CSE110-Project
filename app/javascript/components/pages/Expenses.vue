@@ -35,13 +35,13 @@
     <!-- Modal Component 1-->
     <b-modal id="modal-1" title="Add Expense">
       <label>Name of Expense:</label>
-      <b-form-input v-model="text" placeholder></b-form-input>
+      <b-form-input v-model="expense_title" placeholder></b-form-input>
       <label>Amount:</label>
-      <b-form-input v-model="text" placeholder></b-form-input>
+      <b-form-input v-model="expense_amount" placeholder></b-form-input>
       <label>Description:</label>
       <b-form-textarea v-model="text" rows="3"></b-form-textarea>
-      <label>User ID's that you are splitting with:</label>
-      <b-form-input v-model="text" placeholder></b-form-input>
+      <label>Payer:</label>
+      <b-form-input v-model="expense_payer_id" placeholder></b-form-input>
       <b-col md="auto">
         <b-button @click="addExpense">Post</b-button>
       </b-col>
@@ -56,14 +56,10 @@ export default {
   name: "Expenses",
   data() {
     return {
-      payer_id: "",
-      issuer_id: "",
-      title: "",
-      amount: "",
-      date: "",
-      isSuccess: undefined,
-      show_register_fail: false,
-      remember_me: false
+      expense_payer_id: 1,
+      expense_issuer_id: 2,
+      expense_title: "Rent",
+      expense_amount: 10000,
     };
   },
   methods: {
@@ -71,8 +67,8 @@ export default {
     async addExpense() {
       try {
         // post and wait for response
-        let response = await api.expenses.post( this.payer_id, 
-        this.issuer_id, this.title, this.amount );
+        let response = await api.expenses.post( this.expense_payer_id, 
+        this.expense_issuer_id, this.expense_title, this.expense_amount );
         // add to table
         this.messages.push({
           message: response.data.message,
