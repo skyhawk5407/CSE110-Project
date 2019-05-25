@@ -35,15 +35,15 @@ export default {
   // Expenses Post and Get endpoint
   expenses: {
     // Post Expense to api/v1/example, providing the name
-    post: (payer_id, issuer_id, title, amount) => axios.post('/apartments/expenses', {
+    post: (payer_id, issuer_id, title, amount, email, password) => axios.post('/apartments/expenses', {
       payer_id: payer_id,
       issuer_id: issuer_id,
       title: title,
       amount: amount
     }, {
       headers: {
-        email: 'jsmith@example.com',
-        password: 'password123'
+        email: email,
+        password: password,
       }
     }),
     get: (email, password) => axios.get('/apartments/expenses/all', {

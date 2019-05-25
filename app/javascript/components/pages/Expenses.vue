@@ -1,16 +1,12 @@
 <template>
   <div>
-    <b-table
-      show-empty
-      stacked="md"
-      :items="expense_entries"
-      :fields="fields"
-      :filter="filter"
+    <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
+      <!-- Props to b-table to add later TODO -->
+      <!-- :filter="filter"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
-      @filtered="onFiltered"
-    >
+      @filtered="onFiltered"-->
       <!-- Data -->
       <template slot="Date" slot-scope="col">{{ col.value }}</template>
       <template slot="Expense" slot-scope="col">{{ col.value }}</template>
@@ -58,9 +54,7 @@
         <b-button @click="getExpense">Get</b-button>
       </b-col>-->
     </b-modal>
-    <div>
-      Post/Get Status: {{getStatus}}
-    </div>
+    <div>Post/Get Status: {{getStatus}}</div>
   </div>
 </template>
 
@@ -105,9 +99,11 @@ export default {
           this.expense_payer_id,
           this.expense_issuer_id,
           this.expense_title,
-          this.expense_amount
+          this.expense_amount,
+          "jsmith@example.com",
+          "password123",
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (err) {
         // Error handling
         this.messages.push({
@@ -127,8 +123,6 @@ export default {
         }
       }
 
-      // clear form after submit
-      this.formText = "";
       // Call get Expense to populate
       this.getExpense();
     },
@@ -138,18 +132,28 @@ export default {
         let response = await api.expenses.get(
           "jsmith@example.com",
           "password123"
-          //  this.expense_payer_id // TODO CHANGE THIS TO SEND EMAIL AND PASS
         );
-        this.getStatus = response.status;
-        // response.data has array of all the expenses TODO
 
+        this.getStatus = response.status;
+        var transactions = response.data;
+        var currId = response.data[0].id;
+        var lastTransactionId = transactions.length - 1;
+
+        // This data contains all the data for the last transaction
+        var lastTransactionEntry = transactions.find(
+          function findLastTransaction(element, index, array) {
+            var lastTransactionId = array.length - 1;
+            return element == lastTransactionId || index == lastTransactionId;
+          },
+          lastTransactionId
+        );
         // add to table
         this.expense_entries.push({
-          Date: "5/24/2019",
-          Expense: "ExampleEntry",
-          Amount: 9000,
-          Issuer: "Kevin the God",
-          Payers: { first: "A", middle: "B. ", last: "G" },
+          Date: lastTransactionEntry.created_at,
+          Expense: lastTransactionEntry.title,
+          Amount: lastTransactionEntry.amount,
+          Issuer: lastTransactionEntry.issuer.email,
+          Payers: lastTransactionEntry.payer.email,
           Description: "Oh no I'm really broke now!"
         });
       } catch (err) {
@@ -166,10 +170,18 @@ export default {
               break;
           }
         }
+        console.log(err);
       }
 
       // clear form after submit
       this.formText = "";
+    },
+    // TODO USED TO OBTAIN THE EXPENSES IN THE TABLE
+    obtainFields(array) {
+      array.forEach(checkPayid);
+      function checkPayid(expense) {
+        // TODO FILL OUT FUNCTIONALITY TO PARSE JSON FOR EXPENSE DATA
+      }
     }
   }
 };
