@@ -53,4 +53,13 @@ export default {
       }
     })
   },
+
+  // Notifications endpoint
+  notification: {
+    // Post to api/v1/notification, providing the subject and message
+    post: (subject, message) => axios.post('/apartments/notifications', {
+        subject: subject,
+        message: message
+        })
+  },
 }
