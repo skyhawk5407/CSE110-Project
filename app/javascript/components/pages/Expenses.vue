@@ -15,7 +15,10 @@
       <template
         slot="Payers"
         slot-scope="col"
-      >{{ col.value.first }} {{ col.value.middle }} {{ col.value.last }}</template>
+      >
+      <!-- {{ col.value.first }} {{ col.value.middle }} {{ col.value.last }} -->
+      {{ col.value }}
+      </template>
       <template slot="Description" slot-scope="col">{{ col.value }}</template>
       <!-- Actions -->
       <template slot="Actions" slot-scope="row">
@@ -79,7 +82,8 @@ export default {
           Expense: "A big Gary L",
           Amount: 2000,
           Issuer: "Gary Gillespe",
-          Payers: { first: "Bob", middle: "P. ", last: "Oop" },
+          // Payers: { first: "Bob", middle: "P. ", last: "Oop" },
+          Payers: "Bob P. Oop",
           Description: "Oh no I'm broke!"
         }
       ],
@@ -138,7 +142,7 @@ export default {
         var transactions = response.data;
         var currId = response.data[0].id;
         var lastTransactionId = transactions.length - 1;
-
+        console.log(response);
         // This data contains all the data for the last transaction
         var lastTransactionEntry = transactions.find(
           function findLastTransaction(element, index, array) {
@@ -152,8 +156,8 @@ export default {
           Date: lastTransactionEntry.created_at,
           Expense: lastTransactionEntry.title,
           Amount: lastTransactionEntry.amount,
-          Issuer: lastTransactionEntry.issuer.email,
-          Payers: lastTransactionEntry.payer.email,
+          Issuer: lastTransactionEntry.issuer.display_name,
+          Payers: lastTransactionEntry.payer.display_name, 
           Description: "Oh no I'm really broke now!"
         });
       } catch (err) {
