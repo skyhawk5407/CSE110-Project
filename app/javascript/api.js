@@ -74,5 +74,17 @@ export default {
         password: password
       }
     })
+  },
+
+  //Apartment join endpoints
+  join: {
+    post: (code, email, password) => axios.post('/users/join_apartment',{
+      access_code: code
+    }, {
+      headers: {
+        email:email,
+        password: password
+      }
+    })
   }
 }

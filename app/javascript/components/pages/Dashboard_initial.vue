@@ -21,9 +21,9 @@
 			<b-row class="my-1" align-h="center">
 				<b-button v-b-modal="'modal-join-apartment'" class="btn btn-success btn-lg">Join Apartment</b-button>
 			</b-row>
-            <b-modal id="modal-join-apartment" title="Join Apartment" ok-title="Join" cancel-title="Back">
+            <b-modal id="modal-join-apartment" title="Join Apartment" ok-title="Join" @ok='joinApartment' cancel-title="Back">
                 <label>Enter Secret Code:</label>
-                <b-form-input v-model="text" placeholder=""></b-form-input>
+                <b-form-input v-model="apartment_code_text" placeholder=""></b-form-input>
             </b-modal>
 		</div>
       </template>
@@ -47,9 +47,29 @@
           try {
             //HARDCODED replace email and password
             let response = await api.apartment.post(this.apartment_name_text,
-              this.apartment_address_text, "jsmith@example.com", 'password123');
+              this.apartment_address_text, 'jsmith@example.com', 'password123');
 
               this.$router.push({path: 'Dashboard'});
+          } catch(err) {
+            if(err.response){
+              switch (err.response.status) {
+                case 400: //User in apartment or bad apartment name/address
+                  console.log(err.response.data);
+                  break;
+                case 401: //User not logged in
+                  console.log(err.reponse.data);
+                default:
+                  console.log('An unknown error occured.');
+                  break;
+
+              }
+            }
+          }
+        },
+        async joinApartment() {
+          try {
+            let response = await api.join.post(this.apartment_code_text, 'jsmith@example.com', 'password123');
+            console.log(response.status);
           } catch(err) {
             if(err.response){
               switch (err.response.status) {
