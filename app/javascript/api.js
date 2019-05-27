@@ -62,4 +62,17 @@ export default {
         message: message
         })
   },
+
+  //Apartment creation endpoints
+  apartment: {
+    // Post to api/v1/apartments, providing the address and name
+    post: (apartment_name, apartment_address, email, password) => axios.post('/apartments', {
+      address: apartment_address,
+      name: apartment_name}, {
+      headers: {
+        email: email,
+        password: password
+      }
+    })
+  }
 }
