@@ -68,10 +68,16 @@ export default {
   // Notifications endpoint
   notification: {
     // Post to api/v1/notification, providing the subject and message
-    post: (subject, message) => axios.post('/apartments/notifications', {
-        subject: subject,
+    post: (title, message, email, password) => axios.post('/apartments/notifications', {
+        title: title,
         message: message
-        })
+        }, {
+            headers: {
+              email: email,
+              password: password,
+            }
+          }
+        )
   },
 
   //Apartment creation endpoints
