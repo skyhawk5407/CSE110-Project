@@ -1,5 +1,9 @@
 <template>
   <div>
+    <b-jumbotron>
+      <template slot="header">
+				Expenses
+			</template>
     <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
       <!-- Props to b-table to add later TODO -->
       <!-- :filter="filter"
@@ -39,7 +43,7 @@
     <!-- TODO: Add on click handlers into a form -->
     <!-- TODO: Allow form to be reset each time + popup email sent! -->
     <b-button v-b-modal.modal-1 variant="primary">Add Expense</b-button>
-
+    </b-jumbotron>
     <!-- Modal Component 1-->
     <b-modal id="modal-1" title="Add Expense">
       <label>Name of Expense:</label>

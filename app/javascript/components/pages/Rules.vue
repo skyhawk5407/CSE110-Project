@@ -7,7 +7,12 @@
 
 
 <template>
+
     <div>
+        <b-jumbotron>
+            <template slot="header">
+				Rules
+			</template>
         <b-card>
             <p v-html="htmlForEditor" id="text" @change="changeText"></p>
         </b-card>
@@ -20,6 +25,7 @@
                 <vue-editor placeholder="Edit Rules Here" v-model="htmlForEditor" id="editor"></vue-editor>
             </b-card>
         </b-row>
+        </b-jumbotron>
     </div>
 </template>
 
