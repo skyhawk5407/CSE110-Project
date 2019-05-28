@@ -29,6 +29,15 @@ export default {
           password: password,
           display_name: display_name
       })
-  }
+  },
+
+    delete_account: {
+        delete: (email, password) => axios.delete('/users', {
+            headers: {
+                email: email,
+                password: password
+            }
+        })
+    }
 
 }

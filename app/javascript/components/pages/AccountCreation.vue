@@ -95,7 +95,7 @@
 
                   this.show_register_fail = false;
               } catch(err) {
-                  if(typeof err.response.data == "string") {
+                  if(typeof err.response.data === "string") {
                       this.isSuccess = err.response.data;
                   } else {
                       this.isSuccess = err.response.data.errors[0];
