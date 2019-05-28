@@ -1,9 +1,9 @@
-# spec/acceptance/apartment_spec.rb
+# spec/acceptance/item_spec.rb
 
 require 'rails_helper'
 require 'rspec_api_documentation/dsl'
-resource 'Document' do
-  explanation "Handles creation and updates to apartment documents."
+resource 'Item' do
+  explanation "Handles creation and updates to apartment items."
 
   header "Content-Type", "application/json"
 
@@ -29,42 +29,55 @@ resource 'Document' do
         :display_name => 'Jane Doe',
         :apartment_id => @existing_apartment.id
     )
-    @example_file = File.open(File.join(Rails.root, 'public', 'robots.txt'), 'rb') {|io| io.read}
+    @example_file = File.open(File.join(Rails.root, 'public', 'apple-touch-icon.png'), 'rb') {|io| io.read}
     @example_file_data = Base64.encode64(@example_file)
-    @existing_document = Document.create(
+    @existing_item = Item.create(
         :apartment_id => @existing_apartment.id,
         :user_id => @existing_user2.id,
-        :title => 'Example Document',
-        :apartmentwide => false,
-        :file_data => {:io => StringIO.new(@example_file), :filename => 'example_doc.txt'}
+        :name => 'Microwave',
+        :bought => true,
+        :description => 'J Smith\'s microwave',
+        :image => {:io => StringIO.new(@example_file), :filename => 'example_item.png'}
     )
   end
 
-  post 'api/v1/apartments/documents/upload' do
-    parameter :expense_id, 'The expense to link this document to, or null if N/A.', type: :integer
-    parameter :title, 'The document title (name)', type: :string
-    parameter :filename, 'The document filename', type: :string
-    parameter :apartmentwide, 'Whether the document should be displayed in the apartment documents section', type: :boolean
-    parameter :file_data, 'The base-64 encoding of the file to upload', type: :string
+  post 'api/v1/apartments/items' do
+    parameter :name, 'The item name', type: :string
+    parameter :description, 'The item description', type: :string
+    parameter :bought, 'Whether the item has been bought', type: :boolean
+    parameter :image_data, 'Optional base-64 encoded image for the item', type: :string
+    parameter :filename, 'If image_data is supplied, this is the filename of the attached image.', type: :string
 
     context '200' do
-      let(:expense_id) {nil}
-      let(:title) {'Document Title'}
-      let(:filename) {'robots.txt'}
-      let(:apartmentwide) {true}
-      let(:file_data) {@example_file_data}
-      example 'Document creation' do
-        explanation 'Create a new document consisting of a text document.'
+      example 'Item creation - Add optional image' do
+        explanation 'Create a new item with an attached image.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
-        do_request
+        request = {
+          :name => 'Fridge',
+          :description => 'We need a fridge for the apartment.',
+          :bought => false,
+          :image_data => @example_file_data,
+          :filename => 'item.png'
+        }
+        do_request(request)
+        expect(status).to eq(200)
+      end
+      example 'Item creation' do
+        explanation 'Create a new item with no image.'
+        @existing_user.update(:apartment_id => @existing_apartment.id)
+        request = {
+            :name => 'Fridge',
+            :description => 'We need a fridge for the apartment.',
+            :bought => false
+        }
+        do_request(request)
         expect(status).to eq(200)
       end
     end
 
     context '400' do
       context 'Insufficient fields' do
-        let(:filename) {'robots.txt'}
-        example 'Document creation - Insufficient fields' do
+        example 'Item creation - Insufficient fields' do
           explanation 'Example of supplying insufficient information. The new document will not be inserted into the database.'
           @existing_user.update(:apartment_id => @existing_apartment.id)
           do_request
@@ -72,11 +85,9 @@ resource 'Document' do
         end
       end
       context 'Not part of apartment' do
-        let(:expense_id) {nil}
-        let(:title) {'My Document'}
-        let(:filename) {'.png'}
-        let(:apartmentwide) {true}
-        let(:file_data) {@example_file_data}
+        let(:name) {'Fridge'}
+        let(:description) {'We need a fridge for the apartment.'}
+        let(:bought) {false}
         example_request 'Document creation - Not part of apartment' do
           explanation 'Attempt to add a new document while not in an apartment. The new document will not be inserted into the database.'
           expect(status).to eq(400)
@@ -85,11 +96,9 @@ resource 'Document' do
     end
 
     context '401' do
-      let(:expense_id) {nil}
-      let(:title) {'My Document'}
-      let(:filename) {'robots.txt'}
-      let(:apartmentwide) {true}
-      let(:file_data) {@example_file_data}
+      let(:name) {'Fridge'}
+      let(:description) {'We need a fridge for the apartment.'}
+      let(:bought) {false}
 
       let(:email_header) {nil}
       let(:password_header) {nil}
@@ -102,7 +111,7 @@ resource 'Document' do
       end
     end
   end
-
+=begin
   get 'api/v1/apartments/documents/all' do
     context '200' do
       example 'Get all documents' do
@@ -251,4 +260,5 @@ resource 'Document' do
       end
     end
   end
+=end
 end

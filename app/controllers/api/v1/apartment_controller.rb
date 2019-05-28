@@ -7,7 +7,7 @@ class Api::V1::ApartmentController < ApplicationController
   def create
     # User only allowed to create apartment if they're not already in one
     user = User.find_by_email(request.headers['EMAIL'].to_s)
-    return render plain: 'User already in an apartment', status: :bad_request unless user.apartment_id.nil?
+    return render :json => {:errors => ['User already in an apartment']}, status: :bad_request unless user.apartment_id.nil?
 
     # Create apartment
     apartment = Apartment.create(
@@ -38,7 +38,7 @@ class Api::V1::ApartmentController < ApplicationController
   def update_description
     filtered_params = {:name => params[:name],
                        :address => params[:address]}.reject{|_,v| v.nil?}
-    return render plain: 'Missing params', status: :bad_request if filtered_params.blank?
+    return render :json => {:errors => ['Missing params']}, status: :bad_request if filtered_params.blank?
     if @apartment.update(filtered_params)
       render plain: 'Apartment description successfully updated', status: :ok
     else
@@ -47,9 +47,9 @@ class Api::V1::ApartmentController < ApplicationController
   end
 
   def remove_user
-    return render plain: 'Cannot remove self', status: :bad_request if params[:user_id] == @user.id
+    return render :json => {:errors => ['Cannot remove self']}, status: :bad_request if params[:user_id] == @user.id
     user_to_remove = User.find_by_id(params[:user_id])
-    return render plain: 'Not in same apartment', status: :bad_request if user_to_remove.nil? or user_to_remove.apartment_id != @user.apartment_id
+    return render :json => {:errors => ['Not in same apartment']}, status: :bad_request if user_to_remove.nil? or user_to_remove.apartment_id != @user.apartment_id
 
     user_to_remove.leave_apartment
     render plain: 'User removed from apartment', status: :ok

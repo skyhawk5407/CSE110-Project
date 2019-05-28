@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router';
 
 import Login from './components/pages/Login'
-import Profile from './components/pages/Profile'
+import AccountSettings from './components/pages/AccountSettings'
 import AccountCreation from './components/pages/AccountCreation'
 import Dashboard from './components/pages/Dashboard'
 import Dashboard_i from './components/pages/Dashboard_initial'
@@ -19,7 +19,7 @@ Vue.use(VueRouter);
 
 const routes = [
   { path: '/Login', component: Login },
-  { path: '/Profile', component: Profile },
+  { path: '/AccountSettings', component: AccountSettings },
   { path: '/AccountCreation', component: AccountCreation },
   { path: '/Dashboard', component: Dashboard },
   { path: '/Dashboardi', component: Dashboard_i },

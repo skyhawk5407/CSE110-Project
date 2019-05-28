@@ -25,12 +25,23 @@ export default {
   },
 
   register: {
-    post: (email, password, display_name) => axios.post('/users', {
-      email: email,
-      password: password,
-      display_name: display_name
-    })
+      post: (email, password, display_name, phone_number) => axios.post('/users', {
+          email: email,
+          password: password,
+          display_name: display_name,
+          phone_number: phone_number
+      })
   },
+
+  delete_account: {
+      delete: (email, password) => axios.delete('/users', {
+          headers: {
+              email: email,
+              password: password
+          }
+      })
+  },
+    
 
   // Expenses Post and Get endpoint
   expenses: {

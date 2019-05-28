@@ -19,7 +19,7 @@
 			<b-form-checkbox v-model="remember_me">Remember me</b-form-checkbox>
 		</div>
 		<div style="margin-top: 20px">
-			<b-button class="btn" variant="success" @click="login">Login</b-button>
+			<b-button class="btn" variant="success" @keyup.enter="login" @click="login">Login</b-button>
 			<b-button class="btn" to="AccountCreation" variant="info">Create Account</b-button>
             <b-button class="btn" v-b-modal="'modal-1'" variant="info">Forgot Password</b-button>
 
@@ -60,7 +60,7 @@
                     this.$store.commit('setUsername', this.login_email_text);
                     this.$store.commit('setPassword', this.login_password_text);
                     this.$store.commit('setDisplayName', response.data.display_name);
-
+                
                     if (response.data.apartment_id == null) {
                         this.$router.push({path: 'Dashboardi'});
                     } else {

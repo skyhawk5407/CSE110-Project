@@ -45,13 +45,14 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
   create_table "documents", force: :cascade do |t|
     t.integer "apartment_id", null: false
     t.integer "expense_id"
+    t.integer "user_id", null: false
     t.string "title", null: false
-    t.string "filename", null: false
     t.boolean "apartmentwide", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_documents_on_apartment_id"
     t.index ["expense_id"], name: "index_documents_on_expense_id", unique: true
+    t.index ["user_id"], name: "index_documents_on_user_id"
   end
 
   create_table "expenses", force: :cascade do |t|
@@ -59,6 +60,7 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
     t.integer "payer_id", null: false
     t.integer "issuer_id", null: false
     t.string "title", null: false
+    t.string "description", null: false
     t.integer "amount", null: false
     t.boolean "paid"
     t.datetime "paid_date"
@@ -71,10 +73,10 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
 
   create_table "items", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "apartment_id"
-    t.string "name"
+    t.integer "apartment_id", null: false
+    t.string "name", null: false
     t.boolean "bought"
-    t.string "description"
+    t.string "description", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_items_on_apartment_id"
@@ -82,14 +84,14 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.integer "apartment_id"
+    t.integer "apartment_id", null: false
     t.integer "user_id"
-    t.string "title"
-    t.string "message"
-    t.datetime "sent_date"
+    t.string "title", null: false
+    t.string "message", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_notifications_on_apartment_id"
+    t.index ["created_at"], name: "index_notifications_on_created_at"
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 

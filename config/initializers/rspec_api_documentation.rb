@@ -9,4 +9,8 @@ RspecApiDocumentation.configure do |config|
   config.format = [:json]
   config.request_body_formatter = :json
 
+  config.request_headers_to_include = %w(Email Password Content-Type)
+  config.response_headers_to_include = []
+
+  config.keep_source_order = true
 end

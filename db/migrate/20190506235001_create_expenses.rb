@@ -5,6 +5,7 @@ class CreateExpenses < ActiveRecord::Migration[5.2]
       t.references :payer, foreign_key: {to_table: :users}, null: false
       t.references :issuer, foreign_key: {to_table: :users}, null: false
       t.string :title, null: false
+      t.string :description, null: false
       t.integer :amount, null: false
       t.boolean :paid
       t.timestamp :paid_date

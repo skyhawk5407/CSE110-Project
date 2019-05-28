@@ -18,14 +18,18 @@ class ApplicationController < ActionController::Base
     password = request.headers['PASSWORD'].to_s
     @user = User.find_by_email(email)
     if @user.nil? or not @user.authenticate(password)
-      render :plain => 'Incorrect email or password',
+      render :json => {:errors => ['Incorrect email or password']},
              :status => :unauthorized
     end
   end
 
   def get_apartment
     user = User.find_by_email(request.headers['EMAIL'].to_s)
-    return render plain: 'User not already in an apartment', status: :bad_request if user.apartment_id.nil?
+    return render json: {:errors => ['User not already in an apartment']}, status: :bad_request if user.apartment_id.nil?
     @apartment = Apartment.find(user.apartment_id)
+  end
+
+  def sanitize_filename(filename)
+    ActiveStorage::Filename.new(filename).sanitized
   end
 end
