@@ -65,7 +65,19 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "vue-rails-sqlite_#{Rails.env}"
 
-  config.action_mailer.perform_caching = false
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_caching = true
+  # Set up ActionMailer
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      address:              'smtp.gmail.com',
+      port:                 587,
+      domain:               Settings.EMAIL.DOMAIN,
+      user_name:            Settings.EMAIL.USERNAME,
+      password:             Settings.EMAIL.PASSWORD,
+      authentication:       'plain',
+      enable_starttls_auto: true  }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

@@ -139,7 +139,7 @@ resource 'User' do
           :display_name => 'John Smith'
       )
     end
-
+    parameter :email, "The user's new email.", type: :string
     parameter :display_name, "The user's new display name (i.e. first and last).", type: :string
     parameter :password, "The user's new password.", type: :string
     parameter :phone_number, "The user's new phone number.", type: :string

@@ -81,3 +81,6 @@ gem 'apitome'
 
 # Authentication
 gem 'bcrypt', '~> 3.1.7'
+
+# Validation for file upload
+gem 'activestorage-validator'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# localhost:3000/api/v1/documents
+# localhost:3000/api/v1/apartments/documents
 class Api::V1::DocumentController < ApplicationController
   before_action :authenticated?
   before_action :get_apartment
@@ -19,11 +19,11 @@ class Api::V1::DocumentController < ApplicationController
     # Create the document
     document = Document.new(
         :apartment_id => @apartment.id,
-        :expense => params[:expense_id],
+        :expense_id => params[:expense_id],
+        :user_id => @user.id,
         :title => params[:title],
-        :filename => params[:filename],
         :apartmentwide => params[:apartmentwide],
-        :file_data => {:io => file_io, :filename => params[:filename]}
+        :file_data => {:io => file_io, :filename => sanitize_filename(params[:filename])}
     )
 
     # Save the document
@@ -42,9 +42,8 @@ class Api::V1::DocumentController < ApplicationController
   end
 
   def update
-    filtered_params = {:title => params[:title],
-                       :filename => params[:filename]}.reject{|_,v| v.nil?}
-    return render plain: 'Missing params', status: :bad_request if filtered_params.blank?
+    filtered_params = {:title => params[:title]}.reject{|_,v| v.nil?}
+    return render :json => {:errors => ['Missing params']}, status: :bad_request if filtered_params.blank?
     if @document.update(filtered_params)
       render plain: 'Document successfully updated', status: :ok
     else
@@ -65,8 +64,8 @@ class Api::V1::DocumentController < ApplicationController
     begin
       @document = Document.find(params[:document_id])
     rescue
-      return render plain: 'Invalid document ID', status: :bad_request
+      return render :json => {:errors => ['Invalid document ID']}, status: :bad_request
     end
-    render plain: 'Unauthorized document ID(s)', status: :unauthorized unless @apartment.id == @document.apartment_id
+    render :json => {:errors => ['Unauthorized document ID(s)']}, status: :unauthorized unless @apartment.id == @document.apartment_id
   end
 end
