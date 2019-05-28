@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# localhost:3000/api/v1/expenses
+# localhost:3000/api/v1/apartments/expenses
 class Api::V1::ExpenseController < ApplicationController
   before_action :authenticated?
   before_action :get_apartment
@@ -8,7 +8,7 @@ class Api::V1::ExpenseController < ApplicationController
 
   def create
     # Validate users
-    return render plain: 'Invalid user(s)', status: :bad_request \
+    return render json: {:errors => ['Invalid user(s)']}, status: :bad_request \
       if params[:payer_id].nil? or User.find_by_id(params[:payer_id]).nil? \
          or params[:issuer_id].nil? or User.find_by_id(params[:issuer_id]).nil? \
          or User.find_by_id(params[:payer_id]).apartment_id != @apartment.id \
@@ -20,6 +20,7 @@ class Api::V1::ExpenseController < ApplicationController
         :payer_id => params[:payer_id],
         :issuer_id => params[:issuer_id],
         :title => params[:title],
+        :description => params[:description],
         :amount => params[:amount],
         :paid => false,
     )
@@ -34,7 +35,7 @@ class Api::V1::ExpenseController < ApplicationController
 
   def mark_paid
       document = Document.find_by_id(params[:document_id])
-      return render plain: 'Invalid document ID', status: :bad_request \
+      return render :json => {:errors => ['Invalid document ID']}, status: :bad_request \
         if (params[:document_id] and document.nil?) \
         or (not document.nil? and document.apartment_id != @apartment.id)
 
@@ -56,8 +57,8 @@ class Api::V1::ExpenseController < ApplicationController
     begin
       @expense = Expense.find(params[:expense_id])
     rescue
-      return render plain: 'Invalid expense ID', status: :bad_request
+      return render json: {:errors => ['Invalid expense ID']}, status: :bad_request
     end
-    render plain: 'Unauthorized expense ID(s)', status: :unauthorized unless @apartment.id == @expense.apartment_id
+    render :json => {:errors => ['Unauthorized expense ID(s)']}, status: :unauthorized unless @apartment.id == @expense.apartment_id
   end
 end

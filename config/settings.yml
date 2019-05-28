@@ -1,0 +1,7 @@
+EMAIL:
+  DOMAIN:   'gmail.com'
+  USERNAME: 'my-username'
+  PASSWORD: 'my-password'
+
+BASE_URL: 'localhost:3000'
+RESET_TOKEN_PATH: '/ResetPassword'

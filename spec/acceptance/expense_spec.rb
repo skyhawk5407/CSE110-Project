@@ -19,19 +19,15 @@ resource 'Expense' do
         :password => 'password123',
         :display_name => 'John Smith'
     )
-    @existing_user2 = User.create(
-        :email => 'jdoe@example.com',
-        :password => 'password12',
-        :display_name => 'Jane Doe'
-    )
-    @existing_user3 = User.create(
-        :email => 'bob@example.com',
-        :password => 'password1',
-        :display_name => 'Bob'
-    )
     @existing_apartment = Apartment.create(
         :name => 'Example apartment',
         :address => '9500 Gilman Dr, La Jolla, CA 92093'
+    )
+    @existing_user2 = User.create(
+        :email => 'jdoe@example.com',
+        :password => 'password12',
+        :display_name => 'Jane Doe',
+        :apartment_id => @existing_apartment.id
     )
     @example_file = File.open(File.join(Rails.root, 'public', 'robots.txt'), 'rb') {|io| io.read}
     @example_file_data = Base64.encode64(@example_file)
@@ -40,6 +36,7 @@ resource 'Expense' do
         :payer_id => @existing_user.id,
         :issuer_id => @existing_user2.id,
         :title => 'Example expense 1',
+        :description => 'Expense Description',
         :amount => 1234,
         :paid => false
     )
@@ -48,14 +45,15 @@ resource 'Expense' do
         :payer_id => @existing_user2.id,
         :issuer_id => @existing_user.id,
         :title => 'Example expense 2',
+        :description => 'Expense Description',
         :amount => 1000,
         :paid => true
     )
     @existing_document = Document.create(
         :apartment_id => @existing_apartment.id,
+        :user_id => @existing_user2.id,
         :expense_id => @existing_expense.id,
         :title => 'Example Document',
-        :filename => 'example_doc.txt',
         :apartmentwide => false,
         :file_data => {:io => StringIO.new(@example_file), :filename => 'example_doc.txt'}
     )
@@ -65,12 +63,14 @@ resource 'Expense' do
     parameter :payer_id, 'The expense payer\'s user ID.', type: :integer
     parameter :issuer_id, 'The expense issuer\'s user ID.', type: :integer
     parameter :title, 'The name of the expense.', type: :string
+    parameter :description, 'The description of the expense.', type: :string
     parameter :amount, 'The amount to be paid, in cents.', type: :integer
 
     context '200' do
       let(:payer_id) {@existing_user.id}
       let(:issuer_id) {@existing_user2.id}
       let(:title) {'Rent'}
+      let(:description) {'January and February rent'}
       let(:amount) {100000}
       example 'Expense creation' do
         explanation 'Create a new expense.'
@@ -96,6 +96,7 @@ resource 'Expense' do
         let(:payer_id) {@existing_user.id}
         let(:issuer_id) {@existing_user2.id}
         let(:title) {'Rent'}
+        let(:description) {'January and February rent'}
         let(:amount) {100000}
         example_request 'Expense creation - Not part of apartment' do
           explanation 'Attempt to add a new expense while not in an apartment. The new expense will not be inserted into the database.'
@@ -106,6 +107,7 @@ resource 'Expense' do
         let(:payer_id) {@existing_user.id}
         let(:issuer_id) {@existing_user2.id}
         let(:title) {'a'}
+        let(:description) {''}
         let(:amount) {-500}
         example_request 'Expense creation - Invalid fields' do
           explanation 'Attempt to add a new expense with invalid fields. The new expense will not be inserted into the database.'
@@ -118,6 +120,7 @@ resource 'Expense' do
       let(:payer_id) {@existing_user.id}
       let(:issuer_id) {@existing_user2.id}
       let(:title) {'Rent'}
+      let(:description) {'January and February rent'}
       let(:amount) {100000}
 
       let(:email_header) {nil}
@@ -125,8 +128,7 @@ resource 'Expense' do
 
       example_request 'Expense creation - Not logged in' do
         explanation 'Attempt to create an expense while not supplying correct user credentials.'
-        @existing_user.update(:apartment_id => @existing_apartment.id)
-        @existing_user2.update(:apartment_id => @existing_apartment.id)
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
         expect(status).to eq(401)
       end
@@ -184,7 +186,7 @@ resource 'Expense' do
       context 'Insufficient fields' do
         example 'Mark as paid - Insufficient fields' do
           explanation 'Example of supplying insufficient information.'
-          @existing_user.update(:apartment_id => @existing_apartment.id)
+          @existing_user.update_column(:apartment_id, @existing_apartment.id)
           do_request
           expect(status).to eq(400)
         end
@@ -210,8 +212,7 @@ resource 'Expense' do
 
       example_request 'Mark as paid - Not logged in' do
         explanation 'Attempt to mark an expense as paid while not supplying correct user credentials.'
-        @existing_user.update(:apartment_id => @existing_apartment.id)
-        @existing_user2.update(:apartment_id => @existing_apartment.id)
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
         expect(status).to eq(401)
       end
@@ -225,7 +226,7 @@ resource 'Expense' do
       let(:expense_id) {@existing_expense.id}
       example 'Delete expense' do
         explanation 'Delete an expense. The corresponding document, if any, will also be deleted.'
-        @existing_user.update(:apartment_id => @existing_apartment.id)
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
         expect(status).to eq(200)
       end
@@ -235,7 +236,7 @@ resource 'Expense' do
       context 'Insufficient fields' do
         example 'Delete expense - Insufficient fields' do
           explanation 'Example of supplying insufficient information.'
-          @existing_user.update(:apartment_id => @existing_apartment.id)
+          @existing_user.update_column(:apartment_id, @existing_apartment.id)
           do_request
           expect(status).to eq(400)
         end
@@ -257,7 +258,7 @@ resource 'Expense' do
 
       example_request 'Delete expense - Not logged in' do
         explanation 'Attempt to delete an expense while not supplying correct user credentials.'
-        @existing_user.update(:apartment_id => @existing_apartment.id)
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
         expect(status).to eq(401)
       end

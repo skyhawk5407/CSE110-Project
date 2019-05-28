@@ -3,6 +3,11 @@ EMAIL_REGEX = /\A[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\z/i
 class User < ApplicationRecord
   has_many :expenses, foreign_key: 'payer_id', dependent: :destroy
   has_many :expenses, foreign_key: 'issuer_id', dependent: :destroy
+  has_many :document, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+  has_many :unread_notifications, dependent: :destroy
+  has_many :items, dependent: :destroy
+
   belongs_to :apartment, optional: true
 
   has_secure_password

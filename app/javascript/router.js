@@ -8,7 +8,6 @@ import Dashboard from './components/pages/Dashboard'
 import Dashboard_i from './components/pages/Dashboard_initial'
 import ExamplePage from './components/pages/ExamplePage'
 import SplashScreen from './components/pages/SplashScreen'
-import Expenses from './components/pages/Expenses'
 
 Vue.use(VueRouter);
 
@@ -20,8 +19,7 @@ const routes = [
   { path: '/Dashboardi', component: Dashboard_i },
   { path: '/example', component: ExamplePage },
   { path: '/SplashScreen', component: SplashScreen},
-  { path: '/Expenses', component: Expenses},
-  { path: '*', redirect: '/SplashScreen' },
+  { path: '*', redirect: '/SplashScreen' }
 ];
 
 export default new VueRouter({

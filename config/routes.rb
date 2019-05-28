@@ -37,13 +37,15 @@ Rails.application.routes.draw do
       delete 'apartments/expenses' => 'expense#delete'
 
       # Notifications
-      # TODO
-      # post 'apartments/notifications' => 'notifications#create'
-      # get 'apartments/notifications' => 'notifications#get'
-      # post 'apartments/notifications/mark_read' => 'notifications#mark_read'
+      post 'apartments/notifications' => 'notification#create'
+      get 'apartments/notifications/all' => 'notification#get_all'
+      post 'apartments/notifications/mark_read' => 'notification#mark_read'
 
       # Items
-      # TODO
+      post 'apartments/items' => 'item#create'
+      get 'apartments/items/all' => 'item#get_all'
+      post 'apartments/items/update' => 'itemex#update'
+      delete 'apartments/items' => 'item#delete'
     end
   end
 
