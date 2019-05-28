@@ -25,10 +25,11 @@ export default {
   },
 
   register: {
-      post: (email, password, display_name) => axios.post('/users', {
+      post: (email, password, display_name, phone_number) => axios.post('/users', {
           email: email,
           password: password,
-          display_name: display_name
+          display_name: display_name,
+          phone_number: phone_number
       })
   },
 

@@ -1,9 +1,6 @@
 <template>
 	<div>
 		<b-jumbotron>
-			<template slot="header">
-				Profile
-			</template>
 			<template slot="lead">
 				<div style="margin-top: 20px">
 					<b-row class="my-1">
@@ -45,7 +42,7 @@
 								<label>Old Password:</label>
 							</b-col>
 							<b-col sm="8">
-								<b-form-input v-model="text" placeholder=""></b-form-input>
+								<b-form-input v-model="account_old_password" placeholder=""></b-form-input>
 							</b-col>
 						</b-row>
 						<b-row class="my-1">
@@ -53,7 +50,7 @@
 								<label>New Password:</label>
 							</b-col>
 							<b-col sm="8">
-								<b-form-input v-model="text" placeholder=""></b-form-input>
+								<b-form-input v-model="account_new_password" placeholder=""></b-form-input>
 							</b-col>
 						</b-row>
 
@@ -95,7 +92,7 @@
 		data() {
             return {
                 account_display_name: this.$store.state.displayName,
-				//account_phone_number: this.$store.state.phonenumber,
+				account_phone_number: this.$store.state.phonenumber,
                 delete_alert_message: undefined,
                 show_delete_alert: false
             }
@@ -103,15 +100,19 @@
 		methods: {
 			async delete_account() {
                 try {
-                    let response = api.delete_account.delete(this.$store.state.username,
+					if (this.register_password !== this.register_password_check) {
+						this.isSuccess = "Passwords do not match.";
+						this.show_register_fail = true;
+						return;
+					}
+
+                    let response = await api.delete_account.delete(this.$store.state.username,
                         this.$store.state.password);
 
-                    this.$store.commit('setUsername', this.login_email_text);
-                    this.$store.commit('setPassword', this.login_password_text);
-
-                    this.delete_alert_message = response.data;
-                    this.show_delete_alert = true;
-
+                    this.$store.commit('setUsername', undefined);
+					this.$store.commit('setPassword', undefined);
+					
+					this.$router.push({path: 'SplashScreen'});
                 } catch(err) {
                     this.delete_alert_message = err.response.data;
                     this.show_delete_alert = true;

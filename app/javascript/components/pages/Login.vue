@@ -60,7 +60,7 @@
                     this.$store.commit('setUsername', this.login_email_text);
                     this.$store.commit('setPassword', this.login_password_text);
                     this.$store.commit('setDisplayName', response.data.display_name);
-
+                
                     if (response.data.apartment_id == null) {
                         this.$router.push({path: 'Dashboardi'});
                     } else {

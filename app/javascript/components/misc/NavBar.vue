@@ -8,15 +8,8 @@
     <b-collapse is-nav id="nav_collapse">
       <!-- add conditional ghere -->
       <b-navbar-nav >
-
-<<<<<<< HEAD
-      <b-navbar-nav>
-        <b-nav-item to="/AccountSettings">Account Settings</b-nav-item>
-        <b-nav-item to="/Dashboard">Dashboard</b-nav-item>
-=======
-        <b-nav-item v-if="$store.state.username" to="/Profile">Profile</b-nav-item>
+        <b-nav-item v-if="$store.state.username" to="/AccountSettings">Account Settings</b-nav-item>
         <b-nav-item  v-if="$store.state.username" to="/Dashboard">Dashboard</b-nav-item>
->>>>>>> 3f575e2c4c6711239435927573cd86a0d01ff04d
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
