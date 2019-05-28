@@ -14,8 +14,8 @@
 			  <b-tab title="Rules">
                   <Rules></Rules>
 			  </b-tab>
-			  <b-tab title="Rent Splitter">
-                  <Splitter></Splitter>
+			  <b-tab title="Expenses">
+                  <Expenses></Expenses>
 			  </b-tab>
 			  <b-tab title="Notifications">
                   <Notifications></Notifications>
@@ -39,11 +39,11 @@
 	import Notifications from './Notifications';
 	import Documents from './Documents';
 	import Items from './Items';
-	import Splitter from "./Splitter";
+	import Expenses from "./Expenses";
 	import Rules from './Rules';
 
     export default {
         name: "Dashboard",
-        components: {ApartmentMate, Notifications, Documents, Items, Splitter, Rules}
+        components: {ApartmentMate, Notifications, Documents, Items, Expenses, Rules}
     }
 </script>

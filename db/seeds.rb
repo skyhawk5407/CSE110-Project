@@ -12,10 +12,23 @@ case Rails.env
   when 'development'
     # development-specific seeds ...
     # (anything you need to interactively play around with in the rails console)
+    apt = Apartment.create(
+        :name => 'WHAADADUPUPP',
+        :address => 'WHEREDIDTHESODAGO?!?!?!',
+    )
+
     User.create(
         :email => 'jsmith@example.com',
         :password => 'password123',
-        :display_name => 'John Smith'
+        :display_name => 'John Smith',
+        :apartment_id => apt.id
+    )
+
+    User.create(
+        :email => 'yappa@example.com',
+        :password => 'password234',
+        :display_name => 'Yalta Appolo',
+        :apartment_id => apt.id
     )
 
   when 'test'
