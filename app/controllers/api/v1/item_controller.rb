@@ -20,7 +20,7 @@ class Api::V1::ItemController < ApplicationController
     # Create the item
     item = Item.new(
         :apartment_id => @apartment.id,
-        :user_id => params[:bought] ? @user.id : nil,
+        :user_id => params[:owner_id],
         :image => image,
         :name => params[:name],
         :bought => params[:bought],
@@ -53,11 +53,12 @@ class Api::V1::ItemController < ApplicationController
       image = nil
     end
     filtered_params = {:name => params[:name],
+                       :user_id => params[:owner_id],
                        :bought => params[:bought],
                        :description => params[:description],
                        :image => image}.reject{|_,v| v.nil?}
     return render json: {:errors => ['Missing params']}, status: :bad_request if filtered_params.blank?
-    if item.update(filtered_params)
+    if @item.update(filtered_params)
       render plain: 'Item successfully updated', status: :ok
     else
       render :json => {:errors => @item.errors.full_messages}, status: :bad_request

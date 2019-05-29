@@ -42,6 +42,7 @@ resource 'Item' do
   end
 
   post 'api/v1/apartments/items' do
+    parameter :owner_id, 'The item\'s owner', type: :integer
     parameter :name, 'The item name', type: :string
     parameter :description, 'The item description', type: :string
     parameter :bought, 'Whether the item has been bought', type: :boolean
@@ -53,6 +54,7 @@ resource 'Item' do
         explanation 'Create a new item with an attached image.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
         request = {
+          :owner_id => nil,
           :name => 'Fridge',
           :description => 'We need a fridge for the apartment.',
           :bought => false,
@@ -66,6 +68,7 @@ resource 'Item' do
         explanation 'Create a new item with no image.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
         request = {
+            :owner_id => nil,
             :name => 'Fridge',
             :description => 'We need a fridge for the apartment.',
             :bought => false
@@ -78,24 +81,26 @@ resource 'Item' do
     context '400' do
       context 'Insufficient fields' do
         example 'Item creation - Insufficient fields' do
-          explanation 'Example of supplying insufficient information. The new document will not be inserted into the database.'
+          explanation 'Example of supplying insufficient information. The new item will not be inserted into the database.'
           @existing_user.update(:apartment_id => @existing_apartment.id)
           do_request
           expect(status).to eq(400)
         end
       end
       context 'Not part of apartment' do
+        let(:owner_id) {@existing_user.id}
         let(:name) {'Fridge'}
         let(:description) {'We need a fridge for the apartment.'}
         let(:bought) {false}
-        example_request 'Document creation - Not part of apartment' do
-          explanation 'Attempt to add a new document while not in an apartment. The new document will not be inserted into the database.'
+        example_request 'Item creation - Not part of apartment' do
+          explanation 'Attempt to add a new item while not in an apartment. The new item will not be inserted into the database.'
           expect(status).to eq(400)
         end
       end
     end
 
     context '401' do
+      let(:owner_id) {@existing_user.id}
       let(:name) {'Fridge'}
       let(:description) {'We need a fridge for the apartment.'}
       let(:bought) {false}
@@ -103,19 +108,19 @@ resource 'Item' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Document creation - Not logged in' do
-        explanation 'Attempt to create a document while not supplying correct user credentials.'
+      example_request 'Item creation - Not logged in' do
+        explanation 'Attempt to create a item while not supplying correct user credentials.'
         @existing_user.apartment_id = @existing_apartment.id
         do_request
         expect(status).to eq(401)
       end
     end
   end
-=begin
-  get 'api/v1/apartments/documents/all' do
+
+  get 'api/v1/apartments/items/all' do
     context '200' do
-      example 'Get all documents' do
-        explanation 'Get all documents belonging to the current user\'s apartment. The user must be part of an existing apartment.'
+      example 'Get all items' do
+        explanation 'Get all items belonging to the current user\'s apartment. The user must be part of an existing apartment.'
         # User is part of apartment
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
@@ -124,8 +129,8 @@ resource 'Item' do
     end
 
     context '400' do
-      example_request 'Get all documents - Not already in apartment' do
-        explanation 'Attempt to get documents while user not already in apartment.'
+      example_request 'Get all items - Not already in apartment' do
+        explanation 'Attempt to get items while user not already in apartment.'
         expect(status).to eq(400)
       end
     end
@@ -134,8 +139,8 @@ resource 'Item' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example 'Get all documents - Not logged in' do
-        explanation 'Attempt to get documents while not supplying correct user credentials.'
+      example 'Get all items - Not logged in' do
+        explanation 'Attempt to get items while not supplying correct user credentials.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
         expect(status).to eq(401)
@@ -143,29 +148,37 @@ resource 'Item' do
     end
   end
 
-  post 'api/v1/apartments/documents/update' do
-    parameter :document_id, "The document's id.", type: :integer
-    parameter :title, "The document's new title.", type: :string
-    parameter :filename, "The document's new filename.", type: :string
+  post 'api/v1/apartments/items/update' do
+    parameter :item_id, "The item's id.", type: :integer
+    parameter :owner_id, "The item's new owner.", type: :integer
+    parameter :name, "The item's new name.", type: :string
+    parameter :bought, "Whether the item has been bought.", type: :boolean
+    parameter :image_data, "Optionally include the item's updated image.", type: :string
+    parameter :filename, "If image_data is included, the image's new filename.", type: :string
 
     context '200' do
       example 'Update description' do
-        explanation 'Update the current apartment\'s name and address.'
+        explanation 'Update all of the item\'s fields.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         request = {
-            :document_id => @existing_document.id,
-            :title => 'New Document Title',
-            :filename => 'new_filename.txt'
+            :item_id => @existing_item.id,
+            :owner_id => @existing_user.id,
+            :name => 'New Item Name',
+            :bought => true,
+            :image_data => @example_file_data,
+            :filename => 'new_filename.png'
         }
         do_request(request)
         expect(status).to eq(200)
       end
       example 'Update description - Supply partial info' do
-        explanation 'Update the current apartment\'s name or address only.'
+        explanation 'Update only some of the item\'s fields.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         request = {
-            :document_id => @existing_document.id,
-            :title => 'New Document Title'
+            :item_id => @existing_item.id,
+            :bought => true,
+            :image_data => @example_file_data,
+            :filename => 'new_filename.png'
         }
         do_request(request)
         expect(status).to eq(200)
@@ -173,52 +186,45 @@ resource 'Item' do
 
     end
     context '400' do
-      context 'Invalid title/filename' do
-        example 'Update description - Invalid title/filename' do
-          explanation 'Supply invalid document title and/or filename.'
-          request = {
-              :document_id => @existing_document.id,
-              :title => '',
-              :filename => 'new_filename.txt'
-          }
-          do_request(request)
-          expect(status).to eq(400)
-        end
-      end
-      context 'No document ID' do
-        example 'Update description - No document ID' do
-          explanation 'Supply title and/or filename without supplying the document ID.'
-          request = {
-              :title => 'New Document Title',
-              :filename => 'new_filename.txt'
-          }
-          do_request(request)
-          expect(status).to eq(400)
-        end
+      example 'Update item - Invalid parameter' do
+        explanation 'Supply invalid item parameter.'
+        request = {
+            :item_id => -1,
+            :owner_id => -1,
+            :name => '',
+            :bought => true
+        }
+        do_request(request)
+        expect(status).to eq(400)
       end
     end
     context '401' do
-      let(:document_id) {@existing_document.id}
-      let(:title) {'New Document Title'}
-      let(:filename) {'new_filename.txt'}
-
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Update description - Not logged in' do
-        explanation 'Attempt to update the document while supplying invalid user credentials.'
+      example 'Update description - Not logged in' do
+        explanation 'Attempt to update the item while supplying invalid user credentials.'
+        request = {
+            :item_id => @existing_item.id,
+            :owner_id => @existing_user.id,
+            :name => 'New Item Name',
+            :bought => true,
+            :image_data => @example_file_data,
+            :filename => 'new_filename.png'
+        }
+        do_request(request)
         expect(status).to eq(401)
       end
     end
   end
 
-  delete 'api/v1/apartments/documents' do
-    parameter :document_id, "The document's id.", type: :integer
+  delete 'api/v1/apartments/items' do
+    parameter :item_id, "The item's id.", type: :integer
 
     context '200' do
-      let (:document_id) {@existing_document.id}
-      example 'Document deletion' do
-        explanation 'Delete the specified document. The current user must be a member of its corresponding apartment'
+      let (:item_id) {@existing_item.id}
+      example 'Item deletion' do
+        explanation 'Delete the specified item. The current user must be a member of its corresponding apartment'
         # User is part of apartment
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
 
@@ -228,15 +234,15 @@ resource 'Item' do
     end
 
     context '400' do
-      example 'Document deletion - Not in corresponding apartment' do
-        explanation 'Attempt to delete document while user not member of corresponding apartment.'
+      example 'Item deletion - Not in corresponding apartment' do
+        explanation 'Attempt to delete item while user not member of corresponding apartment.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
-        do_request({:document_id => @existing_document})
+        do_request({:item_id => @existing_item})
         expect(status).to eq(400)
       end
-      example 'Document deletion - No document ID specified' do
+      example 'Item deletion - No item ID specified' do
         explanation 'Attempt to delete apartment while user not already in apartment.'
-        do_request({:document_id => @existing_document})
+        do_request({:item_id => @existing_item})
         expect(status).to eq(400)
       end
     end
@@ -244,7 +250,7 @@ resource 'Item' do
 
 
     context '400' do
-      example_request 'Document deletion - Not already in apartment' do
+      example_request 'Item deletion - Not already in apartment' do
         explanation 'Attempt to delete apartment while user not already in apartment.'
         expect(status).to eq(400)
       end
@@ -254,11 +260,10 @@ resource 'Item' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Document deletion - Not logged in' do
+      example_request 'Item deletion - Not logged in' do
         explanation 'Attempt to delete an apartment while not supplying correct user credentials.'
         expect(status).to eq(401)
       end
     end
   end
-=end
 end

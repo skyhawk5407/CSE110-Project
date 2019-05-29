@@ -44,7 +44,7 @@ Rails.application.routes.draw do
       # Items
       post 'apartments/items' => 'item#create'
       get 'apartments/items/all' => 'item#get_all'
-      post 'apartments/items/update' => 'itemex#update'
+      post 'apartments/items/update' => 'item#update'
       delete 'apartments/items' => 'item#delete'
     end
   end
