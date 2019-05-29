@@ -27,11 +27,12 @@
 							<b-form-input v-model="account_phone_number" :placeholder="$store.state.phonenumber"></b-form-input>
 						</b-col>
 					</b-row>
-
+					<b-alert variant="success" :show="show_good_account_message">{{ account_good_alert_message }}</b-alert>
+					<b-alert variant="danger" :show="show_account_alert">{{ account_alert_message }}</b-alert>
                     <div style="margin-top: 20px">
                         <b-row class="my-1">
                             <b-col offset="3">
-                                <b-button>Update Preferences</b-button>
+                                <b-button @click="update_account">Update Preferences</b-button>
                             </b-col>
                         </b-row>
                     </div>
@@ -42,7 +43,7 @@
 								<label>Old Password:</label>
 							</b-col>
 							<b-col sm="8">
-								<b-form-input v-model="account_old_password" placeholder=""></b-form-input>
+								<b-form-input v-model="account_old_password" type="password" placeholder=""></b-form-input>
 							</b-col>
 						</b-row>
 						<b-row class="my-1">
@@ -50,14 +51,23 @@
 								<label>New Password:</label>
 							</b-col>
 							<b-col sm="8">
-								<b-form-input v-model="account_new_password" placeholder=""></b-form-input>
+								<b-form-input v-model="account_new_password" type="password" placeholder=""></b-form-input>
 							</b-col>
 						</b-row>
+						<b-row class="my-1">
+							<b-col sm="3">
+								<label>Confirm Password:</label>
+							</b-col>
+							<b-col sm="8">
+								<b-form-input v-model="account_confirm_password" type="password" placeholder=""></b-form-input>
+							</b-col>
+						</b-row>
+
 
 						<div style="margin-top: 20px">
 							<b-row class="my-1">
 								<b-col offset="3">
-									<b-button>Change Password</b-button>
+									<b-button @click="update_password">Change Password</b-button>
 								</b-col>
 
                                 <b-col offset="4">
@@ -77,6 +87,7 @@
 							</b-row>
 						</div>
                         <b-alert variant="danger" :show="show_delete_alert">{{ delete_alert_message }}</b-alert>
+						<b-alert variant="success" :show="show_good_password_alert">{{ account_good_password_message }}</b-alert>
                     </div>
                 </div>
 			</template>
@@ -93,24 +104,92 @@
             return {
                 account_display_name: this.$store.state.displayName,
 				account_phone_number: this.$store.state.phonenumber,
+				account_old_password: "",
+				account_new_password: "",
+				account_confirm_password: "",
+				account_good_alert_message: undefined,
+				account_good_password_message: undefined,
+				show_good_password_alert: undefined,
+				show_good_account_message: undefined,
+				account_alert_message: undefined,
+				show_account_alert: false,
                 delete_alert_message: undefined,
                 show_delete_alert: false
             }
 		},
 		methods: {
-			async delete_account() {
-                try {
-					if (this.register_password !== this.register_password_check) {
-						this.isSuccess = "Passwords do not match.";
-						this.show_register_fail = true;
+			async update_account() {
+				try {
+					let response = await api.users.update.update_account(
+						this.$store.state.username, this.$store.state.password,
+						this.account_display_name, this.account_phone_number);
+
+					this.$store.commit('setDisplayName', undefined);
+					this.$store.commit('setPhoneNumber', undefined);
+					
+					this.account_good_alert_message = response.data;
+					this.show_good_account_message = true;
+					this.show_account_alert = false;
+				} catch (err) {
+					if(typeof err.response.data === "string") {
+						this.account_alert_message = err.response.data;
+					} else {
+						this.account_alert_message = err.response.data.errors[0];
+					}
+					this.show_account_alert = true;
+					this.show_good_account_message = false;
+				}
+			},
+
+			async update_password() {
+				try {
+					if (this.$store.state.password != this.account_old_password) {
+						this.delete_alert_message = "Old password incorrect";
+						this.show_delete_alert = true;
 						return;
 					}
 
-                    let response = await api.delete_account.delete(this.$store.state.username,
+					if (this.account_new_password != this.account_confirm_password) {
+						this.delete_alert_message = "Passwords do not match";
+						this.show_delete_alert = true;
+						return;
+					}
+
+					if (this.account_confirm_password.length < 5) {
+						this.delete_alert_message = "Password is too short (minimum is 5 characters)";
+						this.show_delete_alert = true;
+						return;
+					}
+
+					let response = await api.users.update.update_password(
+						this.$store.state.username, this.$store.state.password,
+						this.account_confirm_password);
+
+					this.$store.commit("setPassword", this.account_confirm_password);
+					
+					this.account_good_password_message = response.data;
+					this.show_good_password_alert = true;
+					this.show_delete_alert = false;
+				} catch(err) {
+					if(typeof err.response.data === "string") {
+						this.delete_alert_message = err.response.data;
+					} else {
+						this.delete_alert_message = err.response.data.errors[0];
+					}
+					this.show_delete_alert = true;
+					this.show_good_password_alert = false;
+				}
+			},
+
+			async delete_account() {
+                try {			
+                    let response = await api.users.delete_account.delete(this.$store.state.username,
                         this.$store.state.password);
 
                     this.$store.commit('setUsername', undefined);
 					this.$store.commit('setPassword', undefined);
+					this.$store.commit('setDisplayName', undefined);
+					this.$store.commit('setPhoneNumber', undefined);
 					
 					this.$router.push({path: 'SplashScreen'});
                 } catch(err) {
