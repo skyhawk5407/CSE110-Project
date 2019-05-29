@@ -46,11 +46,12 @@ export default {
   // Expenses Post and Get endpoint
   expenses: {
     // Post Expense to api/v1/example, providing the name
-    post: (payer_id, issuer_id, title, amount, email, password) => axios.post('/apartments/expenses', {
+    post: (payer_id, issuer_id, title, amount, description, email, password) => axios.post('/apartments/expenses', {
       payer_id: payer_id,
       issuer_id: issuer_id,
       title: title,
-      amount: amount
+      description: description,
+      amount: amount,
     }, {
       headers: {
         email: email,
@@ -68,10 +69,16 @@ export default {
   // Notifications endpoint
   notification: {
     // Post to api/v1/notification, providing the subject and message
-    post: (subject, message) => axios.post('/apartments/notifications', {
-        subject: subject,
+    post: (title, message, email, password) => axios.post('/apartments/notifications', {
+        title: title,
         message: message
-        })
+        }, {
+            headers: {
+              email: email,
+              password: password,
+            }
+          }
+        )
   },
 
   //Apartment creation endpoints
