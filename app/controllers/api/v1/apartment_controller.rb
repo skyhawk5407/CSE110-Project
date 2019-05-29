@@ -6,7 +6,7 @@ class Api::V1::ApartmentController < ApplicationController
   before_action :get_apartment, except: [:create]
   def create
     # User only allowed to create apartment if they're not already in one
-    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    user = User.find_by_email(request.headers['EMAIL'].to_s.downcase)
     return render :json => {:errors => ['User already in an apartment']}, status: :bad_request unless user.apartment_id.nil?
 
     # Create apartment

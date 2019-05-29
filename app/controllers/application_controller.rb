@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticated?
-    email = request.headers['EMAIL'].to_s
+    email = request.headers['EMAIL'].to_s.downcase
     password = request.headers['PASSWORD'].to_s
     @user = User.find_by_email(email)
     if @user.nil? or not @user.authenticate(password)
@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def get_apartment
-    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    user = User.find_by_email(request.headers['EMAIL'].to_s.downcase)
     return render json: {:errors => ['User not already in an apartment']}, status: :bad_request if user.apartment_id.nil?
     @apartment = Apartment.find(user.apartment_id)
   end

@@ -1,5 +1,5 @@
 <template>
-  <b-navbar  v-if="$store.state.username" toggleable="md" type="dark" variant="dark">
+  <b-navbar toggleable="md" type="dark" variant="dark">
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
     <b-navbar-brand to="/">TURD MATE</b-navbar-brand>

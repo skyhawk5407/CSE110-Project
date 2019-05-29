@@ -7,6 +7,11 @@ resource 'User' do
 
   header "Content-Type", "application/json"
 
+  header 'EMAIL', :email_header
+  header 'PASSWORD', :password_header
+  let(:email_header) {nil}
+  let(:password_header) {nil}
+
   post 'api/v1/users' do
     parameter :email, "The user's email.", type: :string
     parameter :password, "The user's password.", type: :string
@@ -60,8 +65,8 @@ resource 'User' do
   end
 
   delete 'api/v1/users' do
-    header 'EMAIL', :email_header
-    header 'PASSWORD', :password_header
+    let(:email_header) {'jsmith@example.com'}
+    let(:password_header) {'password123'}
 
     before (:each) do
       # Set up existing user
@@ -104,27 +109,21 @@ resource 'User' do
     end
 
     context '200' do
-      example 'User login' do
+      let(:email_header) {'jsmith@example.com'}
+      let(:password_header) {'password123'}
+
+      example_request 'User login' do
         explanation 'Verify the user\'s email and password.'
-
-        header 'EMAIL', 'jsmith@example.com'
-        header 'PASSWORD', 'password123'
-
-        # Should confirm login
-        do_request
         expect(status).to eq(200)
       end
     end
 
     context '401' do
-      example 'User login - Incorrect credentials' do
+      let(:email_header) {'jsmith@example.com'}
+      let(:password_header) {'wrong-password'}
+
+      example_request 'User login - Incorrect credentials' do
         explanation 'Reject the user\'s incorrect email and password.'
-
-        header 'EMAIL', 'jsmith@example.com'
-        header 'PASSWORD', 'wrong-password'
-
-        # Should confirm login
-        do_request
         expect(status).to eq(401)
       end
     end
@@ -144,8 +143,8 @@ resource 'User' do
     parameter :password, "The user's new password.", type: :string
     parameter :phone_number, "The user's new phone number.", type: :string
 
-    header 'EMAIL', 'jsmith@example.com'
-    header 'PASSWORD', 'password123'
+    let(:email_header) {'jsmith@example.com'}
+    let(:password_header) {'password123'}
 
     context '200' do
       example 'Update profile' do
@@ -205,7 +204,6 @@ resource 'User' do
     end
   end
 
-
   post 'api/v1/users/join_apartment' do
     before (:each) do
       # Seed with an existing user and apartment
@@ -228,8 +226,8 @@ resource 'User' do
 
     parameter :access_code, "The apartment's access code.", type: :string
 
-    header 'EMAIL', 'jsmith@example.com'
-    header 'PASSWORD', 'password123'
+    let(:email_header) {'jsmith@example.com'}
+    let(:password_header) {'password123'}
 
     context '200' do
       let(:access_code) {@access_code1}
@@ -263,8 +261,8 @@ resource 'User' do
       )
     end
 
-    header 'EMAIL', 'jsmith@example.com'
-    header 'PASSWORD', 'password123'
+    let(:email_header) {'jsmith@example.com'}
+    let(:password_header) {'password123'}
 
     context '200' do
       example 'Leave Apartment' do

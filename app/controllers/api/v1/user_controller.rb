@@ -6,7 +6,7 @@ class Api::V1::UserController < ApplicationController
 
   # Register new user
   def register
-    user = User.find_by_email(params[:email])
+    user = User.find_by_email(params[:email].downcase)
     return render :json => {:errors => ['User with this email already exists']}, status: :bad_request unless user.nil?
 
     user = User.create(
@@ -22,7 +22,7 @@ class Api::V1::UserController < ApplicationController
   end
 
   def delete
-    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    user = User.find_by_email(request.headers['EMAIL'].to_s.downcase)
     user.destroy
     render plain: 'User deletion successful', status: :ok
   end
@@ -32,6 +32,7 @@ class Api::V1::UserController < ApplicationController
     user = User.find_by_reset_token(params[:reset_token])
     return render :json => {:errors => ['Invalid token']}, status: :unauthorized if user.nil?
     if user.update(:password => params[:password])
+      user.regenerate_reset_token
       render plain: 'Password successfully updated', status: :ok
     else
       render :json => {:errors => user.errors.full_messages}, status: :bad_request
@@ -41,7 +42,7 @@ class Api::V1::UserController < ApplicationController
 
   # Update display name, password
   def update_profile
-    user = User.find_by_email(request.headers['EMAIL'].to_s)
+    user = User.find_by_email(request.headers['EMAIL'].to_s.downcase)
     filtered_params = {:email => params[:email],
                        :display_name => params[:display_name],
                        :phone_number => params[:phone_number],
@@ -55,7 +56,7 @@ class Api::V1::UserController < ApplicationController
   end
 
   def login
-    render :json => User.find_by_email(request.headers['EMAIL'].to_s)
+    render :json => User.find_by_email(request.headers['EMAIL'].to_s.downcase)
                         .as_json
   end
 
@@ -73,7 +74,7 @@ class Api::V1::UserController < ApplicationController
   end
 
   def issue_reset_email
-    user = User.find_by_email(params['email'])
+    user = User.find_by_email(params['email'].downcase)
     return render :json => {:errors => ['Invalid email']}, status: :bad_request if user.nil?
 
     user.regenerate_reset_token

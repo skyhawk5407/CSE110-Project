@@ -42,7 +42,7 @@ export default {
             }
         })
     },
-    
+
     update: {
         update_account: (email, password, display_name, phone_number) => axios.post('users/update_profile', {
           display_name: display_name,
@@ -60,10 +60,21 @@ export default {
             headers: {
                 email: email,
                 password: password
-            },  
+            },
         })
     }
   },
+
+  reset_password: {
+    issue_reset_token: (email) => axios.post('/users/issue_reset_email', {
+      email: email
+    }),
+    change_password: (newPassword, token) => axios.post('/users/reset_password', {
+      password: newPassword,
+      reset_token: token
+    })
+  },
+
 
   // Expenses Post and Get endpoint
   expenses: {

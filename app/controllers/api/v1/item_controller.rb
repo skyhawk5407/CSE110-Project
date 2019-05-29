@@ -29,7 +29,7 @@ class Api::V1::ItemController < ApplicationController
 
     # Save the item
     if item.save
-      render :json => item.to_json(request.host), status: :ok
+      render :json => item.to_json(request.base_url), status: :ok
     else
       render :json => {:errors => item.errors.full_messages}, status: :bad_request
     end
@@ -39,7 +39,7 @@ class Api::V1::ItemController < ApplicationController
     items = Item.where(:apartment_id => @apartment.id)
 
     # Add the url and file data to each
-    render :json => items.map {|x| x.to_json(request.host)}
+    render :json => items.map {|x| x.to_json(request.base_url)}
   end
 
   def update

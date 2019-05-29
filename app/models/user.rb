@@ -13,10 +13,12 @@ class User < ApplicationRecord
   has_secure_password
   has_secure_token :reset_token
 
-  validates :email, :presence => true, :uniqueness => true, :format => EMAIL_REGEX
+  validates :email, :presence => true, :uniqueness => {:case_sensitive => false}, :format => EMAIL_REGEX
   validates :reset_token, :uniqueness => true
   validates :display_name, :presence => true, :length => { :in => 2..64 }
   validates :password, :presence => true, :length => { :in => 5..128 }, :if => :password_digest_changed?
+
+  before_save :downcase_email
 
   def update_password(new_password)
     self.update(password: new_password)
@@ -41,5 +43,9 @@ class User < ApplicationRecord
 
   def delete_items
     Item.where(:user_id => self.id).destroy_all
+  end
+
+  def downcase_email
+    self.email = self.email.downcase
   end
 end
