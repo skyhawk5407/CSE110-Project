@@ -27,7 +27,7 @@
       <!-- Actions -->
       <template slot="Actions" slot-scope="row">
         <b-button variant="primary">Pay</b-button>
-        <b-button v-b-modal="'modal-2'" variant="danger">Remove</b-button>
+        <b-button v-b-modal="'modal-2'" variant="danger" >Remove</b-button>
         <b-modal id="modal-2" hide-footer title="Remove Expense">
           <p>
             <b>Are you SURE you wish to remove this expense?</b>
@@ -36,7 +36,7 @@
             <i>Note: This action can not be undone.</i>
           </p>
           <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
-          <b-button class="mt-2" variant="danger">Yes, I am sure.</b-button>
+          <b-button class="mt-2" variant="danger" @click="removeExp(row.item)" >Yes, I am sure.</b-button>
         </b-modal>
       </template>
     </b-table>
@@ -45,23 +45,20 @@
     <b-button v-b-modal.modal-1 variant="primary">Add Expense</b-button>
     </b-jumbotron>
     <!-- Modal Component 1-->
-    <b-modal id="modal-1" title="Add Expense">
+    <b-modal id="modal-1" title="Add Expense" @ok="addExpense">
       <label>Name of Expense:</label>
       <b-form-input v-model="expense_title"></b-form-input>
       <label>Amount:</label>
       <b-form-input v-model="expense_amount"></b-form-input>
       <label>Description:</label>
-      <b-form-textarea v-model="text" rows="3"></b-form-textarea>
+      <b-form-textarea v-model="expense_description" rows="3"></b-form-textarea>
       <label>Payer:</label>
       <b-form-input v-model="expense_payer_id"></b-form-input>
-      <b-col md="auto">
-        <b-button @click="addExpense">Post</b-button>
-      </b-col>
-      <!-- <b-col>
-        <b-button @click="getExpense">Get</b-button>
-      </b-col>-->
     </b-modal>
-    <div>Post/Get Status: {{getStatus}}</div>
+
+    <!-- <div>
+      Post/Get Status: {{getStatus}}
+      </div> -->
   </div>
 </template>
 
@@ -79,14 +76,13 @@ export default {
         }
       ],
       getStatus: undefined,
-      fields: ["Date", "Expense", "Amount", "Issuer", "Payers", "Description"],
+      fields: ["Date", "Expense", "Amount", "Issuer", "Payers", "Description", "Actions"],
       expense_entries: [
         {
           Date: "5/23/2019",
           Expense: "A big Gary L",
           Amount: 2000,
           Issuer: "Gary Gillespe",
-          // Payers: { first: "Bob", middle: "P. ", last: "Oop" },
           Payers: "Bob P. Oop",
           Description: "Oh no I'm broke!"
         }
@@ -95,10 +91,17 @@ export default {
       expense_payer_id: 1,
       expense_issuer_id: 2,
       expense_title: "Rent",
+      expense_description: "Now I am realy realy really broke!",
       expense_amount: 10000
     };
   },
   methods: {
+    removeExp(row){
+      var amount = 1;
+      var index = this.expense_entries.indexOf(row);
+      this.expense_entries.splice(index, amount);
+      // TODO ADD IN REMOVE IN BACKEND
+    },
     // This should split the costs and submit multiple expenses to the backend
     async addExpense() {
       try {
@@ -108,6 +111,7 @@ export default {
           this.expense_issuer_id,
           this.expense_title,
           this.expense_amount,
+          this.expense_description,
           "jsmith@example.com",
           "password123",
         );
@@ -155,6 +159,7 @@ export default {
           },
           lastTransactionId
         );
+        console.log(lastTransactionEntry);
         // add to table
         this.expense_entries.push({
           Date: lastTransactionEntry.created_at,
@@ -162,7 +167,7 @@ export default {
           Amount: lastTransactionEntry.amount,
           Issuer: lastTransactionEntry.issuer.display_name,
           Payers: lastTransactionEntry.payer.display_name, 
-          Description: "Oh no I'm really broke now!"
+          Description: lastTransactionEntry.description,
         });
       } catch (err) {
         // Error handling

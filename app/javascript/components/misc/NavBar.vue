@@ -7,7 +7,6 @@
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
         <b-nav-item v-if="$store.state.username" to="/DashBoard">Dashboard</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/Profile">Profile</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/ApartmentMate">Apartment Mates</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/Documents">Documents</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/Items">Items</b-nav-item>

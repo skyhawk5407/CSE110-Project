@@ -31,6 +31,7 @@ const routes = [
   { path: '/Items', component: Items},
   { path: '/Notifications', component: Notifications},
   { path: '/Rules', component: Rules},
+  { path: 'AccountSettings', component: AccountSettings},
   { path: '*', redirect: '/SplashScreen' },
 ];
 
