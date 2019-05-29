@@ -226,7 +226,7 @@ resource 'Document' do
         expect(status).to eq(400)
       end
       example 'Document deletion - No document ID specified' do
-        explanation 'Attempt to delete apartment while user not already in apartment.'
+        explanation 'Attempt to delete document while user not already in apartment.'
         do_request({:document_id => @existing_document})
         expect(status).to eq(400)
       end
@@ -236,7 +236,7 @@ resource 'Document' do
 
     context '400' do
       example_request 'Document deletion - Not already in apartment' do
-        explanation 'Attempt to delete apartment while user not already in apartment.'
+        explanation 'Attempt to delete document while user not already in apartment.'
         expect(status).to eq(400)
       end
     end
@@ -246,7 +246,7 @@ resource 'Document' do
       let(:password_header) {nil}
 
       example_request 'Document deletion - Not logged in' do
-        explanation 'Attempt to delete an apartment while not supplying correct user credentials.'
+        explanation 'Attempt to delete a document while not supplying correct user credentials.'
         expect(status).to eq(401)
       end
     end
