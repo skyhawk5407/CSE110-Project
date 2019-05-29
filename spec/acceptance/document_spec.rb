@@ -232,8 +232,6 @@ resource 'Document' do
       end
     end
 
-
-
     context '400' do
       example_request 'Document deletion - Not already in apartment' do
         explanation 'Attempt to delete document while user not already in apartment.'

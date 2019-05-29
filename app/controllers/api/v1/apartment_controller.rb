@@ -46,6 +46,13 @@ class Api::V1::ApartmentController < ApplicationController
     end
   end
 
+  def issue_invite_email
+    ApartmentMailer.with(:email => params[:email],
+                         :apartment => @apartment,
+                         :user => @user).invite.deliver_now
+    render plain: 'Email sent', status: :ok
+  end
+
   def remove_user
     return render :json => {:errors => ['Cannot remove self']}, status: :bad_request if params[:user_id] == @user.id
     user_to_remove = User.find_by_id(params[:user_id])

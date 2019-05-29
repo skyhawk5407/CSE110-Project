@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h2>TURDMate Apartment Invitation</h2>
+<p>
+  Hello,
+  <br/><br/>
+  Your friend <%=@referrer_name%> has invited you to join the apartment "<%=@apartment_name%>" at <%=@address%>!
+  <br/>
+  To join, create an account on the <a href=<%=@url%>>TURDMATE</a> website, and use the following secret code:
+  <br/><br/>
+  Secret code: <%=@token%>
+  <br/><br/>
+  Hope to see you soon!
+</p>
+</body>
+</html>

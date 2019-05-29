@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get 'apartments/' => 'apartment#get'
       post 'apartments/update_description' => 'apartment#update_description'
       post 'apartments/remove_user' => 'apartment#remove_user'
+      post 'apartments/issue_invite_email' => 'apartment#issue_invite_email'
 
       # Documents
       post 'apartments/documents/upload' => 'document#upload'

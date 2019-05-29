@@ -149,6 +149,40 @@ resource 'Apartment' do
     end
   end
 
+  post 'api/v1/apartments/issue_invite_email' do
+    parameter :email, "The recipient's email.", type: :string
+
+    context '200' do
+      let(:email) {'jsmith@example.com'}
+      example 'Issue invite email' do
+        explanation 'Issue an invite to the recipient\'s email, which they can use to join the apartment.'
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        do_request
+        expect(status).to eq(200)
+      end
+    end
+    context '400' do
+      let(:email) {'jsmith@example.com'}
+      example_request 'Issue invite email - Not in apartment' do
+        explanation 'Attempt to issue an invite email while user not already in apartment.'
+        expect(status).to eq(400)
+      end
+    end
+    context '401' do
+      let(:email) {'jsmith@example.com'}
+
+      let(:email_header) {nil}
+      let(:password_header) {nil}
+      example 'Issue invite email - Not logged in' do
+        explanation 'Attempt to issue an invite email while not supplying correct user credentials.'
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        do_request
+        expect(status).to eq(401)
+      end
+    end
+  end
+
+
   post 'api/v1/apartments/update_description' do
     parameter :name, "The apartment's new name.", type: :string
     parameter :address, "The apartment's new address.", type: :string
