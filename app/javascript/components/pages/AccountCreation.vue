@@ -89,13 +89,14 @@
 					return;
 				}
 
-				await api.register.post(this.register_email,
+				await api.users.register.post(this.register_email,
 					this.register_password, this.register_display_name,
 					this.register_phone_number);
 
 				this.$store.commit('setUsername', this.register_email);
 				this.$store.commit('setPassword', this.register_password);
 				this.$store.commit('setDisplayName', this.register_display_name);
+				this.$store.commit('setPhoneNumber', this.register_phone_number);
 
 				this.$router.push({path: 'Dashboardi'});
 

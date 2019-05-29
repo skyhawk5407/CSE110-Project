@@ -15,33 +15,55 @@ export default {
     })
   },
 
-  login: {
-    get: (email, password) => axios.get('/users/login', {
-      headers: {
-        email: email,
-        password: password
-      }
-    })
-  },
-
-  register: {
-      post: (email, password, display_name, phone_number) => axios.post('/users', {
+  users: {
+    login: {
+      get: (email, password) => axios.get('/users/login', {
+        headers: {
           email: email,
-          password: password,
+          password: password
+        }
+      })
+    },
+
+    register: {
+        post: (email, password, display_name, phone_number) => axios.post('/users', {
+            email: email,
+            password: password,
+            display_name: display_name,
+            phone_number: phone_number
+        })
+    },
+
+    delete_account: {
+        delete: (email, password) => axios.delete('/users', {
+            headers: {
+                email: email,
+                password: password
+            }
+        })
+    },
+    
+    update: {
+        update_account: (email, password, display_name, phone_number) => axios.post('users/update_profile', {
           display_name: display_name,
           phone_number: phone_number
-      })
-  },
-
-  delete_account: {
-      delete: (email, password) => axios.delete('/users', {
+        }, {
           headers: {
-              email: email,
-              password: password
+            email: email,
+            password: password
           }
-      })
+        }),
+
+        update_password: (email, password, new_password) => axios.post('users/update_profile', {
+          password: new_password
+        }, {
+            headers: {
+                email: email,
+                password: password
+            },  
+        })
+    }
   },
-    
 
   // Expenses Post and Get endpoint
   expenses: {
