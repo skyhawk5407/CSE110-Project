@@ -25,7 +25,7 @@ const routes = [
   { path: '/AccountSettings', component: AccountSettings, meta: {auth: true}},
   { path: '/AccountCreation', component: AccountCreation, meta: {notLoggedIn: true} },
   { path: '/Dashboard', component: Dashboard, meta: {auth: true, apartment:true}},
-  { path: '/Dashboardi', component: Dashboard_i, meta: {auth: true} },
+  { path: '/Dashboardi', component: Dashboard_i, meta: {auth: true, notApartment:true} },
   { path: '/example', component: ExamplePage },
   { path: '/SplashScreen', component: SplashScreen},
   { path: '/Expenses', component: Expenses, meta: {auth: true, apartment:true}},
@@ -47,9 +47,11 @@ router.beforeEach((to, from, next) => {
   // If not logged in, don't show certain pages
   if(to.meta.auth && !store.state.username){
     next('/');
-  // if logged in, don't show other pages
+    // if logged in, don't show other pages
   } else if(to.meta.notLoggedIn && store.state.username) {
     next('/');
+  } else if(to.meta.notApartment && store.state.apartmentId !== undefined) {
+    next('/Dashboard');
   } else if(to.meta.apartment && store.state.apartmentId === undefined) {
     next('/Dashboardi');
   } else {

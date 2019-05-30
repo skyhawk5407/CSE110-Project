@@ -30,6 +30,7 @@ if(username && password){
   store.commit('setPassword', password);
   store.commit('setDisplayName', displayName);
   store.commit('setPhoneNumber', phoneNumber);
+  store.commit('setApartmentId', phoneNumber);
 }
 
 /* Initialize vue */
