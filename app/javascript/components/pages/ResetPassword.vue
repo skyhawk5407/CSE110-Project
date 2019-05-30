@@ -149,14 +149,16 @@
       },
       async triggerRedirect(){
         let _this = this;
+        let interval = undefined;
         let redirect = () => {
           if(_this.redirectSecs === 0){
-            _this.$router.replace('/')
+            _this.$router.replace('/');
+            clearInterval(interval);
           }else {
             _this.redirectSecs--;
           }
         };
-        setInterval(redirect, 1000);
+        interval = setInterval(redirect, 1000);
       }
     }
   }

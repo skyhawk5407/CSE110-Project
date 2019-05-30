@@ -59,7 +59,7 @@ export default {
       this.$cookie.delete('password');
       this.$cookie.delete('displayName');
       this.$cookie.delete('phoneNumber');
-      
+
       this.$router.push({ path: "SplashScreen" });
     }
   }
