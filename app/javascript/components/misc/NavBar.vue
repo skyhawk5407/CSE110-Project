@@ -50,10 +50,19 @@ export default {
   name: "NavBar",
   methods: {
     logout() {
-      this.$router.push({ path: "SplashScreen" });
       this.$store.commit("setUsername", undefined);
       this.$store.commit("setPassword", undefined);
       this.$store.commit("setDisplayName", undefined);
+      this.$store.commit("setPhoneNumber", undefined);
+      this.$store.commit("setApartmentId", undefined);
+
+      this.$cookie.delete('username');
+      this.$cookie.delete('password');
+      this.$cookie.delete('displayName');
+      this.$cookie.delete('phoneNumber');
+      this.$cookie.delete('apartmentId');
+
+      this.$router.push({ path: "SplashScreen" });
     }
   }
 };

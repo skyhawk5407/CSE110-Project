@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
       # Documents
       post 'apartments/documents/upload' => 'document#upload'
+      get 'apartments/documents/download' => 'document#download'
       get 'apartments/documents/all' => 'document#get_all'
       post 'apartments/documents/update' => 'document#update'
       delete 'apartments/documents' => 'document#delete'
