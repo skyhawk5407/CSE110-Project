@@ -199,7 +199,7 @@
 					this.$store.commit('setPassword', undefined);
 					this.$store.commit('setDisplayName', undefined);
 					this.$store.commit('setPhoneNumber', undefined);
-					this.$store.commit('apartmentId', undefined);
+					this.$store.commit('setApartmentId', undefined);
 			
 					this.$cookie.delete('username');
 					this.$cookie.delete('password');
