@@ -18,9 +18,6 @@ Vue.mixin({
         s += '...';
       }
       return s;
-    },
-    async b64toBlob(b64Data) {
-      return `data:application/octet-stream;base64,${b64Data}`;
     }
   }
 });
