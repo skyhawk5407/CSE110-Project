@@ -1,81 +1,86 @@
 <template>
   <div>
-    <b-table
-      show-empty
-      stacked="md"
-      :items="items"
-      :fields="fields"
-      :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      @filtered="onFiltered"
-    >
-      <template
-        slot="Name"
-        slot-scope="row"
-      >{{ row.value.first }} {{ row.value.middle }} {{ row.value.last }}</template>
+    <b-jumbotron>
+      <template slot="header">
+				Apartment Mates
+			</template>
+      <b-table
+        show-empty
+        stacked="md"
+        :items="items"
+        :fields="fields"
+        :current-page="currentPage"
+        :per-page="perPage"
+        :filter="filter"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
+        :sort-direction="sortDirection"
+        @filtered="onFiltered"
+      >
+        <template
+          slot="Name"
+          slot-scope="row"
+        >{{ row.value.first }} {{ row.value.middle }} {{ row.value.last }}</template>
 
-      <template slot="Email" slot-scope="row">{{ row.value }}</template>
+        <template slot="Email" slot-scope="row">{{ row.value }}</template>
 
-      <template slot="Actions" slot-scope="row">
-        <b-button v-b-modal="'modal-2'" variant="danger">Remove Apartment Mate</b-button>
-        <b-modal id="modal-2" hide-footer title="Remove Apartment Mate">
-          <p>
-            <b>Are you SURE you wish to remove this apartment mate?</b>
-          </p>
-          <p>
-            <i>Note: This action can not be undone.</i>
-          </p>
-          <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
-          <b-button class="mt-2" variant="danger" @click="removeMate">Yes, I am sure.</b-button>
-        </b-modal>
-      </template>
-    </b-table>
+        <template slot="Actions" slot-scope="row">
+          <b-button v-b-modal="'modal-2'" variant="danger">Remove Apartment Mate</b-button>
+          <b-modal id="modal-2" hide-footer title="Remove Apartment Mate">
+            <p>
+              <b>Are you SURE you wish to remove this apartment mate?</b>
+            </p>
+            <p>
+              <i>Note: This action can not be undone.</i>
+            </p>
+            <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
+            <b-button class="mt-2" variant="danger" @click="removeMate">Yes, I am sure.</b-button>
+          </b-modal>
+        </template>
+      </b-table>
 
-    <div>
-      <!-- BELOW IS DEBUGGING TO SHOW IF EMAIL WAS SENT OR NOT -->
-      <!-- <div class="mt-3">
+      <div>
+        <!-- BELOW IS DEBUGGING TO SHOW IF EMAIL WAS SENT OR NOT -->
+        <!-- <div class="mt-3">
         Submitted Names:
         <div v-if="submittedEmails.length === 0">--</div>
         <ul v-else class="mb-0 pl-3">
           <li v-for="email in submittedEmails">{{ status }} {{ email }}</li>
         </ul>
-      </div> -->
-      <b-button @click="$bvModal.show('modal-email')">Invite Apartment Mate</b-button>
-      <!-- Modal Component 1-->
-      <b-modal id="modal-email" centered title="Send E-mail" ref="Email_Modal" hide-header-close>
-        <!-- Form for sending emails -->
-        <form ref="form" @handleSendInvite.stop.prevent="handleSendInvite">
-          <b-form-group
-            :state="emailState"
-            label="Email"
-            label-for="Email-input"
-            invalid-feedback="Valid Email is required"
-          >
-            <b-form-input id="Email-input" v-model="email" :state="emailState" required></b-form-input>
-          </b-form-group>
-        </form>
-        <!-- We pass the name cancel as props to footer -->
-        <div slot="modal-footer">
-          <b-button
-            class="float-right"
-            variant="outline-warning"
-            block
-            @click="handleSendInvite"
-          >Send Invite</b-button>
-          <b-button
-            class="float-right"
-            size="sm"
-            variant="outline-danger"
-            block
-            @click="cancel"
-          >Cancel</b-button>
-        </div>
-      </b-modal>
-    </div>
+        </div>-->
+        <b-button @click="$bvModal.show('modal-email')">Invite Apartment Mate</b-button>
+        <!-- Modal Component 1-->
+        <b-modal id="modal-email" centered title="Send E-mail" ref="Email_Modal" hide-header-close>
+          <!-- Form for sending emails -->
+          <form ref="form" @handleSendInvite.stop.prevent="handleSendInvite">
+            <b-form-group
+              :state="emailState"
+              label="Email"
+              label-for="Email-input"
+              invalid-feedback="Valid Email is required"
+            >
+              <b-form-input id="Email-input" v-model="email" :state="emailState" required></b-form-input>
+            </b-form-group>
+          </form>
+          <!-- We pass the name cancel as props to footer -->
+          <div slot="modal-footer">
+            <b-button
+              class="float-right"
+              variant="outline-warning"
+              block
+              @click="handleSendInvite"
+            >Send Invite</b-button>
+            <b-button
+              class="float-right"
+              size="sm"
+              variant="outline-danger"
+              block
+              @click="cancel"
+            >Cancel</b-button>
+          </div>
+        </b-modal>
+      </div>
+    </b-jumbotron>
   </div>
 </template>
 
@@ -87,7 +92,6 @@ export default {
   name: "ApartmentMate",
   data() {
     return {
-      user_id: 1,
       email: "",
       emailState: null,
       status: null,
@@ -109,7 +113,6 @@ export default {
   methods: {
 
       async removeMate(){
-        console.log('Hello');
         try {
           // post and wait for response
           let response = await api.removeMate.post(2, 'jsmith@example.com', 'password123');
@@ -119,6 +122,30 @@ export default {
           console.log(err);
           if(err.response){
             switch (err.response.status) {
+              case 401:
+                console.log(err.response.data);
+                break;
+              default:
+                console.log('An unknown error occurred.');
+                break;
+            }
+          }
+        }
+      },
+
+      async invite(){
+        try {
+          // post and wait for response
+          let response = await api.invite.post(this.email, 'jsmith@example.com', 'password123');
+          console.log(response.data);
+        } catch (err) {
+      // Error handling
+          console.log(err);
+          if(err.response){
+            switch (err.response.status) {
+              case 400:
+                console.log(err.response.data);
+                break;
               case 401:
                 console.log(err.response.data);
                 break;
@@ -145,6 +172,7 @@ export default {
         if (!this.checkFormValidity()) {
           return;
         }
+        this.invite();
         this.submittedEmails.push(this.email);
         this.status = "Invite Sent to: ";
         // NOtify user that invite was made and backend send

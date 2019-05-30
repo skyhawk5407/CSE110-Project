@@ -150,5 +150,18 @@ export default {
         password: password
       }
     })
+  },
+
+  //invite endpoint
+  invite: {
+    // Post to api/v1/apartments/issue_invite_email, providing the email
+    post: (invite_email, email, password) => axios.post('/apartments/issue_invite_email', {
+      email: invite_email
+    }, {
+      headers: {
+        email:email,
+        password: password
+      }
+    })
   }
 }
