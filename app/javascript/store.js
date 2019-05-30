@@ -12,7 +12,7 @@ export default new Vuex.Store({
       password: undefined,
       displayName: undefined,
       phonenumber: undefined,
-      apartmentId: undefined
+      apartmentId: undefined,
   },
   mutations: {
     setUsername (state, username) {

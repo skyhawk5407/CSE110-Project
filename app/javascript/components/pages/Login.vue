@@ -68,6 +68,9 @@
             this.$cookie.set('displayName', response.data.display_name, 30);
             this.$cookie.set('phoneNumber', response.data.phone_number, 30);
             this.$cookie.set('apartmentId', response.data.apartment_id, 30);
+            this.$cookie.set('isPermanence', true, 30);
+          } else {
+            this.$cookie.set('isPermanence', false, 30);
           }
 
           this.$store.commit('setUsername', this.login_email_text);

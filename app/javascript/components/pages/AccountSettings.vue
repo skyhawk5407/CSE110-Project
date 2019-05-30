@@ -124,8 +124,13 @@
 						this.$store.state.username, this.$store.state.password,
 						this.account_display_name, this.account_phone_number);
 
-					this.$store.commit('setDisplayName', undefined);
-					this.$store.commit('setPhoneNumber', undefined);
+					let is_using_cookies = this.$cookie.get("isPermanence");
+					this.$store.commit('setDisplayName', this.account_display_name);
+					this.$store.commit('setPhoneNumber', this.account_phone_number);
+					if(is_using_cookies) {
+						this.$cookie.set('displayName', this.account_display_name, 30);
+						this.$cookie.set('phoneNumber', this.account_phone_number, 30);
+					}
 					
 					this.account_good_alert_message = response.data;
 					this.show_good_account_message = true;
@@ -165,8 +170,12 @@
 						this.$store.state.username, this.$store.state.password,
 						this.account_confirm_password);
 
+					let is_using_cookies = this.$cookie.get("isPermanence");
 					this.$store.commit("setPassword", this.account_confirm_password);
-					
+					if (is_using_cookies) {
+						this.$cookie.set("password", this.account_confirm_password)
+					}
+
 					this.account_good_password_message = response.data;
 					this.show_good_password_alert = true;
 					this.show_delete_alert = false;
@@ -190,6 +199,12 @@
 					this.$store.commit('setPassword', undefined);
 					this.$store.commit('setDisplayName', undefined);
 					this.$store.commit('setPhoneNumber', undefined);
+			
+					this.$cookie.delete('username');
+					this.$cookie.delete('password');
+					this.$cookie.delete('displayName');
+					this.$cookie.delete('phoneNumber');
+					this.$cookie.delete('apartmentId');
 					
 					this.$router.push({path: 'SplashScreen'});
                 } catch(err) {
