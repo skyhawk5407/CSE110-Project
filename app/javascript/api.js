@@ -110,8 +110,13 @@ export default {
               email: email,
               password: password,
             }
-          }
-        )
+          }),
+    get: (email, password) => axios.get('apartments/notifications/all', {
+    headers: {
+        email: email,
+        password: password
+        }
+    })
   },
 
   //Apartment creation endpoints
