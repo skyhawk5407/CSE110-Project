@@ -10,7 +10,7 @@
   <br/><br/>
   Your friend <%=@referrer_name%> has invited you to join the apartment "<%=@apartment_name%>" at <%=@address%>!
   <br/>
-  To join, create an account on the <a href=<%=@url%>>TURDMATE</a> website, and use the following secret code:
+  To join, create an account on the <%= link_to 'TURDMATE', @url %> website, and use the following secret code:
   <br/><br/>
   Secret code: <%=@token%>
   <br/><br/>
