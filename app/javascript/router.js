@@ -24,16 +24,16 @@ const routes = [
   { path: '/Login', component: Login, meta: {notLoggedIn: true}},
   { path: '/AccountSettings', component: AccountSettings, meta: {auth: true}},
   { path: '/AccountCreation', component: AccountCreation, meta: {notLoggedIn: true} },
-  { path: '/Dashboard', component: Dashboard, meta: {auth: true}},
+  { path: '/Dashboard', component: Dashboard, meta: {auth: true, apartment:true}},
   { path: '/Dashboardi', component: Dashboard_i, meta: {auth: true} },
   { path: '/example', component: ExamplePage },
   { path: '/SplashScreen', component: SplashScreen},
-  { path: '/Expenses', component: Expenses, meta: {auth: true}},
-  { path: '/ApartmentMate', component: ApartmentMate, meta: {auth: true}},
-  { path: '/Documents', component: Documents, meta: {auth: true}},
-  { path: '/Items', component: Items, meta: {auth: true}},
-  { path: '/Notifications', component: Notifications, meta: {auth: true}},
-  { path: '/Rules', component: Rules, meta: {auth: true}},
+  { path: '/Expenses', component: Expenses, meta: {auth: true, apartment:true}},
+  { path: '/ApartmentMate', component: ApartmentMate, meta: {auth: true, apartment:true}},
+  { path: '/Documents', component: Documents, meta: {auth: true, apartment:true}},
+  { path: '/Items', component: Items, meta: {auth: true, apartment:true}},
+  { path: '/Notifications', component: Notifications, meta: {auth: true, apartment:true}},
+  { path: '/Rules', component: Rules, meta: {auth: true, apartment:true}},
   { path: '/ResetPassword', component: ResetPassword, meta: {notLoggedIn: true}},
   { path: '*', redirect: '/SplashScreen' }
 ];
@@ -50,6 +50,8 @@ router.beforeEach((to, from, next) => {
   // if logged in, don't show other pages
   } else if(to.meta.notLoggedIn && store.state.username) {
     next('/');
+  } else if(to.meta.apartment && store.state.apartmentId === undefined) {
+    next('/Dashboardi');
   } else {
     next();
   }
