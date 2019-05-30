@@ -49,6 +49,15 @@
         </ul>
         </div>-->
         <b-button @click="$bvModal.show('modal-email')">Invite Apartment Mate</b-button>
+
+        <b-button v-b-modal="'modal-1'" variant="danger" class="float-right">Leave Apartment</b-button>
+        <b-modal id="modal-1" hide-footer title="Leave Apartment" ref="leave_Modal">
+            <p><b>Are you SURE you wish to leave your apartment?</b></p>
+            <p><i>Note: This action can not be undone.</i></p>
+            <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
+            <b-button class="mt-2" variant="danger" @click="leaveApartment">Yes, I am sure.</b-button>
+        </b-modal>
+
         <!-- Modal Component 1-->
         <b-modal id="modal-email" centered title="Send E-mail" ref="Email_Modal" hide-header-close>
           <!-- Form for sending emails -->
@@ -79,6 +88,8 @@
             >Cancel</b-button>
           </div>
         </b-modal>
+
+
       </div>
     </b-jumbotron>
   </div>
@@ -148,6 +159,26 @@ export default {
                 break;
               case 401:
                 console.log(err.response.data);
+                break;
+              default:
+                console.log('An unknown error occurred.');
+                break;
+            }
+          }
+        }
+      },
+
+      async leaveApartment() {
+        try {
+          let response = await api.leave.post('jsmith@example.com', 'password123');
+          this.$refs.leave_Modal.hide();
+          this.$router.push({path: 'Dashboardi'});
+
+        } catch (err) {
+          if(err.response) {
+            switch(err.response.status) {
+              case 400:
+                console.log(err.reponse.data);
                 break;
               default:
                 console.log('An unknown error occurred.');

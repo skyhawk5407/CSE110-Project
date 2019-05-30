@@ -172,6 +172,15 @@ export default {
     })
   },
 
+  leave: {
+    post: (email, password) => axios.post('/users/leave_apartment', {},{
+      headers: {
+        email:email,
+        password: password
+      }
+    })
+  },
+
   //remove mate endpoint
   removeMate: {
     // Post to api/v1/apartments/remove_user, providing the user_id
