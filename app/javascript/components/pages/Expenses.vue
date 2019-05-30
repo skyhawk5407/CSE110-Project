@@ -1,48 +1,43 @@
 <template>
   <div>
     <b-jumbotron>
-      <template slot="header">
-				Expenses
-			</template>
-    <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
-      <!-- Props to b-table to add later TODO -->
-      <!-- :filter="filter"
+      <template slot="header">Expenses</template>
+      <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
+        <!-- Props to b-table to add later TODO -->
+        <!-- :filter="filter"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
-      @filtered="onFiltered"-->
-      <!-- Data -->
-      <template slot="Date" slot-scope="col">{{ col.value }}</template>
-      <template slot="Expense" slot-scope="col">{{ col.value }}</template>
-      <template slot="Amount" slot-scope="col">{{ col.value }}</template>
-      <template slot="Issuer" slot-scope="col">{{ col.value }}</template>
-      <template
-        slot="Payers"
-        slot-scope="col"
-      >
-      <!-- {{ col.value.first }} {{ col.value.middle }} {{ col.value.last }} -->
-      {{ col.value }}
-      </template>
-      <template slot="Description" slot-scope="col">{{ col.value }}</template>
-      <!-- Actions -->
-      <template slot="Actions" slot-scope="row">
-        <b-button variant="primary">Pay</b-button>
-        <b-button v-b-modal="'modal-2'" variant="danger" >Remove</b-button>
-        <b-modal id="modal-2" hide-footer title="Remove Expense">
-          <p>
-            <b>Are you SURE you wish to remove this expense?</b>
-          </p>
-          <p>
-            <i>Note: This action can not be undone.</i>
-          </p>
-          <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
-          <b-button class="mt-2" variant="danger" @click="removeExp(row.item)" >Yes, I am sure.</b-button>
-        </b-modal>
-      </template>
-    </b-table>
-    <!-- TODO: Add on click handlers into a form -->
-    <!-- TODO: Allow form to be reset each time + popup email sent! -->
-    <b-button v-b-modal.modal-1 variant="primary">Add Expense</b-button>
+        @filtered="onFiltered"-->
+        <!-- Data -->
+        <template slot="Date" slot-scope="col">{{ col.value }}</template>
+        <template slot="Expense" slot-scope="col">{{ col.value }}</template>
+        <template slot="Amount" slot-scope="col">{{ col.value }}</template>
+        <template slot="Issuer" slot-scope="col">{{ col.value }}</template>
+        <template slot="Payers" slot-scope="col">
+          <!-- {{ col.value.first }} {{ col.value.middle }} {{ col.value.last }} -->
+          {{ col.value }}
+        </template>
+        <template slot="Description" slot-scope="col">{{ col.value }}</template>
+        <!-- Actions -->
+        <template slot="Actions" slot-scope="row">
+          <b-button variant="primary">Pay</b-button>
+          <b-button v-b-modal="'modal-2'" variant="danger">Remove</b-button>
+          <b-modal id="modal-2" hide-footer title="Remove Expense">
+            <p>
+              <b>Are you SURE you wish to remove this expense?</b>
+            </p>
+            <p>
+              <i>Note: This action can not be undone.</i>
+            </p>
+            <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
+            <b-button class="mt-2" variant="danger" @click="removeExp(row.item)">Yes, I am sure.</b-button>
+          </b-modal>
+        </template>
+      </b-table>
+      <!-- TODO: Add on click handlers into a form -->
+      <!-- TODO: Allow form to be reset each time + popup email sent! -->
+      <b-button v-b-modal.modal-1 variant="primary">Add Expense</b-button>
     </b-jumbotron>
     <!-- Modal Component 1-->
     <b-modal id="modal-1" title="Add Expense" @ok="addExpense">
@@ -58,7 +53,7 @@
 
     <!-- <div>
       Post/Get Status: {{getStatus}}
-      </div> -->
+    </div>-->
   </div>
 </template>
 
@@ -76,9 +71,18 @@ export default {
         }
       ],
       getStatus: undefined,
-      fields: ["Date", "Expense", "Amount", "Issuer", "Payers", "Description", "Actions"],
+      fields: [
+        "Date",
+        "Expense",
+        "Amount",
+        "Issuer",
+        "Payers",
+        "Description",
+        "Actions"
+      ],
       expense_entries: [
         {
+          Id: 0,
           Date: "5/23/2019",
           Expense: "A big Gary L",
           Amount: 2000,
@@ -96,24 +100,28 @@ export default {
     };
   },
   methods: {
-    removeExp(row){
+    removeExp(row) {
       var amount = 1;
       var index = this.expense_entries.indexOf(row);
+      let response = api.expenses.delete(
+        this.expense_entries[index].Id,
+        "jsmith@example.com",
+        "password123"
+      );
       this.expense_entries.splice(index, amount);
-      // TODO ADD IN REMOVE IN BACKEND
     },
     // This should split the costs and submit multiple expenses to the backend
     async addExpense() {
       try {
         // post and wait for response
-        let response = await api.expenses.post(
+        let response = api.expenses.post(
           this.expense_payer_id,
           this.expense_issuer_id,
           this.expense_title,
           this.expense_amount,
           this.expense_description,
           "jsmith@example.com",
-          "password123",
+          "password123"
         );
         // console.log(response.data);
       } catch (err) {
@@ -162,12 +170,13 @@ export default {
         console.log(lastTransactionEntry);
         // add to table
         this.expense_entries.push({
+          Id: lastTransactionEntry.Id,
           Date: lastTransactionEntry.created_at,
           Expense: lastTransactionEntry.title,
           Amount: lastTransactionEntry.amount,
           Issuer: lastTransactionEntry.issuer.display_name,
-          Payers: lastTransactionEntry.payer.display_name, 
-          Description: lastTransactionEntry.description,
+          Payers: lastTransactionEntry.payer.display_name,
+          Description: lastTransactionEntry.description
         });
       } catch (err) {
         // Error handling
