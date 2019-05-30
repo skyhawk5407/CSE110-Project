@@ -9,7 +9,7 @@
 
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
-import VueCookie from 'vue-cookie';
+import VueCookie from 'vue-cookie'
 
 import App from '../app.vue'
 import router from '../router.js'
