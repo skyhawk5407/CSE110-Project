@@ -20,6 +20,7 @@ class Notification < ApplicationRecord
         :user_id => user.id,
         :notification_id => self.id
       )
+      NotificationMailer.with(user: user, notification: self).new_notification.deliver_now
     end
     UnreadNotification.import unread_notifications
   end

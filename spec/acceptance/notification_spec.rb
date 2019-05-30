@@ -48,15 +48,30 @@ resource 'Notifications' do
   post 'api/v1/apartments/notifications' do
     parameter :title, 'The title of the notification.', type: :string
     parameter :message, 'The message content of the notification', type: :string
+    parameter :anonymous, 'Whether the message should be sent anonymously (Default: false)', type: :boolean
 
     context '200' do
-      let(:title) {'Test Notification'}
-      let(:message) {'Hi everyone'}
-      example 'Notification creation' do
-        explanation 'Send a notification to everyone in the apartment.'
-        @existing_user.update(:apartment_id => @existing_apartment.id)
-        do_request
-        expect(status).to eq(200)
+      context 'Public' do
+        let(:title) {'Test Notification'}
+        let(:message) {'Hi everyone'}
+        example 'Notification creation' do
+          explanation 'Send a notification to everyone in the apartment.'
+          @existing_user.update(:apartment_id => @existing_apartment.id)
+          do_request
+          expect(status).to eq(200)
+        end
+      end
+
+      context 'Anonymous' do
+        let(:title) {'Test Notification'}
+        let(:message) {'Hi everyone'}
+        let(:anonymous) {true}
+        example 'Notification creation - Anonymous' do
+          explanation 'Send a notification anonymously.'
+          @existing_user.update(:apartment_id => @existing_apartment.id)
+          do_request
+          expect(status).to eq(200)
+        end
       end
     end
 

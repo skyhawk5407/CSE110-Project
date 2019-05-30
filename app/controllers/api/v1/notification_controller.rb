@@ -15,6 +15,7 @@ class Api::V1::NotificationController < ApplicationController
         :message => params[:message]
     )
     return render :json => {:errors => notification.errors.full_messages}, status: :bad_request unless notification.valid?
+    return render plain: 'Anonymous notification sent!', status: :ok if params[:anonymous]
     render plain: 'Notification sent!', status: :ok
   end
 

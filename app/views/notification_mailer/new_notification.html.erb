@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h2>Apartment Notification</h2>
+<p>
+  Hi <%=@display_name%>,
+  <br/><br/>
+  <%=@sender_name%> has sent an apartment-wide notification to <%=@apartment_name%>:
+  <br/><br/>
+  Notification title: <%=@title%>
+  <br/>
+  Notification content:
+  <br/>
+  <%=@message_sample%>
+  <br/><br/>
+  <a href=<%=Settings.BASE_URL%>>Login</a> to view more details about this notification.
+  <br /><br />
+  Thank you for using TURDMate!
+</p>
+</body>
+</html>
