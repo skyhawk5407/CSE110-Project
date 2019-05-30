@@ -25,12 +25,13 @@ const username = VueCookie.get('username');
 const password = VueCookie.get('password');
 const displayName = VueCookie.get('displayName');
 const phoneNumber = VueCookie.get('phoneNumber');
+const apartmentId = VueCookie.get('apartmentId');
 if(username && password){
   store.commit('setUsername', username);
   store.commit('setPassword', password);
   store.commit('setDisplayName', displayName);
   store.commit('setPhoneNumber', phoneNumber);
-  store.commit('setApartmentId', phoneNumber);
+  store.commit('setApartmentId', apartmentId);
 }
 
 /* Initialize vue */

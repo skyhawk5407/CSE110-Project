@@ -97,6 +97,7 @@
 				this.$store.commit('setPassword', this.register_password);
 				this.$store.commit('setDisplayName', this.register_display_name);
 				this.$store.commit('setPhoneNumber', this.register_phone_number);
+				this.$store.commit('setApartmentId', undefined);
 
 				this.$router.push({path: 'Dashboardi'});
 

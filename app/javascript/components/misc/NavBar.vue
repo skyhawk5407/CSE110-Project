@@ -50,11 +50,11 @@ export default {
   name: "NavBar",
   methods: {
     logout() {
-      this.$store.commit("setUsername", undefined);
-      this.$store.commit("setPassword", undefined);
-      this.$store.commit("setDisplayName", undefined);
-      this.$store.commit("setPhoneNumber", undefined);
-      this.$store.commit("setApartmentId", undefined);
+      this.$store.commit("setUsername", undefined, false);
+      this.$store.commit("setPassword", undefined, false);
+      this.$store.commit("setDisplayName", undefined, false);
+      this.$store.commit("setPhoneNumber", undefined, false);
+      this.$store.commit("setApartmentId", undefined, false);
 
       this.$cookie.delete('username');
       this.$cookie.delete('password');
