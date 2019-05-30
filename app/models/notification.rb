@@ -1,11 +1,10 @@
 class Notification < ApplicationRecord
   belongs_to :apartment
-  belongs_to :user
+  belongs_to :user, optional: true
 
   has_many :unread_notifications, dependent: :destroy
 
   validates :apartment_id, :presence => true
-  validates :user_id, :presence => true
   validates :title, :presence => true, :length => { :in => 1..32 }
   validates :message, :presence => true, :length => { :in => 1..4096 }
 
