@@ -32,7 +32,7 @@ class User < ApplicationRecord
   def leave_apartment
     delete_expenses
     delete_items
-    self.apartment_id = nil
+    self.update(:apartment_id => nil)
   end
 
   private
