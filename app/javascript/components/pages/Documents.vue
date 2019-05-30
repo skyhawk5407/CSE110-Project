@@ -1,116 +1,168 @@
 <template>
-    <div>
-        <b-table
-                show-empty
-                stacked="md"
-                :items="items"
-                :fields="fields"
-                :current-page="currentPage"
-                :per-page="perPage"
-                :filter="filter"
-                :sort-by.sync="sortBy"
-                :sort-desc.sync="sortDesc"
-                :sort-direction="sortDirection"
-                @filtered="onFiltered"
-        >
-            <template slot="Name" slot-scope="row">
-                {{ row.item.filename }}
-            </template>
+  <div>
+    <b-table
+        show-empty
+        :busy="tableBusy"
+        stacked="md"
+        :items="items"
+        :fields="fields">
+      <div slot="table-busy" class="text-center text-danger my-2">
+        <b-spinner class="align-middle"></b-spinner>
+        <strong>Loading...</strong>
+      </div>
 
-            <template slot="Title" slot-scope="row">
-                {{ row.item.title }}
-                <!--{{ row.value.first }} {{ row.value.middle }} {{ row.value.last }}-->
-            </template>
+      <template slot="Title" slot-scope="row">
+        {{ row.item.title }}
+      </template>
 
-            <template slot="Actions" slot-scope="row">
-                <b-button variant="success" @click="openWindow(row.item.url)">Download</b-button>
-                <b-button v-b-modal="'my_modal_documents'" variant="danger" @click="sendInfo(row.item.filename)">Delete</b-button>
-            </template>
-        </b-table>
+      <template slot="Filename" slot-scope="row">
+        {{ row.item.file_name }}
+      </template>
 
-        <b-modal id='my_modal_documents' hide-footer title="Delete Document">
-            <p><b>Are you SURE you wish to remove this document?</b></p>
-            <p><i>Note: This action can not be undone.</i></p>
-            <b-button class="mt-2" variant="info"  @click="hideModal('my_modal_documents')">No, I am not sure.</b-button>
-            <b-button class="mt-2" variant="danger"  @click="toggleModal('my_modal_documents',selectedRow)">Yes, I am sure.</b-button>
-        </b-modal>
+      <template slot="Uploader" slot-scope="row">
+        {{ row.item.creator_name }}
+      </template>
 
-        <input type="file" ref="file" style="display: none" @change="onFileChange" ><br>
-        <b-button v-b-modal.modal-1 variant="primary" @click="$refs.file.click()">Upload Document</b-button>
+      <template slot="Actions" slot-scope="row">
+        <b-button variant="info" @click="openTab(row.item.url)">Open</b-button>
+        <b-button variant="success" :href="row.item.url" download>Download</b-button>
+        <b-button v-b-modal="'my_modal_documents'" variant="danger" @click="sendInfo(row.item.id)">Delete</b-button>
+      </template>
+    </b-table>
+
+    <b-modal id='my_modal_documents' hide-footer title="Delete Document">
+      <p><b>Are you SURE you wish to remove this document?</b></p>
+      <p><i>Note: This action can not be undone.</i></p>
+      <b-button class="mt-2" variant="info" @click="hideModal('my_modal_documents')">No, I am not sure.</b-button>
+      <b-button class="mt-2" variant="danger" @click="toggleModal('my_modal_documents',selectedRow)">Yes, I am sure.
+      </b-button>
+    </b-modal>
+
+    <b-modal id="addModal"
+             ref="addModal"
+             hide-footer
+             @close="resetAddModal"
+             title="Add Document">
+      <label>Name of Document:</label>
+      <b-form-input v-model="title"></b-form-input>
+      <b-form-file
+          class="my-3"
+          v-model="file"
+          :state="Boolean(file)"
+          :file-name-formatter="truncateFileName"
+          placeholder="Choose a file..."
+          drop-placeholder="Drop file here..."
+      ></b-form-file>
+
+      <b-button variant="secondary"
+                :disabled="file==null||title===''"
+                @click="upload">
+      Upload
+      </b-button>
+      <b-alert class="my-3" variant="danger" :show="uploadError">{{uploadError}}</b-alert>
+
+    </b-modal>
+
+    <b-button v-b-modal.addModal variant="primary">Upload Document</b-button>
 
 
-    </div>
+  </div>
 </template>
 
 <script>
-    import api from '../../api.js';
+  import api from '../../api.js';
 
-    export default {
-        name: "Documents",
-        data() {
-            return {
-                fields: ['Name', 'Title', 'Actions'],
-                items: this.getDocuments,
-                selectedRow: ''
+  export default {
+    name: "Documents",
+    data() {
+      return {
+        fields: ['Title', 'Filename', 'Uploader', 'Actions'],
+        items: [],
+        selectedRow: '',
+        tableBusy: false,
 
-            };
-        },
-        methods: {
-            sendInvite() {
-                // TODO
-            },
+        title: undefined,
+        file: null,
+        uploadError: undefined,
+      };
+    },
+    created(){
+      this.getDocuments();
+    },
+    methods: {
+      async getDocuments() {
+        this.tableBusy = true;
+        let response = await api.document.all(this.$store.state.username,
+                                              this.$store.state.password);
+        // Only display the apartmentwide documents
+        this.items = response.data.filter((x) => x.apartmentwide);
+        this.tableBusy = false;
+      },
 
-            async getDocuments() {
-                // Make the Api call here in order to update the data.
-                // let response = api.document.post(221132332414, "docs1", "docs1.txt", false, 2342374829374982374892374893274982739847238947923874892374982374893272389472398472389);
-                let response = await api.document.get('jsmith@example.com', 'password123')
-                console.log(response.data)
-                return response.data
-                // return [{ Name: response.data[0]['filename'], Creator: {first: "Bob", middle: "P. ", last: "Oop"}, URL: response.data[0]['url']}]
-                // return item
-                // console.log(api.document.get(this.login_email_text, this.login_password_text));
-                // return [{ Name: "Rules.docx", Creator: {first: "Bob", middle: "P. ", last: "Oop"}, URL: "https://jacobsschool.ucsd.edu/faculty/faculty_bios/photos/300.jpg"},
-                //     { Name: "Lease_Agreement.pdf", Creator: {first: "Charlie", middle: "M. ", last: "Smith"},  URL: "https://jacobsschool.ucsd.edu/faculty/faculty_bios/photos/300.jpg"}]
-            },
-
-            handleSubmit() {
-                // Exit when the form isn't valid
-                if (!this.checkFormValidity()) {
-                    return;
-                }
-                // Push the name to submitted names
-                this.submittedNames.push(this.name);
-                // Hide the modal manually
-                this.$nextTick(() => {
-                    this.$refs.modal.hide();
-                });
-            },
-            onFileChange(e) {
-                const file = e.target.files[0];
-                var encoded = btoa(file)
-                var input = event.target;
-                // this.url = URL.createObjectURL(file);
-                var reader = new FileReader();
-
-                reader.onload = function(){
-                    var text = reader.result;
-                    var encoded = btoa(text);
-                };
-                reader.readAsText(file);
-            },
-            hideModal(modal) {
-                this.$root.$emit('bv::hide::modal', modal, '#btnShow')
-            },
-            toggleModal(modal, row) {
-                this.items = this.getDocuments()
-                this.$root.$emit('bv::toggle::modal', modal, '#btnToggle')
-            },
-            openWindow(url) {
-                window.open(url, "_blank")
-            },
-            sendInfo(row) {
-                this.selectedRow = row
-            }
+      async postDocument(fileData, fileName, fileSize) {
+        // If fileData too large, set error and return
+        const MAX_MB = 8;
+        if(fileSize/1024/1024 >= MAX_MB){
+          this.uploadError = 'File size too large (exceeds ' + MAX_MB + ' MB).';
+          return;
         }
-    };
+
+        try {
+          // Post document and update list
+          await api.document.post(
+              undefined,
+              this.title,
+              fileName,
+              true,
+              fileData,
+              this.$store.state.username,
+              this.$store.state.password,
+          );
+          this.getDocuments();
+
+          // Cleanup and reset modal
+          this.$refs.addModal.hide();
+          this.resetAddModal();
+        } catch(err){
+          if(err.response){
+            this.uploadError = err.response.data.errors[0];
+          }
+        }
+      },
+
+      async deleteDocument(row) {
+        await api.document.delete(row, 'jsmith@example.com', 'password123');
+        this.getDocuments();
+      },
+
+      upload() {
+        let reader = new FileReader();
+        reader.onloadend = () => {
+          let binaryString = reader.result;
+          let fileData = btoa(binaryString);
+          this.postDocument(fileData, this.file.name, this.file.size);
+        };
+        reader.readAsBinaryString(this.file);
+      },
+
+      hideModal(modal) {
+        this.$root.$emit('bv::hide::modal', modal, '#btnShow');
+      },
+
+      toggleModal(modal, row) {
+        this.deleteDocument(row);
+        this.$root.$emit('bv::toggle::modal', modal, '#btnToggle');
+      },
+
+      sendInfo(row) {
+        this.selectedRow = row;
+      },
+
+      resetAddModal(){
+        this.title = '';
+        this.file = undefined;
+        this.uploadError = undefined;
+      }
+    }
+  };
 </script>

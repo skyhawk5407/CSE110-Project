@@ -16,6 +16,7 @@ class Item < ApplicationRecord
 
     ActiveStorage::Current.host = base_url
     json.merge({:url => self.image.blob.service_url,
+                :file_name => self.image.filename,
                 :file_data => Base64.encode64(self.image.download)})
   end
 end

@@ -168,5 +168,42 @@ export default {
         password: password
       }
     })
+  },
+
+  document: {
+    post: (expense_id, title, filename, apartmentwide, file_data, email, password) =>
+        axios.post('/apartments/documents/upload', {
+          expense_id : expense_id,
+          title: title,
+          filename: filename,
+          apartmentwide: apartmentwide,
+          file_data: file_data
+        }, {
+          headers: {
+            email: email,
+            password: password
+          }
+        }),
+    // Unused for now
+    download: (documentId, email, password) => axios.get('/apartments/documents/download', {
+      params: {document_id: documentId},
+      headers: {
+        email: email,
+        password: password
+      }
+    }),
+    all: (email, password) => axios.get('/apartments/documents/all', {
+      headers: {
+        email: email,
+        password: password
+      }
+    }),
+    delete: (document_id, email, password) => axios.delete('/apartments/documents', {
+      data: {document_id: document_id},
+      headers: {
+        email: email,
+        password: password
+      }
+    })
   }
 }

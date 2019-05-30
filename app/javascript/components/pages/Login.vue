@@ -63,7 +63,10 @@
               this.login_password_text);
           // TODO: Login permanence if remember me is checked
           if (this.remember_me) {
-
+            this.$cookie.set('username', this.login_email_text, 30);
+            this.$cookie.set('password', this.login_password_text, 30);
+            this.$cookie.set('displayName', response.data.display_name, 30);
+            this.$cookie.set('phoneNumber', response.data.phone_number, 30);
           }
 
           this.$store.commit('setUsername', this.login_email_text);
