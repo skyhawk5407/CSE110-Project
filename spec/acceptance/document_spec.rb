@@ -103,6 +103,42 @@ resource 'Document' do
     end
   end
 
+  get 'api/v1/apartments/documents/download' do
+    parameter :document_id, 'The document to download.', type: :integer
+
+    context '200' do
+      let(:document_id) {@existing_document.id}
+      example 'Download document' do
+        explanation 'Download document data from id.'
+        # User is part of apartment
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        do_request
+        expect(status).to eq(200)
+      end
+    end
+
+    context '400' do
+      example_request 'Download document - Not in apartment' do
+        explanation 'Attempt to get document while user not already in apartment.'
+        expect(status).to eq(400)
+      end
+    end
+
+    context '401' do
+      let(:document_id) {@existing_document.id}
+
+      let(:email_header) {nil}
+      let(:password_header) {nil}
+
+      example 'Download document - Not logged in' do
+        explanation 'Attempt to get document while not supplying correct user credentials.'
+        @existing_user.update_column(:apartment_id, @existing_apartment.id)
+        do_request
+        expect(status).to eq(401)
+      end
+    end
+  end
+
   get 'api/v1/apartments/documents/all' do
     context '200' do
       example 'Get all documents' do

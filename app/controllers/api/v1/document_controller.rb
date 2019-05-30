@@ -4,7 +4,7 @@
 class Api::V1::DocumentController < ApplicationController
   before_action :authenticated?
   before_action :get_apartment
-  before_action :get_document, only: [:update, :delete]
+  before_action :get_document, only: [:update, :delete, :download]
 
   def upload
     # Decode the file
@@ -39,6 +39,10 @@ class Api::V1::DocumentController < ApplicationController
 
     # Add the url and file data to each
     render :json => docs.map {|x| x.to_json(request.base_url)}
+  end
+
+  def download
+    render :json => {:file_data => @document.encoded_file_data}
   end
 
   def update

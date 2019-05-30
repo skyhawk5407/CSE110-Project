@@ -9,6 +9,7 @@
 
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
+import VueCookie from 'vue-cookie';
 
 import App from '../app.vue'
 import router from '../router.js'
@@ -16,6 +17,20 @@ import store from '../store.js'
 import '../mixin.js'
 
 Vue.use(BootstrapVue);
+Vue.use(VueCookie);
+
+
+// Load cookies
+const username = VueCookie.get('username');
+const password = VueCookie.get('password');
+const displayName = VueCookie.get('displayName');
+const phoneNumber = VueCookie.get('phoneNumber');
+if(username && password){
+  store.commit('setUsername', username);
+  store.commit('setPassword', password);
+  store.commit('setDisplayName', displayName);
+  store.commit('setPhoneNumber', phoneNumber);
+}
 
 /* Initialize vue */
 document.addEventListener('DOMContentLoaded', () => {
