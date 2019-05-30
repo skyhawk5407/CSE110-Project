@@ -67,12 +67,14 @@
             this.$cookie.set('password', this.login_password_text, 30);
             this.$cookie.set('displayName', response.data.display_name, 30);
             this.$cookie.set('phoneNumber', response.data.phone_number, 30);
+            this.$cookie.set('apartmentId', response.data.apartment_id, 30);
           }
 
           this.$store.commit('setUsername', this.login_email_text);
           this.$store.commit('setPassword', this.login_password_text);
           this.$store.commit('setDisplayName', response.data.display_name);
           this.$store.commit('setPhoneNumber', response.data.phone_number);
+          this.$store.commit('setApartmentId', response.data.apartment_id);
 
           if (response.data.apartment_id == null) {
             this.$router.push({path: 'Dashboardi'});
@@ -82,6 +84,18 @@
 
           this.show_login_fail = false;
         } catch (err) {
+          this.$store.commit("setUsername", undefined);
+          this.$store.commit("setPassword", undefined);
+          this.$store.commit("setDisplayName", undefined);
+          this.$store.commit("setPhoneNumber", undefined);
+          this.$store.commit("setApartmentId", undefined);
+
+          this.$cookie.delete('username');
+          this.$cookie.delete('password');
+          this.$cookie.delete('displayName');
+          this.$cookie.delete('phoneNumber');
+          this.$cookie.delete('apartmentId');
+          
           this.isSuccess = err.response.data.errors[0];
           this.show_login_fail = true;
         }
