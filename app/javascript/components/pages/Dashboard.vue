@@ -11,9 +11,6 @@
 			  <b-tab title="Items">
                   <Items></Items>
 			  </b-tab>
-			  <b-tab title="Rules">
-                  <Rules></Rules>
-			  </b-tab>
 			  <b-tab title="Expenses">
                   <Expenses></Expenses>
 			  </b-tab>
