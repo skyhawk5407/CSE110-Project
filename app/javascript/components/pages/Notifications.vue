@@ -3,7 +3,7 @@
     <b-jumbotron>
       <template slot="header">Notifications</template>
 
-      <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
+      <b-table show-empty stacked="md" :items="notification_entries" :fields="fields">
         <!-- Props to b-table to add later TODO -->
         <!-- :filter="filter"
       :sort-by.sync="sortBy"
@@ -45,6 +45,7 @@
                     <b-button variant="info" @click="sendNotification">Send Notification</b-button>
                 </div>
       </template-->
+      <b-alert variant="danger" :show="invalidField">{{fieldError}}</b-alert>
     </b-jumbotron>
   </div>
 </template>
@@ -57,13 +58,15 @@ export default {
     return {
       title: "",
       message: "",
+      invalidField: false,
+      fieldError: "",
       fields: ["Date", "Subject", "Message", "Actions"],
-      expense_entries: [
+      notification_entries: [
         {
-          Date: "5/23/2019",
+          Date: "5/30/2019",
           Subject: "Hello",
           Message:
-            "Welcome to the apartment! To access all the modules, go to the top part and click on the NavBar"
+            "Welcome to TURDMate! To access each module, navigate to the top and click the button on the NavBar."
         }
       ]
     };
@@ -77,18 +80,24 @@ export default {
         let response = await api.notification.post(
           this.title,
           this.message,
-          "jsmith@example.com",
-          "password123"
+          this.$store.state.username,
+          this.$store.state.password
         );
+        this.invalidField = false;
 
         console.log(response.status);
         console.log(response.data);
+
+        // call get Notification to populate
+        this.getNotification(true);
       } catch (err) {
         // Error handling
         if (err.response) {
           switch (err.response.status) {
             case 400: // Bad request
               console.log("Bad request");
+              this.invalidField = true;
+              this.fieldError = err.response.data.errors[0];
               break;
             default:
               // 500
@@ -102,35 +111,38 @@ export default {
       this.title = "";
       this.message = "";
 
-      // call get Notification to populate
-      this.getNotification();
+
     },
-    async getNotification() {
+    async getNotification(single) {
       try {
         // get Notification
         let response = await api.notification.get(
-          "jsmith@example.com",
-          "password123"
+          this.$store.state.username,
+          this.$store.state.password
         );
 
         var notifications = response.data;
-        var currId = response.data[0].id;
-        var lastNotificationId = notifications.length - 1;
-        console.log(response);
-        // This data contains all the data for the last notification
-        var lastNotificationEntry = notifications.find(
-          function findLastTransaction(element, index, array) {
-            var lastNotificationId = array.length - 1;
-            return element == lastNotificationId || index == lastNotificationId;
-          },
-          lastNotificationId
-        );
-        // add to table
-        this.expense_entries.push({
-          Date: lastNotificationEntry.created_at,
-          Subject: lastNotificationEntry.title,
-          Message: lastNotificationEntry.message
-        });
+        var notificationId;
+        if (single == true) {
+          notificationId = notifications.length - 1;
+        } else {
+          notificationId = 0;
+        }
+        for (var i = notificationId; i < notifications.length; i++) {
+          console.log(response.data[i].id);
+          var lastNotificationEntry = notifications.find(
+            function findLastNotification(element, index, array) {
+              return element == i || index == i;
+            },
+            notificationId
+          );
+          // add to table
+          this.notification_entries.push({
+            Date: lastNotificationEntry.created_at,
+            Subject: lastNotificationEntry.title,
+            Message: lastNotificationEntry.message
+          });
+        }
       } catch (err) {
         // Error handling
         if (err.response) {
@@ -148,9 +160,10 @@ export default {
       }
     },
 
-    async readNotification() {
-        
-    }
+    async readNotification() {}
+  },
+  beforeMount() {
+    this.getNotification(false);
   }
 };
 </script>
