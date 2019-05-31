@@ -2,6 +2,7 @@
   <div>
     <b-jumbotron>
       <template slot="header">Expenses</template>
+
       <!-- Add Expense Modal and Button -->
       <b-button v-b-modal.modal-add variant="primary">Add Expense</b-button>
       <b-modal id="modal-add" hide-footer title="Add Expense">
@@ -18,7 +19,9 @@
         <b-button class="mt-2" variant="info" @click="addExpense">Add Expense</b-button>
         <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-add')">Cancel</b-button>
       </b-modal>
+
       <label>Expenses Owed</label>
+
       <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
         <!-- Props to b-table to add later TODO -->
         <!-- :filter="filter"
@@ -46,7 +49,7 @@
             <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-pay')">Cancel</b-button>
           </b-modal>
           <!-- Remove Expense Modal and Button-->
-          <b-button v-b-modal.modal-remove variant="danger" class="btn-sm">Remove</b-button>
+          <!-- <b-button v-b-modal.modal-remove variant="danger" class="btn-sm">Remove</b-button>
           <b-modal id="modal-remove" hide-footer title="Remove Expense" no-stacking>
             <p>
               <b>Are you SURE you wish to remove this expense?</b>
@@ -60,10 +63,12 @@
               @click="$bvModal.hide('modal-remove')"
             >No, I am not sure.</b-button>
             <b-button class="mt-2" variant="danger" @click="removeExp(row.item)">Yes, I am sure.</b-button>
-          </b-modal>
+          </b-modal>-->
         </template>
       </b-table>
+
       <label>Expenses Issued</label>
+
       <b-table show-empty stacked="md" :items="issued_expense_entries" :fields="fields">
         <!-- Props to b-table to add later TODO -->
         <!-- :filter="filter"
