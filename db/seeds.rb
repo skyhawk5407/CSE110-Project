@@ -31,6 +31,27 @@ case Rails.env
         :apartment_id => apt.id
     )
 
+    User.create(
+        :email => 'jxie@example.com',
+        :password => 'password345',
+        :display_name => 'Jonathan Xie',
+        :apartment_id => apt.id
+    )
+
+    User.create(
+        :email => 'theflash@example.com',
+        :password => 'password456',
+        :display_name => 'Barry Allen',
+        :apartment_id => apt.id
+    )
+
+    User.create(
+        :email => 'eyeager@example.com',
+        :password => 'password567',
+        :display_name => 'Eren Yeager',
+        :apartment_id => apt.id
+    )
+
   when 'test'
     # test-specific seeds ...
     # (Consider having your tests set up the data they need

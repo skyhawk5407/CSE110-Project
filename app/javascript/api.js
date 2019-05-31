@@ -212,6 +212,17 @@ export default {
     })
   },
 
+  //get current apartment endpoint
+  getApt: {
+    // Post to api/v1/apartments
+    get: (email, password) => axios.get('/apartments', {
+      headers: {
+        email: email,
+        password: password
+      }
+    })
+  },
+
   document: {
     post: (expense_id, title, filename, apartmentwide, file_data, email, password) =>
       axios.post('/apartments/documents/upload', {
