@@ -14,51 +14,60 @@
         <template slot="Expense" slot-scope="col">{{ col.value }}</template>
         <template slot="Amount" slot-scope="col">{{ col.value }}</template>
         <template slot="Issuer" slot-scope="col">{{ col.value }}</template>
-        <template slot="Payers" slot-scope="col">
-          <!-- {{ col.value.first }} {{ col.value.middle }} {{ col.value.last }} -->
-          {{ col.value }}
-        </template>
+        <template slot="Payers" slot-scope="col">{{ col.value }}</template>
         <template slot="Description" slot-scope="col">{{ col.value }}</template>
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
-          <b-button variant="primary">Pay</b-button>
-          <b-button v-b-modal="'modal-2'" variant="danger">Remove</b-button>
-          <b-modal id="modal-2" hide-footer title="Remove Expense">
+          <!-- Pay Expense Modal and Button -->
+          <b-button v-b-modal.modal-pay variant="primary" class="btn-sm">Pay Me</b-button>
+          <b-modal id="modal-pay" hide-footer title="Pay Expense" no-stacking>
+            <p>
+              <b>Do you want to pay for this expense?</b>
+            </p>
+            <b-button class="mt-2" variant="info" @click="$bvModal.hide('modal-pay')">Pay expense</b-button>
+            <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-pay')">Cancel</b-button>
+          </b-modal>
+          <!-- Remove Expense Modal and Button-->
+          <b-button v-b-modal.modal-remove variant="danger" class="btn-sm">Remove</b-button>
+          <b-modal id="modal-remove" hide-footer title="Remove Expense" no-stacking>
             <p>
               <b>Are you SURE you wish to remove this expense?</b>
-            </p>
-            <p>
+              <br>
+              <br>
               <i>Note: This action can not be undone.</i>
             </p>
-            <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
+            <b-button
+              class="mt-2"
+              variant="info"
+              @click="$bvModal.hide('modal-remove')"
+            >No, I am not sure.</b-button>
             <b-button class="mt-2" variant="danger" @click="removeExp(row.item)">Yes, I am sure.</b-button>
           </b-modal>
         </template>
       </b-table>
-      <!-- TODO: Add on click handlers into a form -->
-      <!-- TODO: Allow form to be reset each time + popup email sent! -->
-      <b-button v-b-modal.modal-1 variant="primary">Add Expense</b-button>
+      <!-- Add Expense Modal and Button -->
+      <b-button v-b-modal.modal-add variant="primary">Add Expense</b-button>
+      <b-modal id="modal-add" hide-footer title="Add Expense">
+        <!-- Expense Fields -->
+        <label>Name of Expense:</label>
+        <b-form-input v-model="expense_title"></b-form-input>
+        <label>Amount:</label>
+        <b-form-input v-model="expense_amount"></b-form-input>
+        <label>Description:</label>
+        <b-form-textarea v-model="expense_description" rows="3"></b-form-textarea>
+        <label>Payer:</label>
+        <b-form-input v-model="expense_payer_id"></b-form-input>
+        <!-- Options -->
+        <b-button class="mt-2" variant="info" @click="addExpense">Add Expense</b-button>
+        <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-add')">Cancel</b-button>
+      </b-modal>
     </b-jumbotron>
-    <!-- Modal Component 1-->
-    <b-modal id="modal-1" title="Add Expense" @ok="addExpense">
-      <label>Name of Expense:</label>
-      <b-form-input v-model="expense_title"></b-form-input>
-      <label>Amount:</label>
-      <b-form-input v-model="expense_amount"></b-form-input>
-      <label>Description:</label>
-      <b-form-textarea v-model="expense_description" rows="3"></b-form-textarea>
-      <label>Payer:</label>
-      <b-form-input v-model="expense_payer_id"></b-form-input>
-    </b-modal>
-
-    <!-- <div>
-      Post/Get Status: {{getStatus}}
-    </div>-->
   </div>
 </template>
 
 <script>
 import api from "../../api.js";
+import moment from "moment";
 
 export default {
   name: "Expenses",
@@ -70,7 +79,6 @@ export default {
           error: false
         }
       ],
-      getStatus: undefined,
       fields: [
         "Date",
         "Expense",
@@ -80,48 +88,44 @@ export default {
         "Description",
         "Actions"
       ],
-      expense_entries: [
-        {
-          Id: 0,
-          Date: "5/23/2019",
-          Expense: "A big Gary L",
-          Amount: 2000,
-          Issuer: "Gary Gillespe",
-          Payers: "Bob P. Oop",
-          Description: "Oh no I'm broke!"
-        }
-      ],
+      expense_entries: [],
 
+      current_user_email: this.$store.state.username,
+      current_user_password: this.$store.state.password,
       expense_payer_id: 1,
-      expense_issuer_id: 2,
+      expense_issuer_id: 1,
       expense_title: "Rent",
       expense_description: "Now I am realy realy really broke!",
       expense_amount: 10000
     };
   },
+  created() {
+    this.getAllExpenses();
+  },
   methods: {
-    removeExp(row) {
+    async removeExp(row) {
       var amount = 1;
       var index = this.expense_entries.indexOf(row);
-      let response = api.expenses.delete(
+      let response = await api.expenses.delete(
         this.expense_entries[index].Id,
-        "jsmith@example.com",
-        "password123"
+        this.current_user_email,
+        this.current_user_password
       );
       this.expense_entries.splice(index, amount);
+      this.$bvModal.hide("modal-remove");
     },
-    // This should split the costs and submit multiple expenses to the backend
+    // This should split the costs and submit multiple expenses to the backend TODO FIX THIS TO UPDATED EXPENSE ENTRIES
     async addExpense() {
       try {
         // post and wait for response
-        let response = api.expenses.post(
+        let response = await api.expenses.post(
           this.expense_payer_id,
           this.expense_issuer_id,
           this.expense_title,
-          this.expense_amount,
           this.expense_description,
-          "jsmith@example.com",
-          "password123"
+          this.expense_amount,
+          this.current_user_email,
+          this.current_user_password
         );
         // console.log(response.data);
       } catch (err) {
@@ -142,21 +146,19 @@ export default {
           }
         }
       }
-
       // Call get Expense to populate
       this.getExpense();
+      this.$bvModal.hide("modal-add");
     },
     async getExpense() {
       try {
         // get Expense
         let response = await api.expenses.get(
-          "jsmith@example.com",
-          "password123"
+          this.current_user_email,
+          this.current_user_password
         );
 
-        this.getStatus = response.status;
         var transactions = response.data;
-        var currId = response.data[0].id;
         var lastTransactionId = transactions.length - 1;
         console.log(response);
         // This data contains all the data for the last transaction
@@ -170,8 +172,8 @@ export default {
         console.log(lastTransactionEntry);
         // add to table
         this.expense_entries.push({
-          Id: lastTransactionEntry.Id,
-          Date: lastTransactionEntry.created_at,
+          Id: lastTransactionEntry.id,
+          Date: moment(lastTransactionEntry.created_at).format("MM/DD/YYYY"),
           Expense: lastTransactionEntry.title,
           Amount: lastTransactionEntry.amount,
           Issuer: lastTransactionEntry.issuer.display_name,
@@ -198,11 +200,37 @@ export default {
       // clear form after submit
       this.formText = "";
     },
-    // TODO USED TO OBTAIN THE EXPENSES IN THE TABLE
-    obtainFields(array) {
-      array.forEach(checkPayid);
-      function checkPayid(expense) {
-        // TODO FILL OUT FUNCTIONALITY TO PARSE JSON FOR EXPENSE DATA
+    async getAllExpenses() {
+      let response = await api.expenses.get(
+        this.current_user_email,
+        this.current_user_password
+      );
+      var transactions = response.data;
+      console.log(transactions);
+      // TODO CAN YOU get the issuer ID and set it?
+      //      expense_issuer_id: 1, get issuer and set it.. payer example id was 2
+      // Iterate through each transaction and push...
+      // This data contains all the data for the last transaction
+      // var lastTransactionEntry = transactions.find(
+      //   function findissuerId(element, index, array) {
+      //     var currentUser = thus.current_user_email;
+      //     return element == currentUser || index == lastTransactionId;
+      //   },
+      //   lastTransactionId
+      // );
+      var i = 0;
+      for (i in transactions) {
+        var entry = transactions[i];
+        // add to table
+        this.expense_entries.push({
+          Id: entry.Id,
+          Date: moment(entry.created_at).format("MM/DD/YYYY"),
+          Expense: entry.title,
+          Amount: entry.amount,
+          Issuer: entry.issuer.display_name,
+          Payers: entry.payer.display_name,
+          Description: entry.description
+        });
       }
     }
   }
