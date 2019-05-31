@@ -10,23 +10,8 @@
         <b-nav-item v-if="$store.state.username" to="/ApartmentMate">Apartment Mates</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/Documents">Documents</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/Items">Items</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/Rules">Rules</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/Expenses">Expenses</b-nav-item>
         <b-nav-item v-if="$store.state.username" to="/Notifications">Notifications</b-nav-item>
-        <b-nav-item v-if="$store.state.username" v-b-modal="'modal-leave'" >Leave Apartment</b-nav-item>
-       
-       
-        <b-modal id="modal-leave" hide-footer title="Leave Apartment">
-          <p>
-            <b>Are you SURE you wish to leave your apartment?</b>
-          </p>
-          <p>
-            <i>Note: This action can not be undone.</i>
-          </p>
-          <b-button class="mt-2" variant="info">No, I am not sure.</b-button>
-          <b-button class="mt-2" variant="danger">Yes, I am sure.</b-button>
-        </b-modal>
-
 
       </b-navbar-nav>
 

@@ -47,7 +47,7 @@
           try {
             //HARDCODED replace email and password
             let response = await api.apartment.post(this.apartment_name_text,
-              this.apartment_address_text, 'jsmith@example.com', 'password123');
+              this.apartment_address_text, this.$store.state.username, this.$store.state.password);
 
               this.$router.push({path: 'Dashboard'});
           } catch(err) {
@@ -68,8 +68,10 @@
         },
         async joinApartment() {
           try {
-            let response = await api.join.post(this.apartment_code_text, 'jsmith@example.com', 'password123');
+            let response = await api.join.post(this.apartment_code_text, this.$store.state.username, this.$store.state.password);
             console.log(response.status);
+            this.$router.push({path: 'Dashboard'});
+
           } catch(err) {
             if(err.response){
               switch (err.response.status) {
