@@ -89,25 +89,54 @@ export default {
         "Actions"
       ],
       expense_entries: [],
+      apartment_mates: [],
 
       current_user_email: this.$store.state.username,
       current_user_password: this.$store.state.password,
-      expense_payer_id: 1,
-      expense_issuer_id: 1,
-      expense_title: "Rent",
-      expense_description: "Now I am realy realy really broke!",
-      expense_amount: 10000
+      expense_payer_id: undefined,
+      expense_issuer_id: undefined,
+      expense_title: undefined,
+      expense_description: undefined,
+      expense_amount: undefined
     };
   },
   created() {
+    this.extractMates();
     this.getAllExpenses();
   },
   methods: {
+    async extractMates() {
+      let response = await api.getApt.get(
+        this.$store.state.username,
+        this.$store.state.password
+      );
+      var mate_list = response.data.users;
+      var apartment_mates = [];
+      for (var i = 0; i < mate_list.length; i++) {
+        var apt_mate = mate_list[i];
+        if (apt_mate.email == this.$store.state.username) {
+          this.expense_issuer_id = apt_mate.id;
+        }
+        apartment_mates.push({
+          id: apt_mate.id,
+          display_name: apt_mate.display_name
+        });
+      }
+    },
+    async convertToCurrency(value) {
+        var currency = "";
+        var dollars = (int) (value / 100);
+        var cents = value - (dollar*100);
+        currency = "$" + String(dollars) + "." + String(cents);
+        console.log(currency);
+        return currency;
+    },
     async removeExp(row) {
       var amount = 1;
       var index = this.expense_entries.indexOf(row);
+      var expense_id = this.expense_entries[index].Id;
       let response = await api.expenses.delete(
-        this.expense_entries[index].Id,
+        expense_id,
         this.current_user_email,
         this.current_user_password
       );
@@ -127,6 +156,8 @@ export default {
           this.current_user_email,
           this.current_user_password
         );
+        // Call get Expense to populate
+        this.getExpense();
         // console.log(response.data);
       } catch (err) {
         // Error handling
@@ -146,8 +177,7 @@ export default {
           }
         }
       }
-      // Call get Expense to populate
-      this.getExpense();
+
       this.$bvModal.hide("modal-add");
     },
     async getExpense() {
@@ -207,23 +237,13 @@ export default {
       );
       var transactions = response.data;
       console.log(transactions);
-      // TODO CAN YOU get the issuer ID and set it?
-      //      expense_issuer_id: 1, get issuer and set it.. payer example id was 2
-      // Iterate through each transaction and push...
-      // This data contains all the data for the last transaction
-      // var lastTransactionEntry = transactions.find(
-      //   function findissuerId(element, index, array) {
-      //     var currentUser = thus.current_user_email;
-      //     return element == currentUser || index == lastTransactionId;
-      //   },
-      //   lastTransactionId
-      // );
+
       var i = 0;
       for (i in transactions) {
         var entry = transactions[i];
         // add to table
         this.expense_entries.push({
-          Id: entry.Id,
+          Id: entry.id,
           Date: moment(entry.created_at).format("MM/DD/YYYY"),
           Expense: entry.title,
           Amount: entry.amount,
