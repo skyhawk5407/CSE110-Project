@@ -43,7 +43,7 @@
               @click="$bvModal.hide('modal-remove')"
             >No, I am not sure.</b-button>
             <b-button class="mt-2" variant="danger" @click="removeExp(row.item)">Yes, I am sure.</b-button>
-          </b-modal> -->
+          </b-modal>-->
         </template>
       </b-table>
       <label>Expenses Issued</label>
@@ -71,25 +71,34 @@
             </p>
             <b-button class="mt-2" variant="info" @click="$bvModal.hide('modal-pay')">Pay expense</b-button>
             <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-pay')">Cancel</b-button>
-          </b-modal> -->
+          </b-modal>-->
           <!-- Remove Expense Modal     and Button -->
-          <b-button v-b-modal.modal-remove variant="danger" class="btn-sm">Remove</b-button>
-          <b-modal id="modal-remove" hide-footer title="Remove Expense" no-stacking>
-            <p>
-              <b>Are you SURE you wish to remove this expense?</b>
-              <br>
-              <br>
-              <i>Note: This action can not be undone.</i>
-            </p>
-            <b-button
-              class="mt-2"
-              variant="info"
-              @click="$bvModal.hide('modal-remove')"
-            >No, I am not sure.</b-button>
-            <b-button class="mt-2" variant="danger" @click="removeExp(row.item)">Yes, I am sure.</b-button>
-          </b-modal>
+          <b-button
+            v-b-modal.modal-remove
+            variant="danger"
+            class="btn-sm"
+            @click="sendInfo(row.item)"
+          >Remove</b-button>
         </template>
       </b-table>
+      <b-modal id="modal-remove" hide-footer title="Remove Expense" no-stacking>
+        <p>
+          <b>Are you SURE you wish to remove this expense?</b>
+          <br>
+          <br>
+          <i>Note: This action can not be undone.</i>
+        </p>
+        <b-button
+          class="mt-2"
+          variant="info"
+          @click="$bvModal.hide('modal-remove')"
+        >No, I am not sure.</b-button>
+        <b-button
+          class="mt-2"
+          variant="danger"
+          @click="removeExp(selected_row)"
+        >Yes, I am sure.</b-button>
+      </b-modal>
       <!-- Add Expense Modal and Button -->
       <b-button v-b-modal.modal-add variant="primary">Add Expense</b-button>
       <b-modal id="modal-add" hide-footer title="Add Expense">
@@ -136,6 +145,7 @@ export default {
       apartment_mates: [],
       expense_entries: [],
       issued_expense_entries: [],
+      selected_row: '',
 
       current_user_email: this.$store.state.username,
       current_user_password: this.$store.state.password,
@@ -178,7 +188,7 @@ export default {
       return currency;
     },
     async removeExp(row) {
-        console.log(row);
+      console.log(row);
       var amount = 1;
       var index = this.issued_expense_entries.indexOf(row);
       var expense_id = this.issued_expense_entries[index].Id;
@@ -237,7 +247,7 @@ export default {
 
         var transactions = response.data;
         var lastTransactionId = transactions.length - 1;
-        console.log(response);
+        // console.log(response);
         // This data contains all the data for the last transaction
         var lastTransactionEntry = transactions.find(
           function findLastTransaction(element, index, array) {
@@ -246,7 +256,7 @@ export default {
           },
           lastTransactionId
         );
-        console.log(lastTransactionEntry);
+        // console.log(lastTransactionEntry);
         // add to table
         this.issued_expense_entries.push({
           Id: lastTransactionEntry.id,
@@ -255,7 +265,8 @@ export default {
           Amount: lastTransactionEntry.amount,
           Issuer: lastTransactionEntry.issuer.display_name,
           Payers: lastTransactionEntry.payer.display_name,
-          Description: lastTransactionEntry.description
+          Description: lastTransactionEntry.description,
+          Paid: lastTransactionEntry.paid
         });
       } catch (err) {
         // Error handling
@@ -283,12 +294,12 @@ export default {
         this.current_user_password
       );
       var transactions = response.data;
-      console.log(transactions);
+      //   console.log(transactions);
 
       var i = 0;
       for (i in transactions) {
         var entry = transactions[i];
-        // console.log(entry.id);
+        // console.log(entry.paid);
         // add to table
         var load = {
           Id: entry.id,
@@ -297,7 +308,8 @@ export default {
           Amount: entry.amount,
           Issuer: entry.issuer.display_name,
           Payers: entry.payer.display_name,
-          Description: entry.description
+          Description: entry.description,
+          Paid: entry.paid
         };
         if (entry.issuer.id == this.expense_issuer_id) {
           this.issued_expense_entries.push(load);
@@ -305,6 +317,11 @@ export default {
           this.expense_entries.push(load);
         }
       }
+    },
+    sendInfo(row) {
+      // console.log(row);
+      this.selected_row = row;
+      // console.log(this.selected_row);
     }
   }
 };
