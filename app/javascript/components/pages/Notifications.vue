@@ -12,6 +12,7 @@
         @filtered="onFiltered"-->
         <!-- Data -->
         <template slot="Date" slot-scope="row">{{ row.value }}</template>
+        <template slot="Sender" slot-scope="row">{{ row.value }}</template>
         <template slot="Subject" slot-scope="row">{{ row.value }}</template>
         <template slot="Message" slot-scope="row">{{ row.value }}</template>
         <!-- {{ col.value.first }} {{ col.value.middle }} {{ col.value.last }} -->
@@ -19,7 +20,7 @@
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
           {{row.value}}
-          <b-button variant="primary" @click="readNotification">Mark read</b-button>
+          <b-button variant="primary" @click="readNotification(row.index + 1)">Mark read</b-button>
         </template>
       </b-table>
       <!-- TODO: Add on click handlers into a form -->
@@ -30,45 +31,28 @@
         <b-form-input v-model="title"></b-form-input>
         <label>Description:</label>
         <b-form-textarea v-model="message"></b-form-textarea>
+        <b-form-checkbox v-model="anonymous">Anonymous</b-form-checkbox>
       </b-modal>
-
-      <!--template slot="lead">
-                <div style="margin-top: 20px">
-                    <b-row class="my-1">
-                        <b-col>
-                            <b-form-input v-model="title" placeholder="Subject"></b-form-input>
-                            <b-form-textarea v-model="message" placeholder="Message" rows="4"></b-form-textarea>
-                        </b-col>
-                    </b-row>
-                </div>
-                <div style="margin-top: 20px">
-                    <b-button variant="info" @click="sendNotification">Send Notification</b-button>
-                </div>
-      </template-->
-      <b-alert variant="danger" :show="invalidField">{{fieldError}}</b-alert>
+      <b-alert variant="danger" :show="invalidRequest">{{requestError}}</b-alert>
     </b-jumbotron>
   </div>
 </template>
 
 <script>
 import api from "../../api.js";
+import moment from "moment";
+
 export default {
   name: "Notifications",
   data() {
     return {
       title: "",
       message: "",
-      invalidField: false,
-      fieldError: "",
-      fields: ["Date", "Subject", "Message", "Actions"],
-      notification_entries: [
-        {
-          Date: "5/30/2019",
-          Subject: "Hello",
-          Message:
-            "Welcome to TURDMate! To access each module, navigate to the top and click the button on the NavBar."
-        }
-      ]
+      anonymous: false,
+      invalidRequest: false,
+      requestError: "",
+      fields: ["Date", "Sender", "Subject", "Message", "Actions"],
+      notification_entries: []
     };
   },
   methods: {
@@ -80,10 +64,11 @@ export default {
         let response = await api.notification.post(
           this.title,
           this.message,
+          this.anonymous,
           this.$store.state.username,
           this.$store.state.password
         );
-        this.invalidField = false;
+        this.invalidRequest = false;
 
         console.log(response.status);
         console.log(response.data);
@@ -96,8 +81,8 @@ export default {
           switch (err.response.status) {
             case 400: // Bad request
               console.log("Bad request");
-              this.invalidField = true;
-              this.fieldError = err.response.data.errors[0];
+              this.invalidRequest = true;
+              this.requestError = err.response.data.errors[0];
               break;
             default:
               // 500
@@ -110,8 +95,7 @@ export default {
       // clear form after submit
       this.title = "";
       this.message = "";
-
-
+      this.anonymous = false;
     },
     async getNotification(single) {
       try {
@@ -120,6 +104,7 @@ export default {
           this.$store.state.username,
           this.$store.state.password
         );
+        this.invalidRequest = false;
 
         var notifications = response.data;
         var notificationId;
@@ -128,20 +113,26 @@ export default {
         } else {
           notificationId = 0;
         }
+        console.log(notifications);
         for (var i = notificationId; i < notifications.length; i++) {
           console.log(response.data[i].id);
-          var lastNotificationEntry = notifications.find(
-            function findLastNotification(element, index, array) {
-              return element == i || index == i;
-            },
-            notificationId
-          );
           // add to table
-          this.notification_entries.push({
-            Date: lastNotificationEntry.created_at,
-            Subject: lastNotificationEntry.title,
-            Message: lastNotificationEntry.message
+          if(notifications[i].user_id == null) {
+             this.notification_entries.push({
+            Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
+            Sender: "Anonymous",
+            Subject: notifications[i].title,
+            Message: notifications[i].message
           });
+          } else {
+            this.notification_entries.push({
+            Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
+            Sender: notifications[i].user_id,
+            Subject: notifications[i].title,
+            Message: notifications[i].message
+          });
+          }
+         
         }
       } catch (err) {
         // Error handling
@@ -149,6 +140,8 @@ export default {
           switch (err.response.status) {
             case 400: // Bad request
               console.log("Bad request");
+              this.invalidRequest = true;
+              this.requestError = err.response.data.errors[0];
               break;
             default:
               // 500
@@ -160,7 +153,33 @@ export default {
       }
     },
 
-    async readNotification() {}
+    async readNotification(index) {
+      try {
+        let response = await api.markRead.post(
+          index,
+          this.$store.state.username,
+          this.$store.state.password,
+        );
+        this.invalidRequest = false;
+        console.log(response);
+      } catch (err) {
+        // Error handling
+        if (err.response) {
+          switch (err.response.status) {
+            case 400: // Bad request
+              console.log("Bad request");
+              this.invalidRequest = true;
+              this.requestError = err.response.data.errors[0];
+              break;
+            default:
+              // 500
+              console.log("An unknown error occurred.");
+              break;
+          }
+        }
+        console.log(err);
+      }
+    },
   },
   beforeMount() {
     this.getNotification(false);
