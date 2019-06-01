@@ -69,7 +69,14 @@
         async joinApartment() {
           try {
             let response = await api.join.post(this.apartment_code_text, this.$store.state.username, this.$store.state.password);
-            console.log(response.status);
+
+            // TODO get apartment id
+            this.$store.commit('setApartmentId', true);
+
+            if(this.$cookie.get("isPermanence")){
+              this.$cookie.set('apartmentId', true, 30);
+            }
+
             this.$router.push({path: 'Dashboard'});
 
           } catch(err) {

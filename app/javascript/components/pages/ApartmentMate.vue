@@ -175,6 +175,8 @@ export default {
         try {
           let response = await api.leave.post(this.$store.state.username, this.$store.state.password);
           this.$refs.leave_Modal.hide();
+          this.$store.commit('setApartmentId', undefined);
+          this.$cookie.delete('apartmentId');
           this.$router.push({path: 'Dashboardi'});
 
         } catch (err) {
