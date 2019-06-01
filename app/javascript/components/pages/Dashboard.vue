@@ -46,22 +46,14 @@
 </template>
 
 <script>
-import ApartmentMate from "./ApartmentMate";
-import Notifications from "./Notifications";
-import Documents from "./Documents";
-import Items from "./Items";
-import Expenses from "./Expenses";
-import Rules from "./Rules";
+	import ApartmentMate from './ApartmentMate';
+	import Notifications from './Notifications';
+	import Documents from './Documents';
+	import Items from './Items';
+	import Expenses from "./Expenses";
 
-export default {
-  name: "Dashboard",
-  components: {
-    ApartmentMate,
-    Notifications,
-    Documents,
-    Items,
-    Expenses,
-    Rules
-  }
-};
+    export default {
+        name: "Dashboard",
+        components: {ApartmentMate, Notifications, Documents, Items, Expenses}
+    }
 </script>

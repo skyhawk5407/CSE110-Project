@@ -6,6 +6,7 @@
     "axios": "^0.18.0",
     "babel-preset-vue-app": "^2.0.0",
     "bootstrap-vue": "^2.0.0-rc.19",
+    "dinero.js": "^1.6.0",
     "moment": "^2.24.0",
     "tinycolor2": "^1.4.1",
     "vue": "^2.5.16",

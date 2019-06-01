@@ -5,13 +5,6 @@
       stacked="md"
       :items="items"
       :fields="fields"
-      :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      @filtered="onFiltered"
     >
       <template slot="Name" slot-scope="row">{{ row.value }}</template>
 
