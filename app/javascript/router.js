@@ -50,10 +50,10 @@ router.beforeEach((to, from, next) => {
     // if logged in, don't show other pages
   } else if(to.meta.notLoggedIn && store.state.username) {
     next('/');
-  // } else if(to.meta.notApartment && store.state.apartmentId !== undefined) {
-  //   next('/Dashboard');
-  // } else if(to.meta.apartment && store.state.apartmentId === undefined) {
-  //   next('/Dashboardi');
+  } else if(to.meta.notApartment && store.state.apartmentId) {
+     next('/Dashboard');
+   } else if(to.meta.apartment && !store.state.apartmentId) {
+     next('/Dashboardi');
   } else {
     next();
   }

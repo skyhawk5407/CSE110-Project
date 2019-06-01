@@ -50,11 +50,11 @@
         </div>-->
         <b-button @click="$bvModal.show('modal-email')">Invite Apartment Mate</b-button>
 
-        <b-button v-b-modal="'modal-1'" variant="danger" class="float-right">Leave Apartment</b-button>
-        <b-modal id="modal-1" hide-footer title="Leave Apartment" ref="leave_Modal">
+        <b-button v-b-modal="'modal-leave'" variant="danger" class="float-right">Leave Apartment</b-button>
+        <b-modal id="modal-leave" hide-footer title="Leave Apartment" ref="leave_Modal">
             <p><b>Are you SURE you wish to leave your apartment?</b></p>
             <p><i>Note: This action can not be undone.</i></p>
-            <b-button class="mt-2" variant="info" @click="hideModal('modal-1')">No, I am not sure.</b-button>
+            <b-button class="mt-2" variant="info" @click="hideModal('modal-leave')">No, I am not sure.</b-button>
             <b-button class="mt-2" variant="danger" @click="leaveApartment">Yes, I am sure.</b-button>
         </b-modal>
 
@@ -175,6 +175,8 @@ export default {
         try {
           let response = await api.leave.post(this.$store.state.username, this.$store.state.password);
           this.$refs.leave_Modal.hide();
+          this.$store.commit('setApartmentId', undefined);
+          this.$cookie.delete('apartmentId');
           this.$router.push({path: 'Dashboardi'});
 
         } catch (err) {

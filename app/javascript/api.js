@@ -155,26 +155,6 @@ export default {
         }, {
                 headers: {
                     email: email,
-                    password: password,
-                }
-            }),
-        get: (email, password) => axios.get('apartments/notifications/all', {
-            headers: {
-                email: email,
-                password: password
-            }
-        })
-    },
-
-    //Apartment creation endpoints
-    apartment: {
-        // Post to api/v1/apartments, providing the address and name
-        post: (apartment_name, apartment_address, email, password) => axios.post('/apartments', {
-            address: apartment_address,
-            name: apartment_name
-        }, {
-                headers: {
-                    email: email,
                     password: password
                 }
             })
