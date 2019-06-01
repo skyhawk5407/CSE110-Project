@@ -25,8 +25,8 @@
       </b-table>
       <!-- TODO: Add on click handlers into a form -->
       <!-- TODO: Allow form to be reset each time + popup email sent! -->
-      <b-button v-b-modal.modal-1 variant="primary">Create Notification</b-button>
-      <b-modal id="modal-1" title="Create Notification" @ok="sendNotification">
+      <b-button v-b-modal.modal-notification variant="primary">Create Notification</b-button>
+      <b-modal id="modal-notification" title="Create Notification" @ok="sendNotification">
         <label>Subject:</label>
         <b-form-input v-model="title"></b-form-input>
         <label>Description:</label>
@@ -132,7 +132,7 @@ export default {
             Message: notifications[i].message
           });
           }
-         
+
         }
       } catch (err) {
         // Error handling
