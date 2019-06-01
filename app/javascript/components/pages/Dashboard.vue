@@ -29,10 +29,9 @@
 	import Documents from './Documents';
 	import Items from './Items';
 	import Expenses from "./Expenses";
-	import Rules from './Rules';
 
     export default {
         name: "Dashboard",
-        components: {ApartmentMate, Notifications, Documents, Items, Expenses, Rules}
+        components: {ApartmentMate, Notifications, Documents, Items, Expenses}
     }
 </script>
