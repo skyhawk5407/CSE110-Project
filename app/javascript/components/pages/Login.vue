@@ -27,9 +27,9 @@
         <div style="margin-top: 20px">
           <b-button class="btn" variant="success" @keyup.enter="login" @click="login">Login</b-button>
           <b-button class="btn" to="AccountCreation" variant="info">Create Account</b-button>
-          <b-button class="btn" v-b-modal="'modal-1'" variant="info">Forgot Password</b-button>
+          <b-button class="btn" v-b-modal="'modal-recovery'" variant="info">Forgot Password</b-button>
 
-          <b-modal ref="recoverModal" id="modal-1" title="Account Recovery" @ok="requestReset">
+          <b-modal ref="recoverModal" id="modal-recovery" title="Account Recovery" @ok="requestReset">
             <label>E-mail:</label>
             <b-form-input v-model="resetPasswordText" placeholder></b-form-input>
             <b-alert class="my-3" variant="danger" :show="invalidReset">{{resetError}}</b-alert>
