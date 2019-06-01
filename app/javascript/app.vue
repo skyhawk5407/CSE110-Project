@@ -3,9 +3,7 @@
     <nav-bar></nav-bar>
 
     <div class="my-5 mx-auto" style="width: 80%; height: 100%;">
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
+      <router-view></router-view>
     </div>
   </div>
 </template>
