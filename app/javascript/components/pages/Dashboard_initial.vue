@@ -43,13 +43,21 @@
         }
       },
       methods: {
+        joinedApartment() {
+          // TODO get apartment id
+          this.$store.commit('setApartmentId', true);
+
+          if(this.$cookie.get("isPermanence")){
+            this.$cookie.set('apartmentId', true, 30);
+          }
+          this.$router.push({path: 'Dashboard'});
+        },
         async createApartment(){
           try {
-            //HARDCODED replace email and password
             let response = await api.apartment.post(this.apartment_name_text,
               this.apartment_address_text, this.$store.state.username, this.$store.state.password);
 
-              this.$router.push({path: 'Dashboard'});
+              this.joinedApartment();
           } catch(err) {
             if(err.response){
               switch (err.response.status) {
@@ -69,16 +77,7 @@
         async joinApartment() {
           try {
             let response = await api.join.post(this.apartment_code_text, this.$store.state.username, this.$store.state.password);
-
-            // TODO get apartment id
-            this.$store.commit('setApartmentId', true);
-
-            if(this.$cookie.get("isPermanence")){
-              this.$cookie.set('apartmentId', true, 30);
-            }
-
-            this.$router.push({path: 'Dashboard'});
-
+            this.joinedApartment();
           } catch(err) {
             if(err.response){
               switch (err.response.status) {
