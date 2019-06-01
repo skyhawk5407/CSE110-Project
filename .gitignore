@@ -88,3 +88,5 @@ config/environments/*.local.yml
 .idea/*
 .idea/workspace.xml
 .idea/tasks.xml
+
+.vscode-insiders
