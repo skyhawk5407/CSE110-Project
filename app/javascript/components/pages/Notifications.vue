@@ -4,18 +4,11 @@
       <template slot="header">Notifications</template>
 
       <b-table show-empty stacked="md" :items="notification_entries" :fields="fields">
-        <!-- Props to b-table to add later TODO -->
-        <!-- :filter="filter"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-        @filtered="onFiltered"-->
         <!-- Data -->
         <template slot="Date" slot-scope="row">{{ row.value }}</template>
         <template slot="Sender" slot-scope="row">{{ row.value }}</template>
         <template slot="Subject" slot-scope="row">{{ row.value }}</template>
         <template slot="Message" slot-scope="row">{{ row.value }}</template>
-        <!-- {{ col.value.first }} {{ col.value.middle }} {{ col.value.last }} -->
         <template slot="Description" slot-scope="row">{{ row.value }}</template>
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
@@ -23,8 +16,6 @@
           <b-button variant="primary" @click="readNotification(row.index + 1)">Mark read</b-button>
         </template>
       </b-table>
-      <!-- TODO: Add on click handlers into a form -->
-      <!-- TODO: Allow form to be reset each time + popup email sent! -->
       <b-button v-b-modal.modal-notification variant="primary">Create Notification</b-button>
       <b-modal id="modal-notification" title="Create Notification" @ok="sendNotification">
         <label>Subject:</label>
@@ -117,22 +108,21 @@ export default {
         for (var i = notificationId; i < notifications.length; i++) {
           console.log(response.data[i].id);
           // add to table
-          if(notifications[i].user_id == null) {
-             this.notification_entries.push({
-            Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
-            Sender: "Anonymous",
-            Subject: notifications[i].title,
-            Message: notifications[i].message
-          });
+          if (notifications[i].user_id == null) {
+            this.notification_entries.push({
+              Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
+              Sender: "Anonymous",
+              Subject: notifications[i].title,
+              Message: notifications[i].message
+            });
           } else {
             this.notification_entries.push({
-            Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
-            Sender: notifications[i].user_id,
-            Subject: notifications[i].title,
-            Message: notifications[i].message
-          });
+              Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
+              Sender: notifications[i].user_id,
+              Subject: notifications[i].title,
+              Message: notifications[i].message
+            });
           }
-
         }
       } catch (err) {
         // Error handling
@@ -158,7 +148,7 @@ export default {
         let response = await api.markRead.post(
           index,
           this.$store.state.username,
-          this.$store.state.password,
+          this.$store.state.password
         );
         this.invalidRequest = false;
         console.log(response);
@@ -179,7 +169,7 @@ export default {
         }
         console.log(err);
       }
-    },
+    }
   },
   beforeMount() {
     this.getNotification(false);
