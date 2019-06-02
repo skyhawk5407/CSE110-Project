@@ -9,7 +9,6 @@
         <template slot="Sender" slot-scope="row">{{ row.value }}</template>
         <template slot="Subject" slot-scope="row">{{ row.value }}</template>
         <template slot="Message" slot-scope="row">{{ row.value }}</template>
-        <template slot="Description" slot-scope="row">{{ row.value }}</template>
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
           {{row.value}}
@@ -17,10 +16,10 @@
         </template>
       </b-table>
       <b-button v-b-modal.modal-notification variant="primary">Create Notification</b-button>
-      <b-modal id="modal-notification" title="Create Notification" @ok="sendNotification">
+      <b-modal id="modal-notification" title="Create Notification" @ok="sendNotification" ok-title="Send Notification">
         <label>Subject:</label>
         <b-form-input v-model="title"></b-form-input>
-        <label>Description:</label>
+        <label>Message:</label>
         <b-form-textarea v-model="message"></b-form-textarea>
         <b-form-checkbox v-model="anonymous">Anonymous</b-form-checkbox>
       </b-modal>
@@ -50,8 +49,8 @@ export default {
     async sendNotification() {
       try {
         // post and wait for response
-        console.log(this.title);
-        console.log(this.message);
+        // console.log(this.title);
+        // console.log(this.message);
         let response = await api.notification.post(
           this.title,
           this.message,
@@ -61,8 +60,8 @@ export default {
         );
         this.invalidRequest = false;
 
-        console.log(response.status);
-        console.log(response.data);
+        // console.log(response.status);
+        // console.log(response.data);
 
         // call get Notification to populate
         this.getNotification(true);
@@ -104,25 +103,16 @@ export default {
         } else {
           notificationId = 0;
         }
-        console.log(notifications);
+        // console.log(notifications);
         for (var i = notificationId; i < notifications.length; i++) {
-          console.log(response.data[i].id);
+          // console.log(response.data[i].id);
           // add to table
-          if (notifications[i].user_id == null) {
-            this.notification_entries.push({
-              Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
-              Sender: "Anonymous",
-              Subject: notifications[i].title,
-              Message: notifications[i].message
-            });
-          } else {
-            this.notification_entries.push({
-              Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
-              Sender: notifications[i].user_id,
-              Subject: notifications[i].title,
-              Message: notifications[i].message
-            });
-          }
+          this.notification_entries.push({
+            Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
+            Sender: notifications[i].creator_name,
+            Subject: notifications[i].title,
+            Message: notifications[i].message,
+          });
         }
       } catch (err) {
         // Error handling
@@ -151,7 +141,7 @@ export default {
           this.$store.state.password
         );
         this.invalidRequest = false;
-        console.log(response);
+        // console.log(response);
       } catch (err) {
         // Error handling
         if (err.response) {
@@ -171,7 +161,7 @@ export default {
       }
     }
   },
-  beforeMount() {
+  created() {
     this.getNotification(false);
   }
 };
