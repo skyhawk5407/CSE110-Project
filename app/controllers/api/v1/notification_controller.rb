@@ -28,7 +28,7 @@ class Api::V1::NotificationController < ApplicationController
                                              .map{|x| x.notification_id}
                                              .to_set
 
-    render :json => notifications.map{|x| x.attributes.merge({:read => !unread_notifications.include?(x.id)})}, status: :ok
+    render :json => notifications.map{|x| x.attributes.merge({:read => !unread_notifications.include?(x.id), :creator_name => x.user.nil? ? 'Anonymous' : x.user.display_name})}, status: :ok
   end
 
   def mark_read

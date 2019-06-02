@@ -110,6 +110,16 @@ export default {
                 email: email,
                 password: password
             }
+        }),
+        pay: (expense_id, expense_paid, email, password) => axios.post('/apartments/expenses/mark_paid', {
+            data: {
+                expense_id: expense_id,
+                paid: expense_paid,
+
+            }, headers: {
+                email: email,
+                password: password
+            }
         })
     },
 
