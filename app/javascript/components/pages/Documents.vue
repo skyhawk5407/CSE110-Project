@@ -131,7 +131,7 @@
       },
 
       async deleteDocument(row) {
-        await api.document.delete(row, 'jsmith@example.com', 'password123');
+        await api.document.delete(row, this.$store.state.username, this.$store.state.password);
         this.getDocuments();
       },
 
