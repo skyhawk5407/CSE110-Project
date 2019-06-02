@@ -118,7 +118,7 @@ export default {
 
             }, headers: {
                 email: email,
-                password: password
+                password: password,
             }
         })
     },

@@ -86,8 +86,21 @@
         <b-form-input v-model="expense_amount" placeholder="$0.00"></b-form-input>
         <label>Description:</label>
         <b-form-textarea v-model="expense_description" rows="3" placeholder="Description"></b-form-textarea>
+        <!-- TODO ADD IN CHECKBOXES FOR EACH PAYER -->
         <label>Payer:</label>
         <b-form-input v-model="expense_payer_id" placeholder="Payer"></b-form-input>
+
+        <!-- Renders Checkboxes based on whose in the apartment. Updates the payer_list -->
+        <div v-for="user in apartment_mates" :key="user.id">
+          <div v-if="user.id != expense_issuer_id">
+            <label>{{user.display_name}}</label>
+            <input type="checkbox" v-model="payer_list" :value="user">
+          </div>
+        </div>
+        <!-- Shows who is on the payer list -->
+        <div id>
+          <span>Checked names: {{ payer_list }}</span>
+        </div>
         <!-- Options -->
         <b-button class="mt-2" variant="info" @click="addExpense">Add Expense</b-button>
         <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-add')">Cancel</b-button>
@@ -122,6 +135,7 @@ export default {
         "Actions"
       ],
       apartment_mates: [],
+      payer_list: [],
       expense_entries: [],
       issued_expense_entries: [],
       selected_row: "",
@@ -148,13 +162,12 @@ export default {
         this.$store.state.password
       );
       var mate_list = response.data.users;
-      var apartment_mates = [];
       for (var i = 0; i < mate_list.length; i++) {
         var apt_mate = mate_list[i];
         if (apt_mate.email == this.$store.state.username) {
           this.expense_issuer_id = apt_mate.id;
         }
-        apartment_mates.push({
+        this.apartment_mates.push({
           id: apt_mate.id,
           display_name: apt_mate.display_name
         });
@@ -307,6 +320,7 @@ export default {
         this.current_user_password
       );
       var transactions = response.data;
+      console.log(transactions);
       var i = 0;
       for (i in transactions) {
         var entry = transactions[i];
