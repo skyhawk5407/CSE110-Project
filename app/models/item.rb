@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :apartment
+  belongs_to :owner, class_name: 'User', foreign_key: 'user_id'
 
   has_one_attached :image
 
@@ -8,6 +9,7 @@ class Item < ApplicationRecord
   validates :image, blob: { content_type: :image }
   validates :name, :presence => true, :length => {:in => 1..128}
   validates :description, :presence => true, :length => {:in => 1..4096}
+  validates :user_id, :presence => true
 
   def to_json(base_url)
     json = self.as_json
