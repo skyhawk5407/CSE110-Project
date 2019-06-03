@@ -1,71 +1,73 @@
 <template>
   <div>
-    <b-table
-        show-empty
-        :busy="tableBusy"
-        stacked="md"
-        :items="items"
-        :fields="fields">
-      <div slot="table-busy" class="text-center text-danger my-2">
-        <b-spinner class="align-middle"></b-spinner>
-        <strong>Loading...</strong>
-      </div>
+    <b-jumbotron>
+      <template slot="header">Documents</template>
+      <b-table
+          show-empty
+          :busy="tableBusy"
+          stacked="md"
+          :items="items"
+          :fields="fields">
+        <div slot="table-busy" class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
 
-      <template slot="Title" slot-scope="row">
-        {{ row.item.title }}
-      </template>
+        <template slot="Title" slot-scope="row">
+          {{ row.item.title }}
+        </template>
 
-      <template slot="Filename" slot-scope="row">
-        {{ row.item.file_name }}
-      </template>
+        <template slot="Filename" slot-scope="row">
+          {{ row.item.file_name }}
+        </template>
 
-      <template slot="Uploader" slot-scope="row">
-        {{ row.item.creator_name }}
-      </template>
+        <template slot="Uploader" slot-scope="row">
+          {{ row.item.creator_name }}
+        </template>
 
-      <template slot="Actions" slot-scope="row">
-        <b-button variant="info" @click="openTab(row.item.url)">Open</b-button>
-        <b-button variant="success" :href="row.item.url" download>Download</b-button>
-        <b-button v-b-modal="'my_modal_documents'" variant="danger" @click="sendInfo(row.item.id)">Delete</b-button>
-      </template>
-    </b-table>
+        <template slot="Actions" slot-scope="row">
+          <b-button variant="info" @click="openTab(row.item.url)">Open</b-button>
+          <b-button variant="success" :href="row.item.url" download>Download</b-button>
+          <b-button v-b-modal="'my_modal_documents'" variant="danger" @click="sendInfo(row.item.id)">Delete</b-button>
+        </template>
+      </b-table>
 
-    <b-modal id='my_modal_documents' hide-footer title="Delete Document">
-      <p><b>Are you SURE you wish to remove this document?</b></p>
-      <p><i>Note: This action can not be undone.</i></p>
-      <b-button class="mt-2" variant="info" @click="hideModal('my_modal_documents')">No, I am not sure.</b-button>
-      <b-button class="mt-2" variant="danger" @click="toggleModal('my_modal_documents',selectedRow)">Yes, I am sure.
-      </b-button>
-    </b-modal>
+      <b-modal id='my_modal_documents' hide-footer title="Delete Document">
+        <p><b>Are you SURE you wish to remove this document?</b></p>
+        <p><i>Note: This action can not be undone.</i></p>
+        <b-button class="mt-2" variant="info" @click="hideModal('my_modal_documents')">No, I am not sure.</b-button>
+        <b-button class="mt-2" variant="danger" @click="toggleModal('my_modal_documents',selectedRow)">Yes, I am sure.
+        </b-button>
+      </b-modal>
 
-    <b-modal id="addModal"
-             ref="addModal"
-             hide-footer
-             @close="resetAddModal"
-             title="Add Document">
-      <label>Name of Document:</label>
-      <b-form-input v-model="title"></b-form-input>
-      <b-form-file
-          class="my-3"
-          v-model="file"
-          :state="Boolean(file)"
-          :file-name-formatter="truncateFileName"
-          placeholder="Choose a file..."
-          drop-placeholder="Drop file here..."
-      ></b-form-file>
+      <b-modal id="addModal"
+               ref="addModal"
+               hide-footer
+               @close="resetAddModal"
+               title="Add Document">
+        <label>Name of Document:</label>
+        <b-form-input v-model="title"></b-form-input>
+        <b-form-file
+            class="my-3"
+            v-model="file"
+            :state="Boolean(file)"
+            :file-name-formatter="truncateFileName"
+            placeholder="Choose a file..."
+            drop-placeholder="Drop file here..."
+        ></b-form-file>
 
-      <b-button variant="secondary"
-                :disabled="file==null||title===''"
-                @click="upload">
-      Upload
-      </b-button>
-      <b-alert class="my-3" variant="danger" :show="uploadError">{{uploadError}}</b-alert>
+        <b-button variant="secondary"
+                  :disabled="file==null||title===''"
+                  @click="upload">
+        Upload
+        </b-button>
+        <b-alert class="my-3" variant="danger" :show="uploadError">{{uploadError}}</b-alert>
 
-    </b-modal>
+      </b-modal>
 
-    <b-button v-b-modal.addModal variant="primary">Upload Document</b-button>
+      <b-button v-b-modal.addModal variant="primary">Upload Document</b-button>
 
-
+    </b-jumbotron>
   </div>
 </template>
 

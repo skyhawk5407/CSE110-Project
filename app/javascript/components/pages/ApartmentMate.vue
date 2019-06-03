@@ -12,6 +12,8 @@
 
         <template slot="Email" slot-scope="row">{{ row.item.email }}</template>
 
+        <template slot="Phone Number" slot-scope="row">{{ row.item.phone_number }}</template>
+
         <template slot="Actions" slot-scope="row">
           <b-button
             v-b-modal="'modal-2'"
@@ -19,7 +21,10 @@
             @click="sendInfo(row.item.id)"
             :disabled="disable(row.item.email)"
           >Remove Apartment Mate</b-button>
-          <b-modal id="modal-2" hide-footer title="Remove Apartment Mate">
+        </template>
+      </b-table>
+
+      <b-modal id="modal-2" hide-footer title="Remove Apartment Mate">
             <p>
               <b>Are you SURE you wish to remove this apartment mate?</b>
             </p>
@@ -32,9 +37,7 @@
               variant="danger"
               @click="toggleModal('modal-2', selectedRow)"
             >Yes, I am sure.</b-button>
-          </b-modal>
-        </template>
-      </b-table>
+      </b-modal>
 
       <div>
         <b-button @click="$bvModal.show('modal-email')">Invite Apartment Mate</b-button>
@@ -61,7 +64,7 @@
               label-for="Email-input"
               invalid-feedback="Valid Email is required"
             >
-              <b-form-input id="Email-input" v-model="email" :state="emailState" required></b-form-input>
+              <b-form-input id="Email-input" v-model="email" :state="emailState" required @keyup.enter="handleSendInvite"></b-form-input>
             </b-form-group>
           </form>
           <!-- We pass the name cancel as props to footer -->
@@ -97,7 +100,7 @@ export default {
       emailState: null,
       status: null,
       submittedEmails: [],
-      fields: ["Name", "Email", "Actions"],
+      fields: ["Name", "Email", "Phone Number", "Actions"],
       items: [],
       selectedRow: ""
     };
