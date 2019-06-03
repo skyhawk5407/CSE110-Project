@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-jumbotron>
+      <template slot="header">Items</template>
       <b-table show-empty stacked="md" :items="items" :fields="fields">
         <template slot="Name" slot-scope="row">{{ row.value }}</template>
         <template slot="Owner" slot-scope="row">{{row.value}}</template>

@@ -62,7 +62,7 @@
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>Add and record expenses here so Aprtment Mates can also know.</b-card-text>
+            <b-card-text>Add and record expenses here so Apartment Mates can also know.</b-card-text>
             <b-button class="mt-2" to="/Expenses" variant="info">Expenses</b-button>
           </b-card>
         </b-col>
@@ -77,7 +77,7 @@
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>Send or read messages. An message will be sent to all Apartment Mates</b-card-text>
+            <b-card-text>Send or read messages. A message will be sent to all Apartment Mates.</b-card-text>
             <b-button class="mt-2" to="/Notifications" variant="info">Notifications</b-button>
           </b-card>
         </b-col>
@@ -92,7 +92,7 @@
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>Manage your account settings here to change your password or username.</b-card-text>
+            <b-card-text>Manage your account settings here to change your password or name.</b-card-text>
             <b-button class="mt-2" to="/AccountSettings" variant="info">Account Settings</b-button>
           </b-card>
         </b-col>
