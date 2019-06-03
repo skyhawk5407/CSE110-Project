@@ -179,7 +179,7 @@ export default {
       axios.post(
         "apartments/notifications/mark_read",
         {
-          ID: ID
+          notification_ids: [ID],
         },
         {
           headers: {

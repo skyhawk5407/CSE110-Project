@@ -6,12 +6,13 @@
         <b-col>
           <b-card
             title="Apartment Mates"
-            img-src="https://www.pngfind.com/pngs/m/70-707227_poo-emoji-transparent-animated-emoji-poop-hd-png.png"
+            img-src="https://i.imgur.com/m3g0kAs.png"
             img-alt="Image"
             img-top
             tag="article"
             style="max-width: 20rem;"
             class="mb-2"
+
           >
             <b-card-text>Manage your Apartment Mates, Invite people, View contact info, or leave the Apartment.</b-card-text>
 
@@ -22,7 +23,7 @@
         <b-col>
           <b-card
             title="Documents"
-            img-src="https://www.pngfind.com/pngs/m/70-707227_poo-emoji-transparent-animated-emoji-poop-hd-png.png"
+            img-src="https://i.imgur.com/TNef1Ww.png"
             img-alt="Image"
             img-top
             tag="article"
@@ -37,7 +38,7 @@
         <b-col>
           <b-card
             title="Items"
-            img-src="https://www.pngfind.com/pngs/m/70-707227_poo-emoji-transparent-animated-emoji-poop-hd-png.png"
+            img-src="https://i.imgur.com/S1j5SmJ.png"
             img-alt="Image"
             img-top
             tag="article"
@@ -54,14 +55,14 @@
         <b-col>
           <b-card
             title="Expenses"
-            img-src="https://www.pngfind.com/pngs/m/70-707227_poo-emoji-transparent-animated-emoji-poop-hd-png.png"
+            img-src="https://i.imgur.com/uiXRY2e.png"
             img-alt="Image"
             img-top
             tag="article"
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>Add and record expenses here so your Aprtment Mates can also know.</b-card-text>
+            <b-card-text>Add and record expenses here so Aprtment Mates can also know.</b-card-text>
             <b-button class="mt-2" to="/Expenses" variant="info">Expenses</b-button>
           </b-card>
         </b-col>
@@ -69,14 +70,14 @@
         <b-col>
           <b-card
             title="Notifications"
-            img-src="https://www.pngfind.com/pngs/m/70-707227_poo-emoji-transparent-animated-emoji-poop-hd-png.png"
+            img-src="https://i.imgur.com/S1j5SmJ.png"
             img-alt="Image"
             img-top
             tag="article"
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>Send or read messages within the apartment. An message will be sent to all Apartment Mates</b-card-text>
+            <b-card-text>Send or read messages. An message will be sent to all Apartment Mates</b-card-text>
             <b-button class="mt-2" to="/Notifications" variant="info">Notifications</b-button>
           </b-card>
         </b-col>
@@ -84,7 +85,7 @@
         <b-col>
           <b-card
             title="Account Settings"
-            img-src="https://www.pngfind.com/pngs/m/70-707227_poo-emoji-transparent-animated-emoji-poop-hd-png.png"
+            img-src="https://i.imgur.com/gkGlMOs.png"
             img-alt="Image"
             img-top
             tag="article"
