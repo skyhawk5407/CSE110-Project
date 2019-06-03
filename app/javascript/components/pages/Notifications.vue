@@ -12,7 +12,7 @@
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
           {{row.value}}
-          <b-button variant="primary" @click="readNotification(notification_entries[row.index].ID)" :disabled="notification_entries[row.index].Read">Mark read</b-button>
+          <b-button variant="primary" @click="readNotification(notification_entries[row.index].ID, row.index)" :disabled="notification_entries[row.index].Read">Mark read</b-button>
         </template>
       </b-table>
       <b-button v-b-modal.modal-notification variant="primary">Create Notification</b-button>
@@ -141,15 +141,17 @@ export default {
       }
     },
 
-    async readNotification(index) {
+    async readNotification(notification_id, index) {
       try {
-        console.log(index)
+        // console.log(index)
         let response = await api.markRead.post(
-          index,
+          notification_id,
           this.$store.state.username,
           this.$store.state.password
         );
         this.invalidRequest = false;
+        this.$set(this.notification_entries[index], 'Read', true);
+        // console.log(this.notification_entries[index])
         // console.log(response);
       } catch (err) {
         // Error handling
