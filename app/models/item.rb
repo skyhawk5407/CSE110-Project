@@ -11,7 +11,7 @@ class Item < ApplicationRecord
 
   def to_json(base_url)
     json = self.as_json
-    json = json.merge({:owner_name => self.user.display_name}) unless self.user.nil?
+    json = json.merge({:owner_name => self.user.nil? ? 'N/A' : self.user.display_name})
     return json.merge({:url => nil, :file_data => nil}) if self.image.blank?
 
     ActiveStorage::Current.host = base_url
