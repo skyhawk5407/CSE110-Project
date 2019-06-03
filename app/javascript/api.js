@@ -48,20 +48,20 @@ export default {
                 display_name: display_name,
                 phone_number: phone_number
             }, {
-                    headers: {
-                        email: email,
-                        password: password
-                    }
-                }),
+                headers: {
+                    email: email,
+                    password: password
+                }
+            }),
 
             update_password: (email, password, new_password) => axios.post('users/update_profile', {
                 password: new_password
             }, {
-                    headers: {
-                        email: email,
-                        password: password
-                    },
-                })
+                headers: {
+                    email: email,
+                    password: password
+                },
+            })
         }
     },
 
@@ -86,16 +86,16 @@ export default {
             description: description,
             amount: amount,
         }, {
-                payer_id: payer_id,
-                issuer_id: issuer_id,
-                title: title,
-                description: description,
-                amount: amount,
-                headers: {
-                    email: email,
-                    password: password,
-                }
-            }),
+            payer_id: payer_id,
+            issuer_id: issuer_id,
+            title: title,
+            description: description,
+            amount: amount,
+            headers: {
+                email: email,
+                password: password,
+            }
+        }),
         get: (email, password) => axios.get('/apartments/expenses/all', {
             headers: {
                 email: email,
@@ -106,21 +106,21 @@ export default {
             data: {
                 expense_id: expense_id
 
-            }, headers: {
+            },
+            headers: {
                 email: email,
                 password: password
             }
         }),
         pay: (expense_id, expense_paid, email, password) => axios.post('/apartments/expenses/mark_paid', {
-            data: {
-                expense_id: expense_id,
-                paid: expense_paid,
-
-            }, headers: {
+            expense_id: expense_id,
+            expense_paid: expense_paid
+        }, {
+            headers: {
                 email: email,
-                password: password,
+                password: password
             }
-        })
+        }),
     },
 
     // Send and get notifications endpoint
@@ -131,11 +131,11 @@ export default {
             message: message,
             anonymous: anonymous,
         }, {
-                headers: {
-                    email: email,
-                    password: password,
-                }
-            }),
+            headers: {
+                email: email,
+                password: password,
+            }
+        }),
         get: (email, password) => axios.get('apartments/notifications/all', {
             headers: {
                 email: email,
@@ -149,11 +149,11 @@ export default {
         post: (ID, email, password) => axios.post('apartments/notifications/mark_read', {
             ID: ID,
         }, {
-                headers: {
-                    email: email,
-                    password: password,
-                }
-            })
+            headers: {
+                email: email,
+                password: password,
+            }
+        })
     },
 
     //Apartment creation endpoints
@@ -163,11 +163,11 @@ export default {
             address: apartment_address,
             name: apartment_name
         }, {
-                headers: {
-                    email: email,
-                    password: password
-                }
-            })
+            headers: {
+                email: email,
+                password: password
+            }
+        })
     },
 
     //Apartment join endpoints
@@ -175,11 +175,11 @@ export default {
         post: (code, email, password) => axios.post('/users/join_apartment', {
             access_code: code
         }, {
-                headers: {
-                    email: email,
-                    password: password
-                }
-            })
+            headers: {
+                email: email,
+                password: password
+            }
+        })
     },
 
     leave: {
@@ -197,11 +197,11 @@ export default {
         post: (user_id, email, password) => axios.post('/apartments/remove_user', {
             user_id: user_id
         }, {
-                headers: {
-                    email: email,
-                    password: password
-                }
-            })
+            headers: {
+                email: email,
+                password: password
+            }
+        })
     },
 
     //invite endpoint
@@ -210,11 +210,11 @@ export default {
         post: (invite_email, email, password) => axios.post('/apartments/issue_invite_email', {
             email: invite_email
         }, {
-                headers: {
-                    email: email,
-                    password: password
-                }
-            })
+            headers: {
+                email: email,
+                password: password
+            }
+        })
     },
 
     //get current apartment endpoint
@@ -237,11 +237,11 @@ export default {
                 apartmentwide: apartmentwide,
                 file_data: file_data
             }, {
-                    headers: {
-                        email: email,
-                        password: password
-                    }
-                }),
+                headers: {
+                    email: email,
+                    password: password
+                }
+            }),
         // Unused for now
         download: (documentId, email, password) => axios.get('/apartments/documents/download', {
             params: {

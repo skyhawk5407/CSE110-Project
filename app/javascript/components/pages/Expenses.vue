@@ -4,10 +4,9 @@
       <template slot="header">Expenses</template>
       <br>
       <br>
-
       <!-- Top Half of Table: Expenses you owe, can only pay these -->
       <label>Expenses You Owe</label>
-      <b-table show-empty stacked="md" :items="expense_entries" :fields="fields">
+      <b-table responsive show-empty stacked="md" :items="expense_entries" :fields="fields">
         <!-- Data -->
         <template slot="Date" slot-scope="col">{{ col.value }}</template>
         <template slot="Expense" slot-scope="col">{{ col.value }}</template>
@@ -29,7 +28,7 @@
       </b-table>
       <!-- Bottom Half of Table: Expenses you issued, you can delete these -->
       <label>Expenses You Issued</label>
-      <b-table show-empty stacked="md" :items="issued_expense_entries" :fields="fields">
+      <b-table responsive show-empty stacked="md" :items="issued_expense_entries" :fields="fields">
         <template slot="Date" slot-scope="col">{{ col.value }}</template>
         <template slot="Expense" slot-scope="col">{{ col.value }}</template>
         <template slot="Amount" slot-scope="col">{{ col.value }}</template>
@@ -103,7 +102,7 @@
         </div>
         <!-- Options -->
         <b-button class="mt-2" variant="info" @click="addExpense">Add Expense</b-button>
-        <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-add')">Cancel</b-button>
+        <b-button class="mt-2" variant="danger" @click="$bvModal.hide('modal-add'); resetForm();">Cancel</b-button>
       </b-modal>
     </b-jumbotron>
   </div>
@@ -155,6 +154,16 @@ export default {
     this.getAllExpenses();
   },
   methods: {
+    resetForm() {
+      this.expense_title = undefined;
+      this.expense_description = undefined;
+      this.expense_paid = false;
+      this.expense_amount = undefined;
+      this.payer_list = [];
+    },
+    paidStatus() {
+      // TODO
+    },
     // Helper Functions
     async extractMates() {
       let response = await api.getApt.get(
@@ -162,6 +171,7 @@ export default {
         this.$store.state.password
       );
       var mate_list = response.data.users;
+      console.log(response.data.users);
       for (var i = 0; i < mate_list.length; i++) {
         var apt_mate = mate_list[i];
         if (apt_mate.email == this.$store.state.username) {
@@ -169,7 +179,8 @@ export default {
         }
         this.apartment_mates.push({
           id: apt_mate.id,
-          display_name: apt_mate.display_name
+          display_name: apt_mate.display_name,
+          email: apt_mate.email,
         });
       }
     },
@@ -194,8 +205,6 @@ export default {
       var index = this.expense_entries.indexOf(row);
       var expense_id = this.expense_entries[index].Id;
       var paid = this.expense_entries[index].Paid;
-      console.log(this.current_user_email);
-      console.log(this.current_user_password);
       if (paid == false) {
         let response = await api.expenses.pay(
           expense_id,
@@ -203,7 +212,7 @@ export default {
           this.current_user_email,
           this.current_user_password
         );
-        this.issued_expense_entries.splice(index, amount);
+        this.expense_entries[index].Paid = !paid;
       } else {
         // emit error that expense is already paid TODO
       }
@@ -222,7 +231,6 @@ export default {
       this.issued_expense_entries.splice(index, amount);
       this.$bvModal.hide("modal-remove");
     },
-    // This should split the costs and submit multiple expenses to the backend TODO FIX THIS TO UPDATED EXPENSE ENTRIES
     async addExpense() {
       try {
         // post and wait for response
@@ -258,7 +266,7 @@ export default {
           }
         }
       }
-      this.formText = "";
+      this.resetForm();
       this.$bvModal.hide("modal-add");
     },
     async getExpense() {
