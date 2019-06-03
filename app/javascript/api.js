@@ -138,7 +138,20 @@ export default {
                 }
             })
     },
-
+    // Read notifications endpoint
+    markRead: {
+        post: (ID, email, password) =>
+            axios.post(
+                "apartments/notifications/mark_read", {
+                    notification_ids: [ID],
+                }, {
+                    headers: {
+                        email: email,
+                        password: password
+                    }
+                }
+            )
+    },
     // Send and get notifications endpoint
     notification: {
         // Post to api/v1/notification, providing the title, message, and anonymous
@@ -162,21 +175,6 @@ export default {
                     password: password
                 }
             })
-    },
-
-    // Read notifications endpoint
-    markRead: {
-        post: (ID, email, password) =>
-            axios.post(
-                "apartments/notifications/mark_read", {
-                    ID: ID
-                }, {
-                    headers: {
-                        email: email,
-                        password: password
-                    }
-                }
-            )
     },
 
     //Apartment creation endpoints

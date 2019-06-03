@@ -3,7 +3,7 @@
     <b-jumbotron>
       <template slot="header">Notifications</template>
 
-      <b-table show-empty stacked="md" :items="notification_entries" :fields="fields">
+      <b-table id="notification_table" show-empty stacked="md" :items="notification_entries" :fields="fields" :tbody-tr-class="rowClass">
         <!-- Data -->
         <template slot="Date" slot-scope="row">{{ row.value }}</template>
         <template slot="Sender" slot-scope="row">{{ row.value }}</template>
@@ -12,7 +12,7 @@
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
           {{row.value}}
-          <b-button variant="primary" @click="readNotification(row.index + 1)">Mark read</b-button>
+          <b-button variant="primary" @click="readNotification(notification_entries[row.index].ID, row.index)" :disabled="notification_entries[row.index].Read">Mark read</b-button>
         </template>
       </b-table>
       <b-button v-b-modal.modal-notification variant="primary">Create Notification</b-button>
@@ -42,10 +42,16 @@ export default {
       invalidRequest: false,
       requestError: "",
       fields: ["Date", "Sender", "Subject", "Message", "Actions"],
-      notification_entries: []
+      notification_entries: [],
     };
   },
   methods: {
+    rowClass(item, type) {
+      console.log(item.Read);
+        if (!item) return
+        if (item.Read == false) return 'table-primary'
+
+    },
     async sendNotification() {
       try {
         // post and wait for response
@@ -112,6 +118,8 @@ export default {
             Sender: notifications[i].creator_name,
             Subject: notifications[i].title,
             Message: notifications[i].message,
+            Read: notifications[i].read,
+            ID: notifications[i].id,
           });
         }
       } catch (err) {
@@ -133,14 +141,17 @@ export default {
       }
     },
 
-    async readNotification(index) {
+    async readNotification(notification_id, index) {
       try {
+        // console.log(index)
         let response = await api.markRead.post(
-          index,
+          notification_id,
           this.$store.state.username,
           this.$store.state.password
         );
         this.invalidRequest = false;
+        this.$set(this.notification_entries[index], 'Read', true);
+        // console.log(this.notification_entries[index])
         // console.log(response);
       } catch (err) {
         // Error handling
@@ -159,7 +170,7 @@ export default {
         }
         console.log(err);
       }
-    }
+    }, 
   },
   created() {
     this.getNotification(false);
