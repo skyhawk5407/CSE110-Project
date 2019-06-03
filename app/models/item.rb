@@ -1,7 +1,6 @@
 class Item < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :apartment
-  belongs_to :owner, class_name: 'User', foreign_key: 'user_id'
 
   has_one_attached :image
 
@@ -9,12 +8,11 @@ class Item < ApplicationRecord
   validates :image, blob: { content_type: :image }
   validates :name, :presence => true, :length => {:in => 1..128}
   validates :description, :presence => true, :length => {:in => 1..4096}
-  validates :user_id, :presence => true
 
   def to_json(base_url)
     json = self.as_json
     json = json.merge({:owner_name => self.user.display_name}) unless self.user.nil?
-    return json.merge({:url => nil, :file_data => nil, :owner_name => nil}) if self.image.blank?
+    return json.merge({:url => nil, :file_data => nil}) if self.image.blank?
 
     ActiveStorage::Current.host = base_url
     json.merge({:url => self.image.blob.service_url,

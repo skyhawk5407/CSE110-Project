@@ -39,10 +39,7 @@ class Api::V1::ItemController < ApplicationController
     items = Item.where(:apartment_id => @apartment.id)
 
     # Add the url and file data to each
-    # render :json => items.map {|x| x.to_json(request.base_url)}
-   
-    # Add Owner name by owner_id (user id )
-    render :json => items.map{|x| x.attributes.merge({:owner_name => x.owner.display_name})}, status: :ok
+    render :json => items.map {|x| x.to_json(request.base_url)}
   end
 
   def update
