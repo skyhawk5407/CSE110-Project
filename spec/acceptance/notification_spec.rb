@@ -159,7 +159,7 @@ resource 'Notifications' do
     parameter :notification_ids, "The notifications to mark as read.", type: :array, items: :integer
 
     context '200' do
-      let(:notification_ids) {[@existing_notification, @existing_notification2]}
+      let(:notification_ids) {[@existing_notification.id, @existing_notification2.id]}
       example 'Mark as read' do
         explanation 'Mark the selected notifications as read.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
@@ -168,14 +168,14 @@ resource 'Notifications' do
       end
     end
     context '400' do
-      let(:notification_ids) {[@existing_notification, @existing_notification2]}
+      let(:notification_ids) {[@existing_notification.id, @existing_notification2.id]}
       example_request 'Mark as read - not in apartment' do
         explanation 'Attempt to mark notifications as read while not in an apartment.'
         expect(status).to eq(400)
       end
     end
     context '401' do
-      let(:notification_ids) {[@existing_notification, @existing_notification2]}
+      let(:notification_ids) {[@existing_notification.id, @existing_notification2.id]}
 
       let(:email_header) {nil}
       let(:password_header) {nil}
