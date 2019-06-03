@@ -152,6 +152,7 @@ resource 'Item' do
     parameter :item_id, "The item's id.", type: :integer
     parameter :owner_id, "The item's new owner.", type: :integer
     parameter :name, "The item's new name.", type: :string
+    parameter :description, "The item's new description.", type: :string
     parameter :bought, "Whether the item has been bought.", type: :boolean
     parameter :image_data, "Optionally include the item's updated image.", type: :string
     parameter :filename, "If image_data is included, the image's new filename.", type: :string
@@ -164,6 +165,7 @@ resource 'Item' do
             :item_id => @existing_item.id,
             :owner_id => @existing_user.id,
             :name => 'New Item Name',
+            :name => 'New Item Description',
             :bought => true,
             :image_data => @example_file_data,
             :filename => 'new_filename.png'
