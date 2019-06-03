@@ -165,7 +165,7 @@ resource 'Item' do
             :item_id => @existing_item.id,
             :owner_id => @existing_user.id,
             :name => 'New Item Name',
-            :name => 'New Item Description',
+            :description => 'New Item Description',
             :bought => true,
             :image_data => @example_file_data,
             :filename => 'new_filename.png'
