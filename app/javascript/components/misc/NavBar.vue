@@ -6,12 +6,12 @@
 
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
-        <b-nav-item v-if="$store.state.username" to="/DashBoard">Dashboard</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/ApartmentMate">Apartment Mates</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/Documents">Documents</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/Items">Items</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/Expenses">Expenses</b-nav-item>
-        <b-nav-item v-if="$store.state.username" to="/Notifications">Notifications</b-nav-item>
+        <b-nav-item v-if="$store.state.username && $store.state.apartmentId" to="/DashBoard">Dashboard</b-nav-item>
+        <b-nav-item v-if="$store.state.username && $store.state.apartmentId" to="/ApartmentMate">Apartment Mates</b-nav-item>
+        <b-nav-item v-if="$store.state.username && $store.state.apartmentId" to="/Documents">Documents</b-nav-item>
+        <b-nav-item v-if="$store.state.username && $store.state.apartmentId" to="/Items">Items</b-nav-item>
+        <b-nav-item v-if="$store.state.username && $store.state.apartmentId" to="/Expenses">Expenses</b-nav-item>
+        <b-nav-item v-if="$store.state.username && $store.state.apartmentId" to="/Notifications">Notifications</b-nav-item>
 
       </b-navbar-nav>
 

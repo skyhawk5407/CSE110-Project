@@ -39,6 +39,7 @@ class Api::V1::NotificationController < ApplicationController
   private
   def get_notifications
     @notifications = Notification.where(:id =>params[:notification_ids])
+    render :json => {:errors => ['No notifications specified']}, status: :bad_request if @notifications.length == 0
     @notifications.each do |x|
       return render :json => {:errors => ['Unauthorized notification ID(s)']}, status: :unauthorized unless @apartment.id == x.apartment_id
     end

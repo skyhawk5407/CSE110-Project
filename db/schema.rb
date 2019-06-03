@@ -95,28 +95,6 @@ ActiveRecord::Schema.define(version: 2019_05_21_215710) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
-  create_table "rules", force: :cascade do |t|
-    t.integer "apartment_id"
-    t.string "rule"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["apartment_id"], name: "index_rules_on_apartment_id"
-  end
-
-  create_table "scheduled_expenses", force: :cascade do |t|
-    t.integer "apartment_id"
-    t.integer "payer_id"
-    t.integer "issuer_id"
-    t.string "title"
-    t.integer "amount"
-    t.integer "day_of_month"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["apartment_id"], name: "index_scheduled_expenses_on_apartment_id"
-    t.index ["issuer_id"], name: "index_scheduled_expenses_on_issuer_id"
-    t.index ["payer_id"], name: "index_scheduled_expenses_on_payer_id"
-  end
-
   create_table "unread_notifications", force: :cascade do |t|
     t.integer "user_id"
     t.integer "notification_id"
