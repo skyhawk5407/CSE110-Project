@@ -94,7 +94,7 @@ resource 'Document' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Document creation - Not logged in' do
+      example 'Document creation - Not logged in' do
         explanation 'Attempt to create a document while not supplying correct user credentials.'
         @existing_user.apartment_id = @existing_apartment.id
         do_request

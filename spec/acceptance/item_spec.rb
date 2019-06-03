@@ -108,7 +108,7 @@ resource 'Item' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Item creation - Not logged in' do
+      example 'Item creation - Not logged in' do
         explanation 'Attempt to create a item while not supplying correct user credentials.'
         @existing_user.apartment_id = @existing_apartment.id
         do_request

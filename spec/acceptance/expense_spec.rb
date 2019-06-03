@@ -126,7 +126,7 @@ resource 'Expense' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Expense creation - Not logged in' do
+      example 'Expense creation - Not logged in' do
         explanation 'Attempt to create an expense while not supplying correct user credentials.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
@@ -210,7 +210,7 @@ resource 'Expense' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Mark as paid - Not logged in' do
+      example 'Mark as paid - Not logged in' do
         explanation 'Attempt to mark an expense as paid while not supplying correct user credentials.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request
@@ -256,7 +256,7 @@ resource 'Expense' do
       let(:email_header) {nil}
       let(:password_header) {nil}
 
-      example_request 'Delete expense - Not logged in' do
+      example 'Delete expense - Not logged in' do
         explanation 'Attempt to delete an expense while not supplying correct user credentials.'
         @existing_user.update_column(:apartment_id, @existing_apartment.id)
         do_request

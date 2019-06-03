@@ -182,7 +182,6 @@ resource 'Apartment' do
     end
   end
 
-
   post 'api/v1/apartments/update_description' do
     parameter :name, "The apartment's new name.", type: :string
     parameter :address, "The apartment's new address.", type: :string
@@ -248,7 +247,7 @@ resource 'Apartment' do
       let(:user_id) {@existing_user2.id}
 
       context 'invalid user' do
-        example_request 'Apartment creation - Not in same apartment' do
+        example_request 'Remove user - Not in same apartment' do
           explanation 'Attempting to remove a user that isn\'t in the same apartment.'
           expect(status).to eq(400)
         end
