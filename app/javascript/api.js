@@ -48,9 +48,10 @@ export default {
         },
 
         update: {
-            update_account: (email, password, display_name, phone_number) =>
+            update_account: (email, password, new_email, display_name, phone_number) =>
                 axios.post(
                     "users/update_profile", {
+                        email: new_email,
                         display_name: display_name,
                         phone_number: phone_number
                     }, {

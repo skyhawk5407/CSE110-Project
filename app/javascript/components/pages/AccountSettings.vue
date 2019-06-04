@@ -8,7 +8,7 @@
 							<label>Email:</label>
 						</b-col>
 						<b-col sm="8">
-							<b-form-input :placeholder="$store.state.username" :disabled="true"></b-form-input>
+							<b-form-input v-model="account_email"></b-form-input>
 						</b-col>
 					</b-row>
 					<b-row class="my-1">
@@ -16,7 +16,7 @@
 							<label>Display Name:</label>
 						</b-col>
 						<b-col sm="8">
-							<b-form-input v-model="account_display_name" :placeholder="$store.state.displayName"></b-form-input>
+							<b-form-input v-model="account_display_name"></b-form-input>
 						</b-col>
 					</b-row>
 					<b-row class="my-1">
@@ -24,7 +24,7 @@
 							<label>Phone Number:</label>
 						</b-col>
 						<b-col sm="8">
-							<b-form-input v-model="account_phone_number" :placeholder="$store.state.phonenumber"></b-form-input>
+							<b-form-input v-model="account_phone_number"></b-form-input>
 						</b-col>
 					</b-row>
 					<b-alert variant="success" :show="show_good_account_message">{{ account_good_alert_message }}</b-alert>
@@ -102,6 +102,7 @@
         name: "AccountSettings",
 		data() {
             return {
+				account_email: this.$store.state.username,
                 account_display_name: this.$store.state.displayName,
 				account_phone_number: this.$store.state.phonenumber,
 				account_old_password: "",
@@ -122,14 +123,17 @@
 				try {
 					let response = await api.users.update.update_account(
 						this.$store.state.username, this.$store.state.password,
+						this.account_email,
 						this.account_display_name, this.account_phone_number);
 
 					let is_using_cookies = this.$cookie.get("isPermanence");
 					this.$store.commit('setDisplayName', this.account_display_name);
 					this.$store.commit('setPhoneNumber', this.account_phone_number);
+					this.$store.commit('setUsername', this.account_email);
 					if(is_using_cookies) {
 						this.$cookie.set('displayName', this.account_display_name, 30);
 						this.$cookie.set('phoneNumber', this.account_phone_number, 30);
+						this.$cookie.set('username', this.account_email, 30);
 					}
 					
 					this.account_good_alert_message = response.data;
