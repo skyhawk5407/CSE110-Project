@@ -32,7 +32,20 @@ class User < ApplicationRecord
   def leave_apartment
     delete_expenses
     delete_items
+    delete_unread_notifications
     self.update(:apartment_id => nil)
+  end
+
+  def add_unread_notifications
+    unread_notifications = []
+    notifications = Notification.where(:apartment_id => self.apartment_id)
+    notifications.each do |notif|
+      unread_notifications << UnreadNotification.new(
+          :user_id => self.id,
+          :notification_id => notif.id
+      )
+    end
+    UnreadNotification.import unread_notifications
   end
 
   private
@@ -43,6 +56,10 @@ class User < ApplicationRecord
 
   def delete_items
     Item.where(:user_id => self.id).destroy_all
+  end
+
+  def delete_unread_notifications
+    UnreadNotification.where(:user_id => self.id).destroy_all
   end
 
   def downcase_email

@@ -23,7 +23,7 @@ class Api::V1::NotificationController < ApplicationController
     timerange = params[:timestamp].nil? ? nil : DateTime.parse(params[:timestamp])..DateTime::Infinity.new
     query = {:apartment_id => @apartment.id,
              :created_at => timerange}.reject{|_,v| v.nil?}
-    notifications = Notification.where(query)
+    notifications = Notification.where(query).includes(:user)
     unread_notifications = UnreadNotification.where(:user_id => @user.id)
                                              .map{|x| x.notification_id}
                                              .to_set
