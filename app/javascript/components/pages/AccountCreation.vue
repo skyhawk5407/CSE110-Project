@@ -54,6 +54,7 @@
 				<b-row class="my-1">
 					<b-col offset="3">
 						<b-button variant="info" @click="register">Register</b-button>
+						<b-button variant="secondary" to="/">Cancel</b-button>
 					</b-col>
 				</b-row>
 			</div>

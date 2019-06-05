@@ -47,6 +47,9 @@
           <p>
             <b>Are you SURE you wish to leave your apartment?</b>
           </p>
+          <p class="my-3" v-if="items.length === 1">
+            <b>WARNING: You are the last member of the apartment. If no one is in the apartment when you leave, it will be deleted forever.</b>
+          </p>
           <p>
             <i>Note: This action can not be undone.</i>
           </p>

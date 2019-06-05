@@ -56,10 +56,14 @@
             drop-placeholder="Drop file here..."
         ></b-form-file>
 
-        <b-button variant="secondary"
+        <b-button variant="info"
                   :disabled="file==null||title===''"
                   @click="upload">
         Upload
+        </b-button>
+        <b-button variant="secondary"
+                  @click="$refs.addModal.hide()">
+        Cancel
         </b-button>
         <b-alert class="my-3" variant="danger" :show="uploadError">{{uploadError}}</b-alert>
 

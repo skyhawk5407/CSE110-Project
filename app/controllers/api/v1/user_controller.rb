@@ -63,6 +63,8 @@ class Api::V1::UserController < ApplicationController
   def join_apartment
     return render :json => {:errors => ['User already in an apartment']}, status: :bad_request unless @user.apartment_id.nil?
     apartment = Apartment.find_by_access_code(params[:access_code])
+    return render :json => {:errors => ['Invalid apartment secret code']}, status: :bad_request if apartment.nil?
+
     @user.update_column(:apartment_id, apartment.id)
     @user.add_unread_notifications
     render plain: 'Successfully joined apartment', status: :ok

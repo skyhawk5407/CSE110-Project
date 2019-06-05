@@ -21,8 +21,10 @@ when 'development'
       :name => 'WHAADADUPUPP',
       :address => '9500 Gilman Dr, La Jolla, CA 92093',
   )
+  Apartment.update(:access_code => '12345')
 
-  puts 'Created apartment'
+  puts 'Created apartment with access code 12345'
+
 
   user1 = User.create(
       :email => 'jsmith@example.com',

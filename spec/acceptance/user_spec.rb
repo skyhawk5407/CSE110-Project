@@ -237,11 +237,15 @@ resource 'User' do
       end
     end
     context '400' do
-      let(:access_code) {@access_code2}
       example 'Join Apartment - User already in apartment' do
         explanation 'Attempt to join an apartment while already in one.'
         @existing_user.update(:apartment_id => @existing_apartment.id)
-        do_request
+        do_request({:access_code => @access_code2})
+        expect(status).to eq(400)
+      end
+      example 'Join Apartment - Invalid access code' do
+        explanation 'Attempt to join an apartment with an invalid access code.'
+        do_request({:access_code => 'wrong-access-code'})
         expect(status).to eq(400)
       end
     end

@@ -32,8 +32,12 @@ class User < ApplicationRecord
   def leave_apartment
     delete_expenses
     delete_items
+    delete_documents
+    delete_sent_notifications
     delete_unread_notifications
+    apartment_id = self.apartment_id
     self.update(:apartment_id => nil)
+    delete_apartment_if_empty(apartment_id)
   end
 
   def add_unread_notifications
@@ -58,8 +62,23 @@ class User < ApplicationRecord
     Item.where(:user_id => self.id).destroy_all
   end
 
+  def delete_documents
+    Document.where(:user_id => self.id).destroy_all
+  end
+
+  def delete_sent_notifications
+    Notification.where(:user_id => self.id).destroy_all
+  end
+
   def delete_unread_notifications
     UnreadNotification.where(:user_id => self.id).destroy_all
+  end
+
+  def delete_apartment_if_empty(apartment_id)
+    count = User.where(:apartment_id => apartment_id).count
+    if count == 0
+      Apartment.find(apartment_id).destroy
+    end
   end
 
   def downcase_email

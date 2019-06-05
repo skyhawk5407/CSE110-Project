@@ -29,6 +29,12 @@ resource 'Notifications' do
         :display_name => 'Jane Doe',
         :apartment_id => @existing_apartment.id
     )
+    @existing_user3 = User.create(
+        :email => 'jdo@example.com',
+        :password => 'password1234',
+        :display_name => 'James Do',
+        :apartment_id => @existing_apartment.id
+    )
     @existing_notification = Notification.create(
         :apartment_id => @existing_apartment.id,
         :user_id => @existing_user2.id,
