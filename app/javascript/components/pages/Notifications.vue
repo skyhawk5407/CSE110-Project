@@ -16,6 +16,7 @@
         <template slot="Sender" slot-scope="row">{{ row.value }}</template>
         <template slot="Subject" slot-scope="row">{{ row.value }}</template>
         <template slot="Message" slot-scope="row">{{ row.value }}</template>
+        <template slot="Read By" slot-scope="row">{{ row.value }}</template>
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
           {{row.value}}
@@ -57,8 +58,9 @@ export default {
       anonymous: false,
       invalidRequest: false,
       requestError: "",
-      fields: ["Date", "Sender", "Subject", "Message", "Actions"],
-      notification_entries: []
+      fields: ["Date", "Sender", "Subject", "Message", "ReadBy", "Actions"],
+      notification_entries: [],
+      users: [],
     };
   },
   methods: {
@@ -66,6 +68,13 @@ export default {
       // console.log(item.Read);
       if (!item) return;
       if (item.Read == false) return "table-primary";
+    },
+    async getApartment() {
+      let response = await api.getApt.get(
+        this.$store.state.username,
+        this.$store.state.password
+        );
+        this.users = response.data.users;
     },
     async sendNotification() {
       try {
@@ -128,6 +137,14 @@ export default {
         for (var i = notificationId; i < notifications.length; i++) {
           // console.log(response.data[i].id);
           // add to table
+          var readArray = [];
+          // console.log(notifications[i].read_list);
+
+          for(var j = 0; j < this.users.length; j++) {
+            if(notifications[i].read_list[this.users[j].display_name + " (" + this.users[j].email + ")"] == true) {
+              readArray.push(this.users[j].display_name);
+            }
+          }
           this.notification_entries.push({
             Date: moment(notifications[i].created_at).format("MM/DD/YYYY"),
             Sender: notifications[i].creator_name,
@@ -135,6 +152,7 @@ export default {
             Message: notifications[i].message,
             Read: notifications[i].read,
             ID: notifications[i].id,
+            ReadBy: readArray.toString().replace("[", "").replace("]", "").replace(",", ", "),
           });
         }
       } catch (err) {
@@ -189,6 +207,7 @@ export default {
   },
   created() {
     this.getNotification(false);
+    this.getApartment();
   }
 };
 </script>
