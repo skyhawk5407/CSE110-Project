@@ -3,7 +3,14 @@
     <b-jumbotron>
       <template slot="header">Notifications</template>
 
-      <b-table id="notification_table" show-empty stacked="md" :items="notification_entries" :fields="fields" :tbody-tr-class="rowClass">
+      <b-table
+        id="notification_table"
+        show-empty
+        stacked="md"
+        :items="notification_entries"
+        :fields="fields"
+        :tbody-tr-class="rowClass"
+      >
         <!-- Data -->
         <template slot="Date" slot-scope="row">{{ row.value }}</template>
         <template slot="Sender" slot-scope="row">{{ row.value }}</template>
@@ -12,11 +19,20 @@
         <!-- Actions -->
         <template slot="Actions" slot-scope="row">
           {{row.value}}
-          <b-button variant="primary" @click="readNotification(notification_entries[row.index].ID, row.index)" :disabled="notification_entries[row.index].Read">Mark read</b-button>
+          <b-button
+            variant="primary"
+            @click="readNotification(notification_entries[row.index].ID, row.index)"
+            :disabled="notification_entries[row.index].Read"
+          >Mark read</b-button>
         </template>
       </b-table>
       <b-button v-b-modal.modal-notification variant="primary">Create Notification</b-button>
-      <b-modal id="modal-notification" title="Create Notification" @ok="sendNotification" ok-title="Send Notification">
+      <b-modal
+        id="modal-notification"
+        title="Create Notification"
+        @ok="sendNotification"
+        ok-title="Send Notification"
+      >
         <label>Subject:</label>
         <b-form-input v-model="title"></b-form-input>
         <label>Message:</label>
@@ -42,15 +58,14 @@ export default {
       invalidRequest: false,
       requestError: "",
       fields: ["Date", "Sender", "Subject", "Message", "Actions"],
-      notification_entries: [],
+      notification_entries: []
     };
   },
   methods: {
     rowClass(item, type) {
-      console.log(item.Read);
-        if (!item) return
-        if (item.Read == false) return 'table-primary'
-
+      // console.log(item.Read);
+      if (!item) return;
+      if (item.Read == false) return "table-primary";
     },
     async sendNotification() {
       try {
@@ -150,7 +165,7 @@ export default {
           this.$store.state.password
         );
         this.invalidRequest = false;
-        this.$set(this.notification_entries[index], 'Read', true);
+        this.$set(this.notification_entries[index], "Read", true);
         // console.log(this.notification_entries[index])
         // console.log(response);
       } catch (err) {
@@ -170,7 +185,7 @@ export default {
         }
         console.log(err);
       }
-    }, 
+    }
   },
   created() {
     this.getNotification(false);
