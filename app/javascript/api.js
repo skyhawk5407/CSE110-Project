@@ -353,5 +353,24 @@ export default {
                     password: password
                 }
             })
+    },
+    editApartmentDetails: {
+        //POST api/v1/apartments/update_description
+        edit_aprtment: (name, address) =>
+        axios.post(
+            "apartments/update_description", {
+                name: name,
+                address: address
+            }, {
+                name: name,
+                address: address,
+                headers: {
+                    email: email,
+                    password: password
+                }
+            }
+        ),
+
     }
+
 };

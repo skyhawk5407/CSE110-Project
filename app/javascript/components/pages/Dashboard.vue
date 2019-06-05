@@ -1,6 +1,14 @@
 <template>
   <b-jumbotron>
     <template slot="header">Dashboard</template>
+
+    <!-- edit the aprtment details here -->
+    <p>Apartment Name:</p>
+    <b-form-input v-model="address"></b-form-input>
+     <p>Apartment Address:</p>
+    <b-form-input v-model="name"></b-form-input>
+    <b-button class="mt-2" variant="danger" @click="editApartmentDetails">Edit</b-button>
+
     <b-container class="bv-example-row">
       <b-row>
         <b-col>
@@ -12,7 +20,6 @@
             tag="article"
             style="max-width: 20rem;"
             class="mb-2"
-
           >
             <b-card-text>Manage your Apartment Mates, Invite people, View contact info, or leave the Apartment.</b-card-text>
 
@@ -102,14 +109,53 @@
 </template>
 
 <script>
-	import ApartmentMate from './ApartmentMate';
-	import Notifications from './Notifications';
-	import Documents from './Documents';
-	import Items from './Items';
-	import Expenses from "./Expenses";
+import ApartmentMate from "./ApartmentMate";
+import Notifications from "./Notifications";
+import Documents from "./Documents";
+import Items from "./Items";
+import Expenses from "./Expenses";
+import api from "../../api.js";
 
-    export default {
-        name: "Dashboard",
-        components: {ApartmentMate, Notifications, Documents, Items, Expenses}
-    }
+export default {
+  name: "Dashboard",
+  components: { ApartmentMate, Notifications, Documents, Items, Expenses },
+  data() {
+    return {
+      address: "",
+      name: ""
+    };
+  },
+  created() {
+    this.getApartment();
+  },
+  methods: {
+    async getApartment() {
+      let response = await api.getApt.get(
+        this.$store.state.username,
+        this.$store.state.password
+      );
+      // Only display the apartmentwide documents
+      this.address = response.data.address;
+      this.name = response.data.name;
+    },
+
+    async editApartmentDetails() {  try {
+        let response = await api.editApartmentDetails.post(
+          this.name,
+          this.address
+        );
+      } catch (err) {
+        if (err.response) {
+          switch (err.response.status) {
+            case 400:
+              console.log(err.reponse.data);
+              break;
+            default:
+              console.log("An unknown error occurred.");
+              break;
+          }
+        }
+      }}
+  }
+};
 </script>
