@@ -72,30 +72,26 @@
 <script>
   import api from '../../api.js';
 
-  const defaultData = () => {
-    return {
-      email: '',
-      resetToken: '',
-
-      resetTokenInvalid: false,
-      successfulReset: false,
-
-      newPassword: '',
-      newPasswordConfirmation: '',
-
-      responseText: '',
-      responseError: false,
-
-      // On success, redirect
-      redirectMaxSecs: 5,
-      redirectSecs: 5
-    }
-  };
-
   export default {
     name: "ResetPassword",
     data() {
-      return defaultData();
+      return {
+        email: '',
+        resetToken: '',
+
+        resetTokenInvalid: false,
+        successfulReset: false,
+
+        newPassword: '',
+        newPasswordConfirmation: '',
+
+        responseText: '',
+        responseError: false,
+
+        // On success, redirect
+        redirectMaxSecs: 5,
+        redirectSecs: 5
+      }
     },
     beforeRouteEnter (to, from, next) {
       // If email or reset token not defined, redirect to main page
@@ -103,14 +99,12 @@
         next('/');
       } else {
         next(vm => {
-          vm.$data = defaultData();
           vm.email = to.query.email;
           vm.resetToken = to.query.reset_token;
         });
       }
     },
     beforeRouteUpdate (to, from, next) {
-      this.$data = defaultData();
       // If email or reset token not defined, redirect to main page
       if(to.query.email === undefined || to.query.reset_token === undefined) {
         next('/');
