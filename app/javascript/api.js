@@ -410,7 +410,7 @@ export default {
   },
   editApartmentDetails: {
     //POST api/v1/apartments/update_description
-    edit_aprtment: (name, address) =>
+    post: (name, address, email, password) =>
       axios.post(
         "apartments/update_description",
         {
@@ -418,8 +418,6 @@ export default {
           address: address
         },
         {
-          name: name,
-          address: address,
           headers: {
             email: email,
             password: password

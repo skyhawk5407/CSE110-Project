@@ -1,13 +1,12 @@
 <template>
   <b-jumbotron>
-    <template slot="header">Dashboard</template>
+    <template slot="header">
+      Dashboard
+    </template>
 
-    <!-- edit the aprtment details here -->
-    <p>Apartment Name:</p>
-    <b-form-input v-model="address"></b-form-input>
-     <p>Apartment Address:</p>
-    <b-form-input v-model="name"></b-form-input>
-    <b-button class="mt-2" variant="danger" @click="editApartmentDetails">Edit</b-button>
+    <template slot="lead">
+      Welcome to <i>{{ name }}</i> at {{address}}!
+    </template>
 
     <b-container class="bv-example-row">
       <b-row>
@@ -91,7 +90,7 @@
 
         <b-col>
           <b-card
-            title="Account Settings"
+            title="Settings"
             img-src="https://i.imgur.com/gkGlMOs.png"
             img-alt="Image"
             img-top
@@ -99,12 +98,35 @@
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>Manage your account settings here to change your password or name.</b-card-text>
-            <b-button class="mt-2" to="/AccountSettings" variant="info">Account Settings</b-button>
+            <b-card-text>Manage your account settings, or edit the details of the apartment.</b-card-text>
+            <b-button-toolbar>
+              <b-button to="/AccountSettings" variant="info">Account</b-button>
+              <b-button class="mx-1" v-b-modal.editApartmentModal variant="info">Apartment</b-button>
+            </b-button-toolbar>
           </b-card>
         </b-col>
       </b-row>
     </b-container>
+
+    <b-modal id="editApartmentModal"
+             ref="editApartmentModal"
+             hide-footer
+             title="Edit Apartment Settings">
+      <label>Apartment Name:</label>
+      <b-form-input class="mb-3"v-model="changeName"></b-form-input>
+      <label>Apartment Address:</label>
+      <b-form-input class="my-3" v-model="changeAddress"></b-form-input>
+
+      <b-button variant="info"
+                @click="editApartmentDetails">
+        Edit
+      </b-button>
+      <b-button variant="secondary"
+                @click="$refs.editApartmentModal.hide()">
+        Cancel
+      </b-button>
+      <b-alert class="my-3" variant="danger" :show="errorText">{{errorText}}</b-alert>
+    </b-modal>
   </b-jumbotron>
 </template>
 
@@ -122,7 +144,11 @@ export default {
   data() {
     return {
       address: "",
-      name: ""
+      name: "",
+
+      changeName: "",
+      changeAddress: "",
+      errorText: undefined
     };
   },
   created() {
@@ -137,23 +163,26 @@ export default {
       // Only display the apartmentwide documents
       this.address = response.data.address;
       this.name = response.data.name;
+      this.changeAddress = this.address;
+      this.changeName = this.name;
     },
 
-    async editApartmentDetails() {  try {
+    async editApartmentDetails(e) {
+      e.preventDefault();
+      try {
         let response = await api.editApartmentDetails.post(
-          this.name,
-          this.address
+          this.changeName,
+          this.changeAddress,
+          this.$store.state.username,
+          this.$store.state.password,
         );
+        this.errorText = undefined;
+        this.name = this.changeName;
+        this.address = this.changeAddress;
+        this.$refs.editApartmentModal.hide();
       } catch (err) {
         if (err.response) {
-          switch (err.response.status) {
-            case 400:
-              console.log(err.reponse.data);
-              break;
-            default:
-              console.log("An unknown error occurred.");
-              break;
-          }
+          this.errorText = err.response.data.errors[0];
         }
       }}
   }
