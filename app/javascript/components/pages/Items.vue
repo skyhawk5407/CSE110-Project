@@ -7,10 +7,10 @@
           <strong>Loading...</strong>
         </div>
 
-        <template slot="Name" slot-scope="row">{{ row.value }}</template>
-        <template slot="Owner" slot-scope="row">{{row.value}}</template>
+        <template slot="item" slot-scope="row">{{ row.value }}</template>
+        <template slot="owner" slot-scope="row">{{row.value}}</template>
         <template slot="Description" slot-scope="row">{{ row.value }}</template>
-        <!-- <template slot="Status" slot-scope="row">{{ row.value }}</template> -->
+        <template slot="Bought" slot-scope="row">{{ row.value }}</template>
 
         <!-- Edit&Remove -->
         <template slot="Actions" slot-scope="row">
@@ -27,7 +27,7 @@
     <b-modal id="modal-addItem" title="Add Item" hide-footer>
       <div>
         <label>Item Name:</label>
-        <b-form-input v-model="Name"></b-form-input>
+        <b-form-input v-model="item"></b-form-input>
 
         <label>Owner:</label>
         <b-form-select v-model="selectedMate">
@@ -42,12 +42,13 @@
         </b-form-select>
 
         <label>Description:</label>
-        <b-form-input v-model="Description" rows="3"></b-form-input>
-        <!-- 
-      <label>Status</label>
-        <b-form-checkbox id="buyStatus" v-model="Status" value="true" unchecked-value="false"></b-form-checkbox>-->
+        <b-form-textarea v-model="Description" rows="3"></b-form-textarea>
+
+        <label>Bought</label>
+        <b-form-checkbox id="buyStatus" v-model="Bought">I have this item!</b-form-checkbox>
       </div>
 
+      <!-- action buttons -->
       <b-button class="mt-2" variant="info" @click="addItem">Add</b-button>
       <b-button class="mt-2" variant="danger" @click="hideModal('modal-addItem')">Cancel</b-button>
     </b-modal>
@@ -56,7 +57,7 @@
     <b-modal id="modal-edit" title="Edit Item" hide-footer>
       <div>
         <label>Item Name:</label>
-        <b-form-input v-model="Name"></b-form-input>
+        <b-form-input v-model="item"></b-form-input>
 
         <label>Owner:</label>
         <b-form-select v-model="selectedMate">
@@ -71,14 +72,18 @@
         </b-form-select>
 
         <label>Description:</label>
-        <b-form-input v-model="Description" rows="3"></b-form-input>
+        <b-form-textarea v-model="Description" rows="3"></b-form-textarea>
 
-        <!-- <label>Need to Buy</label>
-      <b-form-checkbox id="buyStatus" v-model="Status">
-        <b-form-checkbox value="true">Have</b-form-checkbox>
-        <b-form-checkbox value="false">Don't Have</b-form-checkbox>
-        </b-form-checkbox>-->
+        <label>Need to Buy</label>
+        <b-form-checkbox
+          id="buyStatus"
+          v-model="Bought"
+          value="true"
+          unchecked-value="false"
+        >I have this item!</b-form-checkbox>
       </div>
+
+      <!-- action buttons -->
       <b-button class="mt-2" variant="info" @click="editItem">Save</b-button>
       <b-button class="mt-2" variant="danger" @click="hideModal('modal-edit')">Cancel</b-button>
     </b-modal>
@@ -92,7 +97,7 @@
         <i>Note: This action can not be undone.</i>
       </p>
       <b-button class="mt-2" variant="info" @click="hideModal('modal-remove')">No, I am not sure.</b-button>
-      <b-button class="mt-2" variant="danger" @click="removeItem('modal-remove')">Yes, I am sure.</b-button>
+      <b-button class="mt-2" variant="danger" @click="removeItem">Yes, I am sure.</b-button>
     </b-modal>
   </div>
 </template>
@@ -110,18 +115,22 @@ export default {
           error: false
         }
       ],
-      fields: ["Name", "Owner", "Description", /*"Status",*/ "Actions"],
+      fields: ["item", "owner", "Description", "Bought", "Actions"],
       items: [],
       apartment_mates: [],
       selectedMate: null,
       selectedRow: "",
       loading: false,
 
-      Id: null,
-      Name: undefined,
+      // item id and name
+      item_id: null,
+      item: undefined,
+
+      // owner id and name
       owner_id: null,
-      Owner: null,
-      Status: false,
+      owner: null,
+
+      Bought: false,
       Description: undefined,
       curr_email: this.$store.state.username,
       curr_password: this.$store.state.password
@@ -148,19 +157,27 @@ export default {
       try {
         this.loading = true;
 
-        console.log("id: " + this.selectedMate.id);
+        // selected user info <handing null case>
+        if (this.selectedMate == null) {
+          this.owner_id = null;
+        } else {
+          this.owner_id = this.selectedMate.id;
+          this.owner = this.selectedMate.display_name;
+        }
 
+        //<post data to database>
         let response = await api.items.post(
-          this.selectedMate.id,
-          this.Name,
+          this.owner_id,
+          this.item,
           this.Description,
+          this.Bought,
           this.curr_email,
           this.curr_password
         );
         console.log(response.data);
-        this.postItem();
+        this.postItem(); //post it to frontend table
         this.resetInput();
-        this.$bvModal.hide("modal-addItem");
+        this.$bvModal.hide("modal-addItem"); //close add pop-up
         this.loading = false;
       } catch (err) {
         this.messages.push({
@@ -194,10 +211,11 @@ export default {
 
         // post Item
         this.items.push({
-          Id: lastTransactionEntry.id,
-          Name: lastTransactionEntry.name,
-          Owner: lastTransactionEntry.owner_name,
-          Description: lastTransactionEntry.description
+          item_id: lastTransactionEntry.id,
+          item: lastTransactionEntry.name,
+          owner: lastTransactionEntry.owner_name,
+          Description: lastTransactionEntry.description,
+          Bought: lastTransactionEntry.bought
         });
       } catch (err) {
         console.log("fail");
@@ -207,6 +225,7 @@ export default {
     // get entire items
     async createTable() {
       this.loading = true;
+
       let response = await api.items.get(this.curr_email, this.curr_password);
       var transactions = response.data;
       var i = 0;
@@ -214,23 +233,24 @@ export default {
       for (i in transactions) {
         var entry = transactions[i];
         var load = {
-          Id: entry.id,
-          Name: entry.name,
-          Owner: entry.owner_name,
-          Description: entry.description
+          item_id: entry.id,
+          item: entry.name,
+          owner: entry.owner_name,
+          Description: entry.description,
+          Bought: entry.bought
         };
         this.items.push(load);
       }
       this.loading = false;
     },
-    async removeItem(modal) {
+    async removeItem() {
       try {
         var deleteCount = 1;
         // delete from database
         var index = this.items.indexOf(this.selectedRow);
-        var item_id = this.items[index].Id;
+        var itemId = this.items[index].item_id;
         let response = await api.items.delete(
-          item_id,
+          itemId,
           this.curr_email,
           this.curr_password
         );
@@ -239,7 +259,7 @@ export default {
         this.items.splice(index, deleteCount);
 
         // close
-        this.hideModal(modal);
+        this.$bvModal.hide("modal-remove");
       } catch (err) {
         this.messages.push({
           message: err.response.data,
@@ -260,29 +280,43 @@ export default {
     async getEditItem(selectedRow) {
       this.selectedRow = selectedRow;
       var index = this.items.indexOf(selectedRow);
-      this.Id = this.items[index].Id;
-      this.Name = this.items[index].Name;
+      this.item_id = this.items[index].item_id;
+      this.item = this.items[index].item;
       this.Description = this.items[index].Description;
-      this.Owner = this.items[index].Owner;
-      console.log("Owner: " + this.items[index].Owner);
+      this.owner = this.items[index].owner;
+      this.Bought = this.items[index].Bought;
+      console.log("owner: " + this.items[index].owner);
     },
     async editItem() {
       console.log("Edit...");
       try {
+        // console.log("selectedMate: " + this.selectedMate.id);
+
+        if (this.selectedMate == null) {
+          this.owner_id = null;
+          this.owner = "N/A";
+        } else {
+          this.owner_id = this.selectedMate.id;
+          this.owner = this.selectedMate.display_name;
+        }
+
         let response = await api.items.update(
-          this.Id,
-          this.selectedMate.id,
-          this.Name,
+          this.item_id,
+          this.owner_id,
+          this.item,
           this.Description,
+          this.Bought,
           this.curr_email,
           this.curr_password
         );
 
         // set changed data to table
         var index = this.items.indexOf(this.selectedRow);
-        this.$set(this.items[index], "Name", this.Name);
-        this.$set(this.items[index], "Owner", this.selectedMate.display_name);
+        this.$set(this.items[index], "item", this.item);
+        this.$set(this.items[index], "owner", this.owner);
         this.$set(this.items[index], "Description", this.Description);
+        this.$set(this.items[index], "Bought", this.Bought);
+
         this.resetInput();
         this.$bvModal.hide("modal-edit");
       } catch (err) {
@@ -319,11 +353,11 @@ export default {
       this.$root.$emit("bv::hide::modal", modal, "#btnShow");
     },
     resetInput() {
-      this.Id = null;
-      this.Name = undefined;
+      this.item_id = null;
+      this.item = undefined;
       this.owner_id = null;
-      this.Owner = null;
-      this.Status = false;
+      this.owner = null;
+      this.Bought = false;
       this.Description = undefined;
     },
     sendInfo(row) {
