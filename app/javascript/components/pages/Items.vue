@@ -1,58 +1,98 @@
 <template>
   <div>
     <b-jumbotron>
-      <template slot="header">Items</template>
-      <b-table show-empty stacked="md" :items="items" :fields="fields">
+      <b-table show-empty :busy="loading" stacked="md" :items="items" :fields="fields">
+        <div slot="table-busy" class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong>Loading...</strong>
+        </div>
+
         <template slot="Name" slot-scope="row">{{ row.value }}</template>
         <template slot="Owner" slot-scope="row">{{row.value}}</template>
         <template slot="Description" slot-scope="row">{{ row.value }}</template>
+        <!-- <template slot="Status" slot-scope="row">{{ row.value }}</template> -->
 
         <!-- Edit&Remove -->
         <template slot="Actions" slot-scope="row">
-          <b-button v-b-modal.modal-2 variant="primary" @click="sendInfo(row.item)">Edit</b-button>
-          <b-button v-b-modal="'my_modal_items'" variant="danger" @click="sendInfo(row.item)">Remove</b-button>
+          <b-button v-b-modal.modal-edit variant="primary" @click="getEditItem(row.item)">Edit</b-button>
+          <b-button v-b-modal="'modal-remove'" variant="danger" @click="sendInfo(row.item)">Remove</b-button>
         </template>
       </b-table>
 
       <!-- Add -->
-      <b-button v-b-modal.modal-1 variant="primary">Add Item</b-button>
+      <b-button v-b-modal.modal-addItem variant="primary">Add Item</b-button>
     </b-jumbotron>
 
     <!-- Add Popup -->
-    <b-modal id="modal-1" title="Add Item" @ok="addItem" ok-title="Add">
-      <label>Item Name:</label>
-      <b-form-input v-model="Name"></b-form-input>
-      <label>Description:</label>
-      <b-form-input v-model="Description" row="2"></b-form-input>
+    <b-modal id="modal-addItem" title="Add Item" hide-footer>
+      <div>
+        <label>Item Name:</label>
+        <b-form-input v-model="Name"></b-form-input>
+
+        <label>Owner:</label>
+        <b-form-select v-model="selectedMate">
+          <option
+            v-for="user in apartment_mates"
+            v-bind:key="user.id"
+            v-bind:value="user"
+          >{{user.display_name}}</option>
+          <template slot="first">
+            <option :value="null">N/A</option>
+          </template>
+        </b-form-select>
+
+        <label>Description:</label>
+        <b-form-input v-model="Description" rows="3"></b-form-input>
+        <!-- 
+      <label>Status</label>
+        <b-form-checkbox id="buyStatus" v-model="Status" value="true" unchecked-value="false"></b-form-checkbox>-->
+      </div>
+
+      <b-button class="mt-2" variant="info" @click="addItem">Add</b-button>
+      <b-button class="mt-2" variant="danger" @click="hideModal('modal-addItem')">Cancel</b-button>
     </b-modal>
 
     <!-- Edit Popup -->
-    <b-modal
-      id="modal-2"
-      title="Edit Item"
-      @ok="editItem(selectedRow, 'my_modal_items')"
-      ok-title="Save"
-    >
-      <label>Item Name:</label>
-      <b-form-input v-model="Name"></b-form-input>
-      <label>Description:</label>
-      <b-form-input v-model="Description" row="2"></b-form-input>
+    <b-modal id="modal-edit" title="Edit Item" hide-footer>
+      <div>
+        <label>Item Name:</label>
+        <b-form-input v-model="Name"></b-form-input>
+
+        <label>Owner:</label>
+        <b-form-select v-model="selectedMate">
+          <option
+            v-for="user in apartment_mates"
+            v-bind:key="user.id"
+            v-bind:value="user"
+          >{{user.display_name}}</option>
+          <template slot="first">
+            <option :value="null">N/A</option>
+          </template>
+        </b-form-select>
+
+        <label>Description:</label>
+        <b-form-input v-model="Description" rows="3"></b-form-input>
+
+        <!-- <label>Need to Buy</label>
+      <b-form-checkbox id="buyStatus" v-model="Status">
+        <b-form-checkbox value="true">Have</b-form-checkbox>
+        <b-form-checkbox value="false">Don't Have</b-form-checkbox>
+        </b-form-checkbox>-->
+      </div>
+      <b-button class="mt-2" variant="info" @click="editItem">Save</b-button>
+      <b-button class="mt-2" variant="danger" @click="hideModal('modal-edit')">Cancel</b-button>
     </b-modal>
 
     <!-- Remove Popup -->
-    <b-modal id="my_modal_items" hide-footer title="Remove Item">
+    <b-modal id="modal-remove" hide-footer title="Remove Item">
       <p>
         <b>Are you SURE you wish to remove this item?</b>
       </p>
       <p>
         <i>Note: This action can not be undone.</i>
       </p>
-      <b-button class="mt-2" variant="info" @click="hideModal('my_modal_items')">No, I am not sure.</b-button>
-      <b-button
-        class="mt-2"
-        variant="danger"
-        @click="removeItem(selectedRow, 'my_modal_items')"
-      >Yes, I am sure.</b-button>
+      <b-button class="mt-2" variant="info" @click="hideModal('modal-remove')">No, I am not sure.</b-button>
+      <b-button class="mt-2" variant="danger" @click="removeItem('modal-remove')">Yes, I am sure.</b-button>
     </b-modal>
   </div>
 </template>
@@ -70,14 +110,18 @@ export default {
           error: false
         }
       ],
-      fields: ["Name", "Owner", "Description", "Actions"],
+      fields: ["Name", "Owner", "Description", /*"Status",*/ "Actions"],
       items: [],
+      apartment_mates: [],
+      selectedMate: null,
       selectedRow: "",
+      loading: false,
 
       Id: null,
       Name: undefined,
       owner_id: null,
-      Owner: undefined,
+      Owner: null,
+      Status: false,
       Description: undefined,
       curr_email: this.$store.state.username,
       curr_password: this.$store.state.password
@@ -85,7 +129,7 @@ export default {
   },
   created() {
     this.extractMates();
-    this.getAllItems();
+    this.createTable();
   },
   methods: {
     async extractMates() {
@@ -94,24 +138,30 @@ export default {
       var mate_list = response.data.users;
       for (var i = 0; i < mate_list.length; i++) {
         var apt_mate = mate_list[i];
-        if (apt_mate.email == this.$store.state.username) {
-          this.owner_id = apt_mate.id;
-          this.Owner = apt_mate.display_name;
-        }
+        this.apartment_mates.push({
+          id: apt_mate.id,
+          display_name: apt_mate.display_name
+        });
       }
     },
     async addItem() {
       try {
-        // add to database
+        this.loading = true;
+
+        console.log("id: " + this.selectedMate.id);
+
         let response = await api.items.post(
-          this.owner_id,
+          this.selectedMate.id,
           this.Name,
           this.Description,
           this.curr_email,
           this.curr_password
         );
-
-        this.getItems();
+        console.log(response.data);
+        this.postItem();
+        this.resetInput();
+        this.$bvModal.hide("modal-addItem");
+        this.loading = false;
       } catch (err) {
         this.messages.push({
           message: err.response.data,
@@ -128,13 +178,12 @@ export default {
         }
       }
     },
-    async getItems() {
+    async postItem() {
       try {
-        console.log("getItems");
+        console.log("push");
         let response = await api.items.get(this.curr_email, this.curr_password);
         var transactions = response.data;
         var lastTransactionId = transactions.length - 1;
-        // This data contains all the data for the last transaction
         var lastTransactionEntry = transactions.find(
           function findLastTransaction(element, index, array) {
             var lastTransactionId = array.length - 1;
@@ -143,6 +192,7 @@ export default {
           lastTransactionId
         );
 
+        // post Item
         this.items.push({
           Id: lastTransactionEntry.id,
           Name: lastTransactionEntry.name,
@@ -152,16 +202,15 @@ export default {
       } catch (err) {
         console.log("fail");
       }
-      this.Name = this.Name;
-      this.Description = this.Description;
     },
-    // et entire items
-    async getAllItems() {
+
+    // get entire items
+    async createTable() {
+      this.loading = true;
       let response = await api.items.get(this.curr_email, this.curr_password);
       var transactions = response.data;
       var i = 0;
 
-      //
       for (i in transactions) {
         var entry = transactions[i];
         var load = {
@@ -172,13 +221,13 @@ export default {
         };
         this.items.push(load);
       }
+      this.loading = false;
     },
-    async removeItem(selectedRow, modal) {
+    async removeItem(modal) {
       try {
         var deleteCount = 1;
-
         // delete from database
-        var index = this.items.indexOf(selectedRow);
+        var index = this.items.indexOf(this.selectedRow);
         var item_id = this.items[index].Id;
         let response = await api.items.delete(
           item_id,
@@ -207,21 +256,51 @@ export default {
         }
       }
     },
-    async editItem(selectedRow, modal) {
-      let response = await api.items.get(this.curr_email, this.curr_password);
-      var transactions = response.data;
-      var lastTransactionId = this.items.indexOf(selectedRow);
-      // This data contains all the data for the last transaction
-      var lastTransactionEntry = transactions.find(function findLastTransaction(
-        element,
-        index,
-        array
-      ) {
-        var lastTransactionId = array.length - 1;
-        return element == lastTransactionId || index == lastTransactionId;
-      },
-      lastTransactionId);
-      console.log("last ID: " + lastTransactionId);
+
+    async getEditItem(selectedRow) {
+      this.selectedRow = selectedRow;
+      var index = this.items.indexOf(selectedRow);
+      this.Id = this.items[index].Id;
+      this.Name = this.items[index].Name;
+      this.Description = this.items[index].Description;
+      this.Owner = this.items[index].Owner;
+      console.log("Owner: " + this.items[index].Owner);
+    },
+    async editItem() {
+      console.log("Edit...");
+      try {
+        let response = await api.items.update(
+          this.Id,
+          this.selectedMate.id,
+          this.Name,
+          this.Description,
+          this.curr_email,
+          this.curr_password
+        );
+
+        // set changed data to table
+        var index = this.items.indexOf(this.selectedRow);
+        this.$set(this.items[index], "Name", this.Name);
+        this.$set(this.items[index], "Owner", this.selectedMate.display_name);
+        this.$set(this.items[index], "Description", this.Description);
+        this.resetInput();
+        this.$bvModal.hide("modal-edit");
+      } catch (err) {
+        console.log(err);
+        this.messages.push({
+          message: err,
+          error: true
+        });
+        if (err.response) {
+          switch (err.response.status) {
+            case 400:
+              console.log("error");
+              break;
+            default:
+              console.log("unknown error");
+          }
+        }
+      }
     },
     handleSubmit() {
       // Exit when the form isn't valid
@@ -236,15 +315,16 @@ export default {
       });
     },
     hideModal(modal) {
+      this.resetInput();
       this.$root.$emit("bv::hide::modal", modal, "#btnShow");
     },
-    toggleModal(modal, row) {
-      console.log(row);
-      this.items = this.getItems();
-      this.$root.$emit("bv::toggle::modal", modal, "#btnToggle");
-    },
-    openWindow(url) {
-      window.open(url, "_blank");
+    resetInput() {
+      this.Id = null;
+      this.Name = undefined;
+      this.owner_id = null;
+      this.Owner = null;
+      this.Status = false;
+      this.Description = undefined;
     },
     sendInfo(row) {
       this.selectedRow = row;
