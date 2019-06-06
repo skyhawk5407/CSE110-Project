@@ -352,18 +352,20 @@ export default {
       })
   },
   items: {
-    post: (owner_id, name, description, email, password) =>
+    post: (owner_id, name, description, bought, email, password) =>
       axios.post(
         "/apartments/items",
         {
           owner_id: owner_id,
           name: name,
-          description: description
+          description: description,
+          bought: bought
         },
         {
           owner_id: owner_id,
           name: name,
           description: description,
+          bought: bought,
           headers: {
             email: email,
             password: password
@@ -387,20 +389,22 @@ export default {
           password: password
         }
       }),
-    update: (item_id, owner_id, name, description, email, password) =>
+    update: (item_id, owner_id, name, description, bought, email, password) =>
       axios.post(
         "/apartments/items/update",
         {
           item_id: item_id,
           owner_id: owner_id,
           name: name,
-          description: description
+          description: description,
+          bought: bought
         },
         {
           item_id: item_id,
           owner_id: owner_id,
           name: name,
           description: description,
+          bought: bought,
           headers: {
             email: email,
             password: password
