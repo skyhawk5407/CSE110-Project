@@ -93,25 +93,13 @@
         redirectSecs: 5
       }
     },
-    beforeRouteEnter (to, from, next) {
+    created () {
       // If email or reset token not defined, redirect to main page
-      if(to.query.email === undefined || to.query.reset_token === undefined){
-        next('/');
+      if(this.$router.query.email === undefined || this.$router.query.reset_token === undefined) {
+        this.$router.replace('/');
       } else {
-        next(vm => {
-          vm.email = to.query.email;
-          vm.resetToken = to.query.reset_token;
-        });
-      }
-    },
-    beforeRouteUpdate (to, from, next) {
-      // If email or reset token not defined, redirect to main page
-      if(to.query.email === undefined || to.query.reset_token === undefined) {
-        next('/');
-      } else {
-        this.email = to.query.email;
-        this.resetToken = to.query.reset_token;
-        next();
+        this.email = this.$router.query.email;
+        this.resetToken = this.$router.query.reset_token;
       }
     },
     methods: {
