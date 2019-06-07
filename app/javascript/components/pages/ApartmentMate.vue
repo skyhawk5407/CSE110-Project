@@ -2,12 +2,7 @@
   <div>
     <b-jumbotron>
       <template slot="header">Apartment Mates</template>
-      <b-table
-        show-empty
-        stacked="md"
-        :items="items"
-        :fields="fields"
-      >
+      <b-table show-empty stacked="md" :items="items" :fields="fields">
         <template slot="Name" slot-scope="row">{{ row.item.display_name }}</template>
 
         <template slot="Email" slot-scope="row">{{ row.item.email }}</template>
@@ -25,18 +20,18 @@
       </b-table>
 
       <b-modal id="modal-2" hide-footer title="Remove Apartment Mate">
-            <p>
-              <b>Are you SURE you wish to remove this apartment mate?</b>
-            </p>
-            <p>
-              <i>Note: This action can not be undone.</i>
-            </p>
-            <b-button class="mt-2" variant="info" @click="hideModal('modal-2')">No, I am not sure.</b-button>
-            <b-button
-              class="mt-2"
-              variant="danger"
-              @click="toggleModal('modal-2', selectedRow)"
-            >Yes, I am sure.</b-button>
+        <p>
+          <b>Are you SURE you wish to remove this apartment mate?</b>
+        </p>
+        <p>
+          <i>Note: This action can not be undone.</i>
+        </p>
+        <b-button
+          class="mt-2"
+          variant="danger"
+          @click="toggleModal('modal-2', selectedRow)"
+        >Yes, I am sure.</b-button>
+        <b-button class="mt-2" variant="info" @click="hideModal('modal-2')">No, I am not sure.</b-button>
       </b-modal>
 
       <div>
@@ -53,8 +48,8 @@
           <p>
             <i>Note: This action can not be undone.</i>
           </p>
-          <b-button class="mt-2" variant="info" @click="hideModal('modal-leave')">No, I am not sure.</b-button>
           <b-button class="mt-2" variant="danger" @click="leaveApartment">Yes, I am sure.</b-button>
+          <b-button class="mt-2" variant="info" @click="hideModal('modal-leave')">No, I am not sure.</b-button>
         </b-modal>
 
         <!-- Modal Component 1-->
@@ -67,7 +62,13 @@
               label-for="Email-input"
               invalid-feedback="Valid Email is required"
             >
-              <b-form-input id="Email-input" v-model="email" :state="emailState" required @keyup.enter="handleSendInvite"></b-form-input>
+              <b-form-input
+                id="Email-input"
+                v-model="email"
+                :state="emailState"
+                required
+                @keyup.enter="handleSendInvite"
+              ></b-form-input>
             </b-form-group>
           </form>
           <!-- We pass the name cancel as props to footer -->
