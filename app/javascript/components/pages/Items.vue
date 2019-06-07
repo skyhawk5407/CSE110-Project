@@ -48,6 +48,8 @@
         <b-form-checkbox id="buyStatus" v-model="Bought">I have this item!</b-form-checkbox>
       </div>
 
+      <b-alert class="my-3" variant="danger" :show="uploadError">{{uploadError}}</b-alert>
+
       <!-- action buttons -->
       <b-button class="mt-2" variant="info" @click="addItem">Add</b-button>
       <b-button class="mt-2" variant="danger" @click="hideModal('modal-addItem')">Cancel</b-button>
@@ -133,7 +135,9 @@ export default {
       Bought: false,
       Description: undefined,
       curr_email: this.$store.state.username,
-      curr_password: this.$store.state.password
+      curr_password: this.$store.state.password,
+
+      uploadError: undefined
     };
   },
   created() {
@@ -154,16 +158,12 @@ export default {
       }
     },
     async addItem() {
-      try {
-        this.loading = true;
+      if (this.item == undefined) {
+        this.uploadError = "Item name can't be blank";
+        return;
+      }
 
-        // selected user info <handing null case>
-        if (this.selectedMate == null) {
-          this.owner_id = null;
-        } else {
-          this.owner_id = this.selectedMate.id;
-          this.owner = this.selectedMate.display_name;
-        }
+      try {
 
         //<post data to database>
         let response = await api.items.post(
@@ -174,12 +174,26 @@ export default {
           this.curr_email,
           this.curr_password
         );
+
+        this.loading = true;
+
+        // selected user info <handing null case>
+        if (this.selectedMate == null) {
+          this.owner_id = null;
+        } else {
+          this.owner_id = this.selectedMate.id;
+          this.owner = this.selectedMate.display_name;
+        }
+
         console.log(response.data);
         this.postItem(); //post it to frontend table
         this.resetInput();
         this.$bvModal.hide("modal-addItem"); //close add pop-up
         this.loading = false;
       } catch (err) {
+        if (err.response) {
+          this.uploadError = err.response.data.errors[0];
+        }
         this.messages.push({
           message: err.response.data,
           error: true
