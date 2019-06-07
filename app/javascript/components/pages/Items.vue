@@ -98,8 +98,8 @@
       <p>
         <i>Note: This action can not be undone.</i>
       </p>
-      <b-button class="mt-2" variant="info" @click="hideModal('modal-remove')">No, I am not sure.</b-button>
       <b-button class="mt-2" variant="danger" @click="removeItem">Yes, I am sure.</b-button>
+      <b-button class="mt-2" variant="info" @click="hideModal('modal-remove')">No, I am not sure.</b-button>
     </b-modal>
   </div>
 </template>

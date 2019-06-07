@@ -9,7 +9,7 @@
       </h2>
       <!-- Top Half of Table: Expenses you owe, can only pay these -->
       <label style="font-weight:bold">Expenses You Owe</label>
-      <b-checkbox name="checkbox-1" v-model="filterExpense">Show Only Your Unpaid Expenses</b-checkbox>
+      <b-checkbox name="checkbox-1" v-model="filterExpense">Your Unpaid Expenses</b-checkbox>
       <b-table
         responsive
         show-empty
@@ -40,7 +40,7 @@
       </b-table>
       <!-- Bottom Half of Table: Expenses you issued, you can delete these -->
       <label style="font-weight:bold">Expenses You Issued</label>
-      <b-checkbox name="checkbox-1" v-model="filterExpenseIssued">Show Only Unpaid Expenses</b-checkbox>
+      <b-checkbox name="checkbox-1" v-model="filterExpenseIssued">Your Unpaid Expenses Issued</b-checkbox>
       <b-table
         responsive
         show-empty
