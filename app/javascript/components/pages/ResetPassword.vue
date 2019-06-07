@@ -93,9 +93,9 @@
         redirectSecs: 5
       }
     },
-    created() {
-      this.email = this.$router.query.email;
-      this.reset_token = this.$router.query.reset_token;
+    created () {
+      this.email = this.$route.query.email;
+      this.resetToken = this.$route.query.reset_token;
     },
     methods: {
       async reset() {
