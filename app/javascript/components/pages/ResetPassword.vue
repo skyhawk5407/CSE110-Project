@@ -93,15 +93,6 @@
         redirectSecs: 5
       }
     },
-    created () {
-      // If email or reset token not defined, redirect to main page
-      if(this.$router.query.email === undefined || this.$router.query.reset_token === undefined) {
-        this.$router.replace('/');
-      } else {
-        this.email = this.$router.query.email;
-        this.resetToken = this.$router.query.reset_token;
-      }
-    },
     methods: {
       async reset() {
         if (this.newPassword !== this.newPasswordConfirmation) {

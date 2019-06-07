@@ -34,7 +34,7 @@ const routes = [
   { path: '/Items', component: Items, meta: {auth: true, apartment:true}},
   { path: '/Notifications', component: Notifications, meta: {auth: true, apartment:true}},
   { path: '/Rules', component: Rules, meta: {auth: true, apartment:true}},
-  { path: '/ResetPassword', component: ResetPassword, meta: {notLoggedIn: true}},
+  { path: '/ResetPassword', component: ResetPassword, meta: {notLoggedIn: true, resetPassword:true}},
   { path: '*', redirect: '/SplashScreen' }
 ];
 
@@ -52,8 +52,10 @@ router.beforeEach((to, from, next) => {
     next('/');
   } else if(to.meta.notApartment && store.state.apartmentId) {
      next('/Dashboard');
-   } else if(to.meta.apartment && !store.state.apartmentId) {
+  } else if(to.meta.apartment && !store.state.apartmentId) {
      next('/Dashboardi');
+  } else if(to.meta.resetPassword && !to.query.email && !to.query.reset_token) {
+    next('/');
   } else {
     next();
   }
