@@ -3,6 +3,8 @@
 | master      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=master)](https://travis-ci.org/tangandrew/CSE110-Project) |
 | rails      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=rails)](https://travis-ci.org/tangandrew/CSE110-Project) |
 
+## The website link (The google form may say something different, make sure to use this one, we changed the port)
+http://34.208.173.107:443
 
 ## Download and install software
     Ruby 2.4.6: https://rubyinstaller.org/downloads/
