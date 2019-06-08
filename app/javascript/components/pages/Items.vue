@@ -10,7 +10,7 @@
         <template slot="item" slot-scope="row">{{ row.value }}</template>
         <template slot="owner" slot-scope="row">{{row.value}}</template>
         <template slot="Description" slot-scope="row">{{ row.value }}</template>
-        <template slot="Bought" slot-scope="row">{{ row.value }}</template>
+        <template slot="Bought" slot-scope="row">{{ Status(row.value) }}</template>
 
         <!-- Edit&Remove -->
         <template slot="Actions" slot-scope="row">
@@ -129,8 +129,8 @@ export default {
       item: undefined,
 
       // owner id and name
-      owner_id: null,
       owner: null,
+      owner_id: null,
 
       Bought: false,
       Description: undefined,
@@ -164,6 +164,14 @@ export default {
       }
 
       try {
+        // selected user info <handing null case>
+        if (this.selectedMate == null) {
+          this.owner_id = null;
+          this.owner = "N/A";
+        } else {
+          this.owner_id = this.selectedMate.id;
+          this.owner = this.selectedMate.display_name;
+        }
 
         //<post data to database>
         let response = await api.items.post(
@@ -176,14 +184,6 @@ export default {
         );
 
         this.loading = true;
-
-        // selected user info <handing null case>
-        if (this.selectedMate == null) {
-          this.owner_id = null;
-        } else {
-          this.owner_id = this.selectedMate.id;
-          this.owner = this.selectedMate.display_name;
-        }
 
         console.log(response.data);
         this.postItem(); //post it to frontend table
@@ -227,7 +227,7 @@ export default {
         this.items.push({
           item_id: lastTransactionEntry.id,
           item: lastTransactionEntry.name,
-          owner: lastTransactionEntry.owner_name,
+          owner: this.selectedMate.display_name,
           Description: lastTransactionEntry.description,
           Bought: lastTransactionEntry.bought
         });
@@ -302,7 +302,6 @@ export default {
       console.log("owner: " + this.items[index].owner);
     },
     async editItem() {
-      console.log("Edit...");
       try {
         // console.log("selectedMate: " + this.selectedMate.id);
 
@@ -348,6 +347,13 @@ export default {
               console.log("unknown error");
           }
         }
+      }
+    },
+    Status(bought) {
+      if (bought) {
+        return "Yes";
+      } else {
+        return "No";
       }
     },
     handleSubmit() {
