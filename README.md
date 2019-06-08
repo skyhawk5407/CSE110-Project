@@ -1,3 +1,5 @@
+# TURDMate
+
 | Branch        | Status        |
 | ------------- |:-------------:|
 | master      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=master)](https://travis-ci.org/tangandrew/CSE110-Project) |
