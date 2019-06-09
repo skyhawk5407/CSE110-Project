@@ -5,11 +5,35 @@
 | master      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=master)](https://travis-ci.org/tangandrew/CSE110-Project) |
 | rails      | [![Build Status](https://travis-ci.org/tangandrew/CSE110-Project.svg?branch=rails)](https://travis-ci.org/tangandrew/CSE110-Project) |
 
+## Introduction
+
+<b>Welcome to TURDMate!</b>
+
+This is a web based application designed to help users manage their living spaces.
+
+Our application assists you with the difficulties of living with roommates, from recording important documents such as the lease, notifying
+roommates, and splitting expenses.
+
+To start, just simply go to our hosted website, create an account and an apartment, and start filling up your aparment with roommates and all your necessary information!
+
+Enjoy!
+
 ## The website link
 
 <b>(The google form may say something different, make sure to use this one, we changed the port)</b>
 
 http://34.208.173.107:443
+
+## Login Credentials
+
+| Username                | Password    | Description                                     |
+|-------------------------|-------------|-------------------------------------------------|
+| jsmith@example.com      | password123 | In apartment with lots of things inside         |
+| noapartment@example.com | password123 | Not in an apartment                             |
+| change@example.com      | password123 | In apartment with nothing                       |
+| delete@example.com      | password123 | Account to be deleted, in an apartment          |
+| turdmate@mailinator.com | password123 | Account for recovery, not in an apartment       |
+| leave@example.com       | password123 | Account for leave apartment, is in an apartment |
 
 ## Download and install software
     Ruby 2.4.6: https://rubyinstaller.org/downloads/
