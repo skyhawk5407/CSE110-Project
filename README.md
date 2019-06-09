@@ -11,6 +11,17 @@
 
 http://34.208.173.107:443
 
+## Login Credentials
+
+| Username                | Password    | Description                                     |
+|-------------------------|-------------|-------------------------------------------------|
+| jsmith@example.com      | password123 | In apartment with lots of things inside         |
+| noapartment@example.com | password123 | Not in an apartment                             |
+| change@example.com      | password123 | In apartment with nothing                       |
+| delete@example.com      | password123 | Account to be deleted, in an apartment          |
+| turdmate@mailinator.com | password123 | Account for recovery, not in an apartment       |
+| leave@example.com       | password123 | Account for leave apartment, is in an apartment |
+
 ## Download and install software
     Ruby 2.4.6: https://rubyinstaller.org/downloads/
     Yarn:       https://yarnpkg.com/en/docs/install
