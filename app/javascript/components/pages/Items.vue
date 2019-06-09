@@ -85,6 +85,8 @@
         >I have this item!</b-form-checkbox>
       </div>
 
+      <b-alert class="my-3" variant="danger" :show="editError">{{editError}}</b-alert>
+
       <!-- action buttons -->
       <b-button class="mt-2" variant="info" @click="editItem">Save</b-button>
       <b-button class="mt-2" variant="danger" @click="hideModal('modal-edit')">Cancel</b-button>
@@ -137,7 +139,8 @@ export default {
       curr_email: this.$store.state.username,
       curr_password: this.$store.state.password,
 
-      uploadError: undefined
+      uploadError: undefined,
+      editError: undefined
     };
   },
   created() {
@@ -190,22 +193,10 @@ export default {
         this.resetInput();
         this.$bvModal.hide("modal-addItem"); //close add pop-up
         this.loading = false;
+        this.uploadError = undefined;
       } catch (err) {
         if (err.response) {
           this.uploadError = err.response.data.errors[0];
-        }
-        this.messages.push({
-          message: err.response.data,
-          error: true
-        });
-        if (err.response) {
-          switch (err.response.status) {
-            case 400:
-              console.log("error");
-              break;
-            default:
-              console.log("unknown error");
-          }
         }
       }
     },
@@ -250,15 +241,7 @@ export default {
         // close
         this.$bvModal.hide("modal-remove");
       } catch (err) {
-        if (err.response) {
-          switch (err.response.status) {
-            case 400:
-              console.log("error");
-              break;
-            default:
-              console.log("unknown error");
-          }
-        }
+        console.log(err);
       }
     },
 
@@ -303,16 +286,10 @@ export default {
 
         this.resetInput();
         this.$bvModal.hide("modal-edit");
+        this.editError = undefined;
       } catch (err) {
-        console.log(err);
         if (err.response) {
-          switch (err.response.status) {
-            case 400:
-              console.log("error");
-              break;
-            default:
-              console.log("unknown error");
-          }
+          this.editError = err.response.data.errors[0];
         }
       }
     },
