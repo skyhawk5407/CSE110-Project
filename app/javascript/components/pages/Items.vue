@@ -183,35 +183,17 @@ export default {
         this.loading = true;
 
         console.log(response.data);
-<<<<<<< HEAD
-
         this.postItem();
         this.hideModal("modal-addItem");
 
-=======
         this.createTable(); // Refresh table
         this.resetInput();
         this.$bvModal.hide("modal-addItem"); //close add pop-up
->>>>>>> bf6e01caa256f527de0a58c6fc4f76bdc7711ddc
         this.loading = false;
         this.uploadError = undefined;
       } catch (err) {
         if (err.response) {
           this.uploadError = err.response.data.errors[0];
-        }
-<<<<<<< HEAD
-        this.messages.push({
-          message: err.response.data,
-          error: true
-        });
-        if (err.response) {
-          switch (err.response.status) {
-            case 400:
-              console.log("error");
-              break;
-            default:
-              console.log("unknown error");
-          }
         }
       }
     },
@@ -239,8 +221,6 @@ export default {
         });
       } catch (err) {
         console.log("fail");
-=======
->>>>>>> bf6e01caa256f527de0a58c6fc4f76bdc7711ddc
       }
     },
 
@@ -347,13 +327,9 @@ export default {
         this.$set(this.items[index], "Description", this.Description);
         this.$set(this.items[index], "Bought", this.Bought);
 
-<<<<<<< HEAD
         this.hideModal("modal-edit");
-=======
         this.resetInput();
-        this.$bvModal.hide("modal-edit");
         this.editError = undefined;
->>>>>>> bf6e01caa256f527de0a58c6fc4f76bdc7711ddc
       } catch (err) {
         if (err.response) {
           this.editError = err.response.data.errors[0];
