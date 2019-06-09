@@ -53,10 +53,13 @@ class Api::V1::ItemController < ApplicationController
       image = nil
     end
     filtered_params = {:name => params[:name],
-                       :user_id => params[:owner_id],
                        :bought => params[:bought],
                        :description => params[:description],
-                       :image => image}.reject{|_,v| v.nil?}
+                       :image => image}.reject {|_, v| v.nil?}
+    if params.has_key? :owner_id
+      filtered_params = filtered_params.merge({:user_id => params[:owner_id]})
+    end
+
     return render json: {:errors => ['Missing params']}, status: :bad_request if filtered_params.blank?
     if @item.update(filtered_params)
       render plain: 'Item successfully updated', status: :ok
@@ -74,6 +77,7 @@ class Api::V1::ItemController < ApplicationController
   end
 
   private
+
   def get_item
     begin
       @item = Item.find(params[:item_id])
