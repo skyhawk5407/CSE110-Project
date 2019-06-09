@@ -186,7 +186,7 @@ export default {
         this.loading = true;
 
         console.log(response.data);
-        this.postItem(); //post it to frontend table
+        this.createTable(); // Refresh table
         this.resetInput();
         this.$bvModal.hide("modal-addItem"); //close add pop-up
         this.loading = false;
@@ -209,32 +209,6 @@ export default {
         }
       }
     },
-    async postItem() {
-      try {
-        console.log("push");
-        let response = await api.items.get(this.curr_email, this.curr_password);
-        var transactions = response.data;
-        var lastTransactionId = transactions.length - 1;
-        var lastTransactionEntry = transactions.find(
-          function findLastTransaction(element, index, array) {
-            var lastTransactionId = array.length - 1;
-            return element == lastTransactionId || index == lastTransactionId;
-          },
-          lastTransactionId
-        );
-
-        // post Item
-        this.items.push({
-          item_id: lastTransactionEntry.id,
-          item: lastTransactionEntry.name,
-          owner: this.selectedMate.display_name,
-          Description: lastTransactionEntry.description,
-          Bought: lastTransactionEntry.bought
-        });
-      } catch (err) {
-        console.log("fail");
-      }
-    },
 
     // get entire items
     async createTable() {
@@ -244,6 +218,7 @@ export default {
       var transactions = response.data;
       var i = 0;
 
+      this.items = [];
       for (i in transactions) {
         var entry = transactions[i];
         var load = {
@@ -275,10 +250,6 @@ export default {
         // close
         this.$bvModal.hide("modal-remove");
       } catch (err) {
-        this.messages.push({
-          message: err.response.data,
-          error: true
-        });
         if (err.response) {
           switch (err.response.status) {
             case 400:
@@ -334,10 +305,6 @@ export default {
         this.$bvModal.hide("modal-edit");
       } catch (err) {
         console.log(err);
-        this.messages.push({
-          message: err,
-          error: true
-        });
         if (err.response) {
           switch (err.response.status) {
             case 400:
