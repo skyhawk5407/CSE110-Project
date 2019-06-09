@@ -342,8 +342,11 @@ def tc_seed
   # Not in an apartment
   # noapartment@example.com
   # password123
-
-
+  User.create(
+      :email => 'noapartment@example.com',
+      :password => 'password123',
+      :display_name => 'Test NoApartment'
+  )
 
   # In apartment with nothing
   # change@example.com
@@ -359,8 +362,6 @@ def tc_seed
       :apartment_id => apt2.id
   )
 
-
-
   # Account to be deleted, in an apartment
   # delete@example.com
   # password123
@@ -375,7 +376,6 @@ def tc_seed
       :apartment_id => apt3.id
   )
 
-
   # Account for recovery, not in an apartment
   # turdmate@mailinator.com
   # password123
@@ -385,7 +385,6 @@ def tc_seed
       :display_name => 'Test Recovery',
       :apartment_id => apt2.id
   )
-
 
   # Account for leave apartment, is in an apartment
   # leave@example.com
@@ -402,7 +401,6 @@ def tc_seed
   )
 
   puts "Create misc. TC seeds"
-
 end
 
 case Rails.env
