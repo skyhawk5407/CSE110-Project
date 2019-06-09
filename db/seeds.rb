@@ -401,6 +401,8 @@ def tc_seed
       :apartment_id => apt4.id
   )
 
+  puts "Create misc. TC seeds"
+
 end
 
 case Rails.env
