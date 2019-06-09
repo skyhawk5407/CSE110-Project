@@ -12,16 +12,12 @@
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = false
 
-
-case Rails.env
-when 'development'
-  # development-specific seeds ...
-  # (anything you need to interactively play around with in the rails console)
+def tc_seed
   apt = Apartment.create(
       :name => 'WHAADADUPUPP',
       :address => '9500 Gilman Dr, La Jolla, CA 92093',
-  )
-  Apartment.update(:access_code => '12345')
+      )
+  apt.update(:access_code => '12345')
 
   puts 'Created apartment with access code 12345'
 
@@ -182,119 +178,119 @@ when 'development'
       :name => 'Toaster',
       :bought => true,
       :description => 'Toaster',
-  )
+      )
   item2 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Kettle',
       :bought => true,
       :description => 'Kettle',
-  )
+      )
   item3 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Spatula',
       :bought => true,
       :description => 'Spatula',
-  )
+      )
   item4 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Toaster Oven',
       :bought => true,
       :description => 'Toaster Oven',
-  )
+      )
   item5 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Tv',
       :bought => true,
       :description => 'Tv',
-  )
+      )
   item6 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Coffee Table',
       :bought => true,
       :description => 'Coffee Table',
-  )
+      )
   item7 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Couch',
       :bought => true,
       :description => 'Couch',
-  )
+      )
   item8 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Strainer',
       :bought => true,
       :description => 'Strainer',
-  )
+      )
   item9 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Shoe Rack',
       :bought => true,
       :description => 'Shoe Rack',
-  )
+      )
   item10 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Blender',
       :bought => true,
       :description => 'Blender',
-  )
+      )
   item11 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Bird Feeder',
       :bought => true,
       :description => 'Bird Feeder',
-  )
+      )
   item12 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Pot',
       :bought => true,
       :description => 'Pot',
-  )
+      )
   item13 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Pan',
       :bought => true,
       :description => 'Pan',
-  )
+      )
   item14 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Fridge',
       :bought => true,
       :description => 'Fridge',
-  )
+      )
   item15 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Kettle',
       :bought => true,
       :description => 'Kettle',
-  )
+      )
   item16 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Foreman Grill',
       :bought => true,
       :description => 'Foreman Grill',
-  )
+      )
   item17 = Item.create(
       :apartment_id => apt.id,
       :user_id => user_ids.sample(:random => rng),
       :name => 'Lamp',
       :bought => true,
       :description => 'Lamp',
-  )
+      )
 
   puts 'Created items'
 
@@ -341,6 +337,77 @@ when 'development'
 
   puts 'Created documents'
 
+  # Other seeds, not in the main apartment
+
+  # Not in an apartment
+  # noapartment@example.com
+  # password123
+
+
+
+  # In apartment with nothing
+  # change@example.com
+  # password123
+  apt2 = Apartment.create(
+      :name => 'Test Apartment',
+      :address => 'Test Address',
+      )
+  User.create(
+      :email => 'change@example.com',
+      :password => 'password123',
+      :display_name => 'Test Change',
+      :apartment_id => apt2.id
+  )
+
+
+
+  # Account to be deleted, in an apartment
+  # delete@example.com
+  # password123
+  apt3 = Apartment.create(
+      :name => 'Test Apartment',
+      :address => 'Test Address',
+      )
+  User.create(
+      :email => 'delete@example.com',
+      :password => 'password123',
+      :display_name => 'Test Delete',
+      :apartment_id => apt3.id
+  )
+
+
+  # Account for recovery, not in an apartment
+  # turdmate@mailinator.com
+  # password123
+  User.create(
+      :email => 'turdmate@mailinator.com',
+      :password => 'password123',
+      :display_name => 'Test Recovery',
+      :apartment_id => apt2.id
+  )
+
+
+  # Account for leave apartment, is in an apartment
+  # leave@example.com
+  # password123
+  apt4 = Apartment.create(
+      :name => 'Test Apartment',
+      :address => 'Test Address',
+      )
+  User.create(
+      :email => 'leave@example.com',
+      :password => 'password123',
+      :display_name => 'Test Leave',
+      :apartment_id => apt4.id
+  )
+
+end
+
+case Rails.env
+when 'development'
+  # development-specific seeds ...
+  # (anything you need to interactively play around with in the rails console)
+  tc_seed
 when 'test'
   # test-specific seeds ...
   # (Consider having your tests set up the data they need
@@ -348,6 +415,7 @@ when 'test'
 
 when 'production'
   # production seeds (if any) ...
+  tc_seed
 else
   pass
 end
