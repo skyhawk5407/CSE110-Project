@@ -382,8 +382,7 @@ def tc_seed
   User.create(
       :email => 'turdmate@mailinator.com',
       :password => 'password123',
-      :display_name => 'Test Recovery',
-      :apartment_id => apt2.id
+      :display_name => 'Test Recovery'
   )
 
   # Account for leave apartment, is in an apartment
