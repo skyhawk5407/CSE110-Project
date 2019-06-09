@@ -16,6 +16,8 @@ roommates, and splitting expenses.
 
 To start, just simply go to our hosted website, create an account and an apartment, and start filling up your aparment with roommates and all your necessary information!
 
+Enjoy!
+
 ## The website link
 
 <b>(The google form may say something different, make sure to use this one, we changed the port)</b>
