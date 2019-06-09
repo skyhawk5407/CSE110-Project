@@ -7,9 +7,9 @@
 
 ## Introduction
 
-Welcome to TURDMate!
+<b>Welcome to TURDMate!</b>
 
-This is a web based application designed to help users manage their living spaces. 
+This is a web based application designed to help users manage their living spaces.
 
 Our application assists you with the difficulties of living with roommates, from recording important documents such as the lease, notifying
 roommates, and splitting expenses.
