@@ -157,8 +157,15 @@ export default {
       }
     },
     async addItem() {
-      if (this.item == undefined) {
+      if (this.item == undefined || this.item == "") {
         this.uploadError = "Item name can't be blank";
+        this.item = undefined;
+        return;
+      }
+
+      if (this.Description == undefined || this.Description == "") {
+        this.uploadError = "Description can't be blank";
+        this.Description = undefined;
         return;
       }
 
@@ -182,24 +189,24 @@ export default {
 
         this.loading = true;
 
-        console.log(response.data);
-        this.postItem();
-        this.hideModal("modal-addItem");
-
-        this.createTable(); // Refresh table
-        this.resetInput();
-        this.$bvModal.hide("modal-addItem"); //close add pop-up
-        this.loading = false;
         this.uploadError = undefined;
       } catch (err) {
         if (err.response) {
           this.uploadError = err.response.data.errors[0];
         }
       }
+
+      if (this.uploadError == undefined) {
+        this.postItem();
+        this.hideModal("modal-addItem");
+
+        this.createTable(); // Refresh table
+      }
+      this.loading = false;
+      this.uploadError = undefined;
     },
     async postItem() {
       try {
-        console.log("push");
         let response = await api.items.get(this.curr_email, this.curr_password);
         var transactions = response.data;
         var lastTransactionId = transactions.length - 1;
@@ -238,8 +245,6 @@ export default {
 
         if (entry.id == null) {
           entry.display_name = "N/A";
-          console.log("apt_mate.display_name");
-          console.log(": " + entry.display_name);
         }
         var load = {
           item_id: entry.id,
@@ -253,26 +258,22 @@ export default {
       this.loading = false;
     },
     async removeItem() {
-      try {
-        var deleteCount = 1;
-        var index = this.items.indexOf(this.selectedRow);
-        var itemId = this.items[index].item_id;
+      var deleteCount = 1;
+      var index = this.items.indexOf(this.selectedRow);
+      var itemId = this.items[index].item_id;
 
-        // backend delete
-        let response = await api.items.delete(
-          itemId,
-          this.curr_email,
-          this.curr_password
-        );
+      // backend delete
+      let response = await api.items.delete(
+        itemId,
+        this.curr_email,
+        this.curr_password
+      );
 
-        // frontend delete
-        this.items.splice(index, deleteCount);
+      // frontend delete
+      this.items.splice(index, deleteCount);
 
-        // close
-        this.hideModal("modal-remove");
-      } catch (err) {
-        console.log(err);
-      }
+      // close
+      this.hideModal("modal-remove");
     },
 
     async getEditItem(selectedRow) {
@@ -285,12 +286,9 @@ export default {
       this.owner = this.items[index].owner;
       this.Description = this.items[index].Description;
       this.Bought = this.items[index].Bought;
-      console.log("owner: " + this.items[index].owner);
     },
     async editItem() {
       try {
-        // console.log("selectedMate: " + this.selectedMate.id);
-
         var owner_id = null;
         this.owner = "N/A";
 
@@ -298,8 +296,6 @@ export default {
           owner_id = this.selectedMate.id;
           this.owner = this.selectedMate.display_name;
         }
-        console.log("this id" + owner_id);
-        console.log("this ower" + this.owner);
 
         let response = await api.items.update(
           this.item_id,
@@ -310,15 +306,6 @@ export default {
           this.curr_email,
           this.curr_password
         );
-        console.log("Bought:::: " + this.Bought);
-
-        // console.log("item_id id: " + this.item_id);
-        // console.log("owner id: " + owner_id);
-        // console.log("owner name: " + this.owner);
-        // console.log("item: " + this.item);
-        // console.log("curr_email: " + this.curr_email);
-        // console.log("curr_pass: " + this.curr_password);
-        // console.log(response.data);
 
         // set changed data to table
         var index = this.items.indexOf(this.selectedRow);
@@ -337,8 +324,6 @@ export default {
       }
     },
     Status(bought) {
-      console.log("bought:: " + bought);
-
       if (bought == true || bought == "true") {
         return "Yes";
       } else {
@@ -362,10 +347,11 @@ export default {
       this.$root.$emit("bv::hide::modal", modal, "#btnShow");
     },
     resetInput() {
+      this.uploadError = undefined;
       this.item_id = null;
       this.item = undefined;
       this.owner = null;
-      this.Bought = true;
+      this.Bought = false;
       this.Description = undefined;
     },
     sendInfo(row) {
